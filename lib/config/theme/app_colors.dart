@@ -49,6 +49,7 @@ class AppColors {
   );
 
   static const Color primaryButtonColor = Color(0xFFFCD331);
+  static const Color primaryBackgroundColor= Color(0xFF16171D);
 
 }
 

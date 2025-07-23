@@ -38,6 +38,7 @@ dependencies:
   http:
   path_provider: ^2.1.2
   shared_preferences:
+  flutter_svg:
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

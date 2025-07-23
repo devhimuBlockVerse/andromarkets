@@ -1,3 +1,4 @@
+import 'package:andromarkets/config/theme/app_colors.dart';
 import 'package:andromarkets/presentation/viewmodel/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,7 @@ class _HomeViewState extends State<HomeView> {
     final user = authViewModel.user;
 
     return Scaffold(
+      backgroundColor: AppColors.primaryBackgroundColor,
       appBar: AppBar(
         title: const Text('Home'),
         actions: [

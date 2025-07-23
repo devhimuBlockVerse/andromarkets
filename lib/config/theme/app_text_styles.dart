@@ -70,7 +70,7 @@ class AppTextStyle {
       _base(fontSize: 14, fontWeight: FontWeight.w400, context: context, color: color , lineHeight: 20);
 
   static TextStyle caption(BuildContext context, {Color color = Colors.black ,double? lineHeight, double? letterSpacing}) =>
-      _base(fontSize: 13, fontWeight: FontWeight.w500, context: context, color: color , lineHeight: 18);
+       _base(fontSize: 13, fontWeight: FontWeight.w500, context: context, color: color);
 
 
   static TextStyle buttonsLarge(BuildContext context, {Color color = Colors.black ,double? lineHeight, double? letterSpacing}) =>
