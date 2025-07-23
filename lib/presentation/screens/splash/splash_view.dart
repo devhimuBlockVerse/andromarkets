@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/config/theme/responsive_ui.dart';
-import 'package:andromarkets/presentation/screens/signIn/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../config/theme/app_colors.dart';
+import '../onboarding/onboarding_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -21,7 +21,8 @@ class _SplashViewState extends State<SplashView>  {
     super.initState();
 
     Timer(const Duration(seconds: 3), (){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const HomeView()));
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const HomeView()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const OnboardingView()));
     });
 
    }
@@ -55,6 +56,8 @@ class _SplashViewState extends State<SplashView>  {
       ),
     );
   }
+
+
   Widget body() {
      final screenWidth = MediaQuery.of(context).size.width *1;
     return SingleChildScrollView(
