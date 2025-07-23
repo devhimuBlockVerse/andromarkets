@@ -1,5 +1,5 @@
 import 'package:andromarkets/config/providers/app_providers.dart';
-import 'package:andromarkets/presentation/screens/home/home_view.dart';
+import 'package:andromarkets/presentation/screens/signIn/home_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
