@@ -39,6 +39,7 @@ dependencies:
   path_provider: ^2.1.2
   shared_preferences:
   flutter_svg:
+  google_sign_in: ^5.0.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

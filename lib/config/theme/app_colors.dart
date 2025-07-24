@@ -14,9 +14,9 @@ class AppColors {
 
   static const Color green = Color(0xFF58D58D);
 
-  static  Color secondaryColorDiscriptions2 = Color(0xFF58D58D).withOpacity(0.7);
+  static  Color secondaryColorDiscriptions2 = Color(0xFFFFFFFF).withOpacity(0.7);
 
-  static  Color secondaryColor3 = Color(0xFF58D58D).withOpacity(0.6);
+  static  Color secondaryColor3 = Color(0xFFFFFFFF).withOpacity(0.6);
 
   static const Color gray = Color(0xFFE0E0E0);
 
@@ -49,6 +49,8 @@ class AppColors {
   );
 
   static const Color primaryButtonColor = Color(0xFFFCD331);
+  static Color secondaryButtonColor = Color(0xFFFFFFFF).withOpacity(0.1);
+
   static const Color primaryBackgroundColor= Color(0xFF16171D);
 
 }
