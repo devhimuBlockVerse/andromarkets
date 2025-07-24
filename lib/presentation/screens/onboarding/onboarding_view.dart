@@ -1,10 +1,12 @@
 import 'package:andromarkets/config/theme/app_colors.dart';
 import 'package:andromarkets/config/theme/app_text_styles.dart';
+import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../config/theme/responsive_ui.dart';
 import '../../../core/enums/button_type.dart';
 import '../../components/buttonComponent.dart';
+import '../../components/textFieldComponent.dart';
 
 
 class OnboardingView extends StatefulWidget {
@@ -16,6 +18,7 @@ class OnboardingView extends StatefulWidget {
 
 class _OnboardingViewState extends State<OnboardingView> {
   final PageController _pageController = PageController();
+  final TextEditingController emailController = TextEditingController();
   int _currentPage = 0;
 
   final List<String> onBoardingHotNews = [
@@ -24,7 +27,6 @@ class _OnboardingViewState extends State<OnboardingView> {
     "assets/images/demoSlider.png",
     "assets/images/demoSlider.png",
   ];
-
 
   @override
   void dispose() {
@@ -158,8 +160,14 @@ class _OnboardingViewState extends State<OnboardingView> {
                  buttonText: "Sign In",
                  buttonType: ButtonType.primary,
                  textStyle: AppTextStyle.buttonsMedium(context),
-                 onPressed: (){},
+                 onPressed: (){
+                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SignInView()));
+                 },
                ),
+
+
+               SizedBox(height: screenHeight * 0.04),
+
 
              ],
           ),

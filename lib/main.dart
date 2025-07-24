@@ -1,4 +1,5 @@
 import 'package:andromarkets/config/providers/app_providers.dart';
+import 'package:andromarkets/config/theme/app_colors.dart';
 import 'package:andromarkets/presentation/screens/splash/splash_view.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return AppProviders(
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor:AppColors.primaryColor),
         ),
         home: const SplashView()
       ),
