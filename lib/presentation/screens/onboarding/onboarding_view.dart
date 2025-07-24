@@ -2,8 +2,9 @@ import 'package:andromarkets/config/theme/app_colors.dart';
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../config/theme/responsive_ui.dart';
+import '../../../core/enums/button_type.dart';
+import '../../components/buttonComponent.dart';
 
 
 class OnboardingView extends StatefulWidget {
@@ -18,6 +19,7 @@ class _OnboardingViewState extends State<OnboardingView> {
   int _currentPage = 0;
 
   final List<String> onBoardingHotNews = [
+    "assets/images/demoSlider.png",
     "assets/images/demoSlider.png",
     "assets/images/demoSlider.png",
     "assets/images/demoSlider.png",
@@ -61,6 +63,7 @@ class _OnboardingViewState extends State<OnboardingView> {
     double dotSize = baseSize * 0.015;
 
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: SizedBox(
         height: screenHeight,
         child: Padding(
@@ -82,7 +85,8 @@ class _OnboardingViewState extends State<OnboardingView> {
 
 
                SizedBox(
-                 height: 224,
+                 // height: 224,
+                 height: screenHeight * 0.25,
                  child: PageView.builder(
                    controller: _pageController,
                    itemCount: onBoardingHotNews.length,
@@ -92,11 +96,13 @@ class _OnboardingViewState extends State<OnboardingView> {
                      });
                    },
                    itemBuilder: (context, index) {
-                     return Image.asset(
-                       onBoardingHotNews[index],
-                       width: 295,
-                       height: 224,
-                       fit: BoxFit.contain,
+                     return Padding(
+                       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                       child: Image.asset(
+                         onBoardingHotNews[index],
+                         width: screenWidth * 0.7,
+                         fit: BoxFit.contain,
+                       ),
                      );
                    },
                  ),
@@ -124,7 +130,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                ),
 
 
-               SizedBox(height: screenHeight * 0.02),
+               SizedBox(height: screenHeight * 0.05),
                Text(
                  "Join the Future of Trading",
                  style: AppTextStyle.h0(context,color: AppColors.primaryText),
@@ -137,7 +143,25 @@ class _OnboardingViewState extends State<OnboardingView> {
                  style: AppTextStyle.label(context,color: AppColors.primaryText),
                ),
 
-              ],
+               SizedBox(height: screenHeight * 0.04),
+
+               PrimaryButton(
+                 buttonText: "Sign Up",
+                 buttonType: ButtonType.secondary,
+                 textStyle: AppTextStyle.buttonsMedium(context),
+                 onPressed: (){},
+
+               ),
+               SizedBox(height: screenHeight * 0.03),
+
+               PrimaryButton(
+                 buttonText: "Sign In",
+                 buttonType: ButtonType.primary,
+                 textStyle: AppTextStyle.buttonsMedium(context),
+                 onPressed: (){},
+               ),
+
+             ],
           ),
         ),
       ),
