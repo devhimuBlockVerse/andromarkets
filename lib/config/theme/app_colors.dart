@@ -17,6 +17,7 @@ class AppColors {
   static  Color secondaryColorDiscriptions2 = Color(0xFFFFFFFF).withOpacity(0.7);
 
   static  Color secondaryColor3 = Color(0xFFFFFFFF).withOpacity(0.6);
+  static  Color secondaryColor4 = Color(0xFFFFFFFF).withOpacity(0.4);
 
   static const Color gray = Color(0xFFE0E0E0);
 

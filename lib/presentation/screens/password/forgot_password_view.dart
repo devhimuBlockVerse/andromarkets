@@ -1,8 +1,8 @@
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/core/enums/button_type.dart';
 import 'package:andromarkets/presentation/components/buttonComponent.dart';
+import 'package:andromarkets/presentation/screens/password/otp_view.dart';
 import 'package:flutter/material.dart';
-
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/responsive_ui.dart';
 import '../../components/textFieldComponent.dart';
@@ -78,9 +78,12 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             PrimaryButton(
                 buttonText: 'Send Verification Code',
                 buttonType: ButtonType.primary,
-                onPressed:(){},
+                onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpCodeView(email: _emailController.text))),
+
                 textStyle: AppTextStyle.buttonsMedium(context)
-            )
+
+            ),
+
 
           ]
         )

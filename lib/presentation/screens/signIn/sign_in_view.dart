@@ -1,9 +1,8 @@
 import 'package:andromarkets/config/theme/app_colors.dart';
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/config/theme/responsive_ui.dart';
-import 'package:andromarkets/core/enums/textfield_type.dart';
 import 'package:andromarkets/presentation/components/buttonComponent.dart';
-import 'package:andromarkets/presentation/screens/signIn/forgot_password_view.dart';
+import 'package:andromarkets/presentation/screens/password/forgot_password_view.dart';
 import 'package:andromarkets/presentation/screens/signup/sign_up_view.dart';
 import 'package:andromarkets/presentation/viewmodel/auth_view_model.dart';
 import 'package:flutter/material.dart';
