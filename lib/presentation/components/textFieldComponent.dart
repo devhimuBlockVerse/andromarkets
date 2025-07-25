@@ -144,7 +144,7 @@ class _TextFieldComState extends State<TextFieldCom> {
               Expanded(
                 child: SizedBox(
                   child: Text(
-                    'Opps! Incorrect password',
+                    'Both passwords must be the same.',
                     style: AppTextStyle.bodySmall2x(context,color: AppColors.redErrorCall),
                   ),
                 ),
