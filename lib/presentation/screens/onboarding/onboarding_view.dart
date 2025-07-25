@@ -7,6 +7,7 @@ import '../../../config/theme/responsive_ui.dart';
 import '../../../core/enums/button_type.dart';
 import '../../components/buttonComponent.dart';
 import '../../components/textFieldComponent.dart';
+import '../signup/sign_up_view.dart';
 
 
 class OnboardingView extends StatefulWidget {
@@ -151,7 +152,11 @@ class _OnboardingViewState extends State<OnboardingView> {
                  buttonText: "Sign Up",
                  buttonType: ButtonType.secondary,
                  textStyle: AppTextStyle.buttonsMedium(context),
-                 onPressed: (){},
+                 onPressed: ()=>Navigator.pushAndRemoveUntil(
+                   context,
+                   MaterialPageRoute(builder: (context) => SignUpView()),
+                       (Route<dynamic> route) => false,
+                 ),
 
                ),
                SizedBox(height: screenHeight * 0.03),
@@ -160,9 +165,11 @@ class _OnboardingViewState extends State<OnboardingView> {
                  buttonText: "Sign In",
                  buttonType: ButtonType.primary,
                  textStyle: AppTextStyle.buttonsMedium(context),
-                 onPressed: (){
-                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SignInView()));
-                 },
+                 onPressed: ()=>Navigator.pushAndRemoveUntil(
+                   context,
+                   MaterialPageRoute(builder: (context) => SignInView()),
+                       (Route<dynamic> route) => false,
+                 ),
                ),
 
 
