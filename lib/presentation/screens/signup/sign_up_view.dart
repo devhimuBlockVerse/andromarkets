@@ -33,12 +33,12 @@ class _SignUpViewState extends State<SignUpView> {
 
   void _checkPasswordMatch(){
     setState(() {
-      if(_confirmPasswordController.text.isNotEmpty){
+      if(_confirmPasswordController.text.isEmpty){
         _confirmPasswordFieldState = TextFieldType.defaultState;
-      }else if(_confirmPasswordController.text != _passwordController.text){
-        _confirmPasswordFieldState = TextFieldType.errorState;
-      }else{
+      }else if(_passwordController.text == _confirmPasswordController.text){
         _confirmPasswordFieldState = TextFieldType.successState;
+      }else{
+        _confirmPasswordFieldState = TextFieldType.errorState;
       }
     });
   }
