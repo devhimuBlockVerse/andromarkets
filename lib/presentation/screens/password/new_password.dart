@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:http/http.dart'as http;
 import 'package:flutter/material.dart';
 import '../../../config/theme/app_colors.dart';
@@ -26,6 +27,7 @@ class _NewPasswordState extends State<NewPassword> {
   TextFieldType _confirmPasswordFieldState = TextFieldType.defaultState;
 
   String? _passwordErrorText;
+  bool _isSuccess = false;
 
   @override
   void initState() {
@@ -57,7 +59,6 @@ class _NewPasswordState extends State<NewPassword> {
     });
   }
 
-
   Future<void> _validatePasswordAPI(String password) async {
     if (password.isEmpty) {
       setState(() {
@@ -84,26 +85,23 @@ class _NewPasswordState extends State<NewPassword> {
       });
     }
   }
+
   void _onResetPassword() {
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
     _validatePasswordAPI(password);
+    _checkPasswordMatch();
 
-    if (_passwordFieldState == TextFieldType.successState &&
-        _confirmPasswordFieldState != TextFieldType.errorState) {
+    final isPasswordValid = _passwordFieldState == TextFieldType.successState;
+    final isConfirmValid = _confirmPasswordFieldState != TextFieldType.errorState;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset successful')),
-      );
+    if (isPasswordValid && isConfirmValid) {
+      setState(() {
+        _isSuccess = true;
+      });
 
-      // Navigate or perform logic here
     } else {
-       if (confirmPassword.isEmpty || password != confirmPassword) {
-        setState(() {
-          _confirmPasswordFieldState = TextFieldType.errorState;
-        });
-      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fix the errors above')),
@@ -111,13 +109,12 @@ class _NewPasswordState extends State<NewPassword> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
             backgroundColor: AppColors.primaryBackgroundColor,
-            appBar: AppBar(
+            appBar: _isSuccess ? null : AppBar(
 
               title: Text('New Password',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
               centerTitle: true,
@@ -125,14 +122,14 @@ class _NewPasswordState extends State<NewPassword> {
 
             ),
             body: ResponsiveViewState(
-              mobile: body(),
-              tablet: body(),
+              mobile: _isSuccess ? _buildSuccessView() : _buildFormView(),
+              tablet:_isSuccess ? _buildSuccessView() : _buildFormView(),
             )
         )
     );
   }
 
-  Widget body() {
+  Widget _buildFormView() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
 
@@ -144,16 +141,13 @@ class _NewPasswordState extends State<NewPassword> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
                   SizedBox(height: screenHeight * 0.03),
-
                   Text(
                     'Your code was verified. Now create a strong password',
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 
                   SizedBox(height: screenHeight * 0.02),
-
                   TextFieldCom(
                     label: 'New Password',
                     hintText: 'Minimum 8 characters',
@@ -177,7 +171,6 @@ class _NewPasswordState extends State<NewPassword> {
 
                   ),
                   SizedBox(height: screenHeight * 0.02),
-
                   PrimaryButton(
                       buttonText: 'Reset Password',
                       buttonType: ButtonType.primary,
@@ -192,15 +185,50 @@ class _NewPasswordState extends State<NewPassword> {
     );
   }
 
-}
+  Widget _buildSuccessView() {
+    final screenWidth = MediaQuery.of(context).size.width * 1;
+    final screenHeight = MediaQuery.of(context).size.height * 1;
 
-class SuccessView extends StatelessWidget {
-  const SuccessView({super.key});
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 80),
 
-  @override
-  Widget build(BuildContext context) {
 
-    return const Placeholder();
+            SizedBox(height: screenHeight * 0.02),
+
+
+            Text(
+              'Password Reset Successful!',
+               style: AppTextStyle.h2(context, color: AppColors.primaryText),
+            ),
+            SizedBox(height: screenHeight * 0.02),
+
+            Text(
+              'Your password has beed updated. You can now login with your new credentials.',
+               style: AppTextStyle.caption(context, color: AppColors.secondaryColor3),
+            ),
+
+            SizedBox(height: screenHeight * 0.08),
+
+            PrimaryButton(
+              buttonText: 'Go to Login',
+              buttonType: ButtonType.primary,
+              onPressed: ()=>Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => SignInView()),
+                  (Route<dynamic> route) => false),
+              textStyle: AppTextStyle.buttonsMedium(context),
+            )
+          ],
+        ),
+      ),
+    );
   }
-}
 
+
+}
