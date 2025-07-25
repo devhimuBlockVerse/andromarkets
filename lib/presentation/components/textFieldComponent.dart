@@ -49,6 +49,8 @@ class _TextFieldComState extends State<TextFieldCom> {
   Color _getBorderColor() {
     if (widget.textFieldType == TextFieldType.errorState) {
       return AppColors.redErrorCall;
+    }else if(widget.textFieldType == TextFieldType.successState){
+      return AppColors.green;
     } else if (_focusNode.hasFocus){
       return AppColors.primaryColor;
     } else {
@@ -148,7 +150,25 @@ class _TextFieldComState extends State<TextFieldCom> {
                 ),
               ),
             ],
-          )
+          ),
+          if(widget.textFieldType == TextFieldType.successState)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle,color: AppColors.green,size: screenWidth * 0.03),
+                SizedBox(width: screenWidth * 0.01),
+                Expanded(
+                  child: SizedBox(
+                    child: Text(
+                      'Password Match',
+                      style: AppTextStyle.bodySmall2x(context,color: AppColors.green),
+                    ),
+                  ),
+                ),
+              ],
+            )
         ],
       ),
     );
