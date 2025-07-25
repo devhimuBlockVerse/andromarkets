@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/models/login_model.dart';
-import '../../domain/usecase/get_message_usecase.dart';
 
-class HomeViewModel extends ChangeNotifier {
+class DashboardViewModel extends ChangeNotifier {
   bool isLoading = false;
   String message = 'Welcome';
   UserModel? user;
@@ -14,18 +13,6 @@ class HomeViewModel extends ChangeNotifier {
   List<String> roles = [];
   List<String> permissions = [];
 
-  
-  final GetMessageUseCase _getMessageUseCase = GetMessageUseCase();
-
-  Future<void> fetchMessage() async {
-    isLoading = true;
-    notifyListeners();
-
-    message = await _getMessageUseCase();
-
-    isLoading = false;
-    notifyListeners();
-  }
 
   Future<void> loadUserData() async{
     final prefs = await SharedPreferences.getInstance();

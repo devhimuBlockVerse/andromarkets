@@ -3,6 +3,7 @@ import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/config/theme/responsive_ui.dart';
 import 'package:andromarkets/core/enums/textfield_type.dart';
 import 'package:andromarkets/presentation/components/buttonComponent.dart';
+import 'package:andromarkets/presentation/screens/signIn/forgot_password_view.dart';
 import 'package:andromarkets/presentation/screens/signup/sign_up_view.dart';
 import 'package:andromarkets/presentation/viewmodel/auth_view_model.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../core/enums/button_type.dart';
 import '../../../core/services/google_sign_service.dart';
 import '../../components/textFieldComponent.dart';
-import '../../viewmodel/home_view_model.dart';
+import '../../viewmodel/dashboard_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../dashboard/dashboard_view.dart';
@@ -88,7 +89,7 @@ class _SignInViewState extends State<SignInView> {
   Widget body() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
-    final viewModel = context.watch<HomeViewModel>();
+    final viewModel = context.watch<DashboardViewModel>();
     final authViewModel = context.watch<AuthViewModel>();
     final user = authViewModel.user;
 
@@ -157,7 +158,7 @@ class _SignInViewState extends State<SignInView> {
 
         /// Forgot password
         GestureDetector(
-          onTap: (){},
+          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPasswordView())),
           child: Align(
             alignment: Alignment.bottomRight,
             child: Text(
