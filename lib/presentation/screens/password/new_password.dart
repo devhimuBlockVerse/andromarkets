@@ -1,5 +1,6 @@
 import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
@@ -194,10 +195,23 @@ class _NewPasswordState extends State<NewPassword> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 80),
+
+            Image.asset(
+              'assets/icons/passwordResetGIF.gif',
+              width: screenWidth * 0.3,
+              height: screenWidth * 0.3,
+              fit: BoxFit.contain,
+            ),
+
+            // SvgPicture.asset(
+            //   'assets/icons/passwordResetSuccess.svg',
+            //   width: screenWidth * 0.3,
+            //   height: screenWidth * 0.3,
+            //   fit: BoxFit.contain,
+            // ),
 
 
-            SizedBox(height: screenHeight * 0.02),
+            SizedBox(height: screenHeight * 0.04),
 
 
             Text(

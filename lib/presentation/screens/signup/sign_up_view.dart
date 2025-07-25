@@ -3,7 +3,6 @@ import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
@@ -49,8 +48,6 @@ class _SignUpViewState extends State<SignUpView> {
     _passwordController.addListener(_checkPasswordMatch);
     _confirmPasswordController.addListener(_checkPasswordMatch);
   }
-
-
 
   Future googleSignIn()async{
     final user = await GoogleSignInApi.login();
@@ -132,8 +129,6 @@ class _SignUpViewState extends State<SignUpView> {
     );
 
   }
-
-
 
   Widget _buildSignUpForm() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
@@ -310,8 +305,6 @@ class _SignUpViewState extends State<SignUpView> {
       ],
     );
   }
-
-
 
 
 }
