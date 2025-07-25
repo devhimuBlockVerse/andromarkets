@@ -71,7 +71,7 @@ class _OtpCodeViewState extends State<OtpCodeView> {
      String code = _otpController.map((c) => c.text).join();
 
      // Simulate failure for demonstration
-     bool isCodeValid = code == "123456";
+     bool isCodeValid = code == "111111";
      if (!isCodeValid) {
        setState(() {
          _isError = true;

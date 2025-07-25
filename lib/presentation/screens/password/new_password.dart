@@ -1,5 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart'as http;
 import 'package:flutter/material.dart';
-
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
@@ -20,7 +21,28 @@ class _NewPasswordState extends State<NewPassword> {
 
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+
+  TextFieldType _passwordFieldState = TextFieldType.defaultState;
   TextFieldType _confirmPasswordFieldState = TextFieldType.defaultState;
+
+  String? _passwordErrorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.addListener((){
+      _checkPasswordMatch();
+      _validatePasswordAPI(_passwordController.text);
+    });
+    _confirmPasswordController.addListener(_checkPasswordMatch);
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
 
   void _checkPasswordMatch(){
@@ -35,18 +57,58 @@ class _NewPasswordState extends State<NewPassword> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _passwordController.addListener(_checkPasswordMatch);
-    _confirmPasswordController.addListener(_checkPasswordMatch);
-  }
 
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
+  Future<void> _validatePasswordAPI(String password) async {
+    if (password.isEmpty) {
+      setState(() {
+        _passwordFieldState = TextFieldType.errorState;
+        _passwordErrorText = 'Password cannot be empty';
+      });
+      return;
+    }
+    final bool isLengthValid = password.length >= 8;
+    final bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    final bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    final bool hasDigit = password.contains(RegExp(r'[0-9]'));
+    final bool hasSpecialChar = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+    if (isLengthValid && hasUppercase && hasLowercase && hasDigit && hasSpecialChar) {
+      setState(() {
+        _passwordFieldState = TextFieldType.successState;
+        _passwordErrorText = null;
+      });
+    } else {
+      setState(() {
+        _passwordFieldState = TextFieldType.errorState;
+        _passwordErrorText = 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
+      });
+    }
+  }
+  void _onResetPassword() {
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    _validatePasswordAPI(password);
+
+    if (_passwordFieldState == TextFieldType.successState &&
+        _confirmPasswordFieldState != TextFieldType.errorState) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password reset successful')),
+      );
+
+      // Navigate or perform logic here
+    } else {
+       if (confirmPassword.isEmpty || password != confirmPassword) {
+        setState(() {
+          _confirmPasswordFieldState = TextFieldType.errorState;
+        });
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fix the errors above')),
+      );
+    }
   }
 
 
@@ -56,11 +118,7 @@ class _NewPasswordState extends State<NewPassword> {
         child: Scaffold(
             backgroundColor: AppColors.primaryBackgroundColor,
             appBar: AppBar(
-              leading: IconButton(
-                onPressed:()=>Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back_ios_rounded),
-                color: AppColors.primaryText,
-              ),
+
               title: Text('New Password',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
               centerTitle: true,
               backgroundColor: AppColors.primaryBackgroundColor,
@@ -90,7 +148,7 @@ class _NewPasswordState extends State<NewPassword> {
                   SizedBox(height: screenHeight * 0.03),
 
                   Text(
-                    'Enter your registered email address to receive a password reset link',
+                    'Your code was verified. Now create a strong password',
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 
@@ -98,12 +156,13 @@ class _NewPasswordState extends State<NewPassword> {
 
                   TextFieldCom(
                     label: 'New Password',
-                    hintText: 'Enter your new password',
+                    hintText: 'Minimum 8 characters',
                     controller: _passwordController,
                     isObscure: true,
                     prefixIcon: 'assets/icons/password.svg',
-                    // textFieldType: hasError ? TextFieldType.errorState : TextFieldType.defaultState,
-                    // errorText: hasError ? 'Show error Text Message From the API' : null,
+                    textFieldType: _passwordFieldState,
+                    errorText: _passwordErrorText,
+
                   ),
 
                   ///Confirm Password
@@ -113,19 +172,19 @@ class _NewPasswordState extends State<NewPassword> {
                     controller: _confirmPasswordController,
                     isObscure: true,
                     prefixIcon: 'assets/icons/password.svg',
-                    textFieldType: _confirmPasswordFieldState,
-                    errorText: _confirmPasswordFieldState == TextFieldType.errorState ? "Passwords do not match":null,
+                      textFieldType: _confirmPasswordFieldState,
+                    errorText: _passwordErrorText,
+
                   ),
                   SizedBox(height: screenHeight * 0.02),
 
                   PrimaryButton(
-                      buttonText: 'Send Verification Code',
+                      buttonText: 'Reset Password',
                       buttonType: ButtonType.primary,
                       textStyle: AppTextStyle.buttonsMedium(context),
-                      onPressed:(){},
+                      onPressed:_onResetPassword,
 
                   ),
-
 
                 ]
             )
@@ -134,3 +193,14 @@ class _NewPasswordState extends State<NewPassword> {
   }
 
 }
+
+class SuccessView extends StatelessWidget {
+  const SuccessView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return const Placeholder();
+  }
+}
+
