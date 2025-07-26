@@ -30,7 +30,7 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
     ProfileView()
   ];
 
-  final List<String> _labels = [ 'Menu', 'Wallet', 'Trade', 'Profile',];
+  final List<String> _labels = [ 'Menu', 'Wallet', 'Account', 'Profile',];
 
   final List<String> _imagePaths = [
 

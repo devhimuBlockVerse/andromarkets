@@ -11,7 +11,9 @@ class PrimaryButton extends StatelessWidget {
   final String? leftIcon;
   final String? rightIcon;
   final Color? iconColor;
-
+  final double? iconSize;
+  final double? buttonWidth;
+  final double? buttonHeight;
   const PrimaryButton({
     super.key,
     required this.buttonText,
@@ -20,7 +22,7 @@ class PrimaryButton extends StatelessWidget {
     required this.textStyle,
     this.leftIcon,
     this.rightIcon,
-    this.iconColor,
+    this.iconColor, this.iconSize, this.buttonWidth, this.buttonHeight,
   });
 
   Color get backgroundColor {
@@ -57,14 +59,13 @@ class PrimaryButton extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
 
-    final buttonWidth = width * 0.8;
-    final buttonHeight = width * 0.12;
-    final iconSize = width * 0.06;
-    final spacing = width * 0.02;
+    final defaultWidth  = width * 0.8;
+    final defaultHeight  = width * 0.12;
+     final spacing = width * 0.02;
 
     return SizedBox(
-      width: buttonWidth,
-      height: buttonHeight,
+      width: buttonWidth ?? defaultWidth,
+      height: buttonHeight ?? defaultHeight,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -79,7 +80,7 @@ class PrimaryButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildIcon(leftIcon, iconSize),
+            _buildIcon(leftIcon, iconSize!),
             SizedBox(width: spacing),
             Flexible(
               child: FittedBox(
@@ -92,7 +93,7 @@ class PrimaryButton extends StatelessWidget {
               ),
             ),
             SizedBox(width: spacing),
-            _buildIcon(rightIcon, iconSize),
+            _buildIcon(rightIcon, iconSize!),
           ],
         ),
       ),

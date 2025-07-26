@@ -48,76 +48,108 @@ class _DashboardViewState extends State<DashboardView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            SizedBox(
-              height: screenHeight * 0.12,
-               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+            SizedBox(height: screenHeight * 0.03),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                 Row(
+                  children: [
+                     Container(
+                      width: screenWidth * 0.11,
+                      height: screenWidth * 0.11,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: const DecorationImage(
+                          image: NetworkImage("https://picsum.photos/40/40"),
+                          fit: BoxFit.cover,
+                        ),
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Welcome Texts
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: screenWidth * 0.11,
-                          height: screenWidth * 0.11,
-                          // height: 40,
-                          decoration: ShapeDecoration(
-                            shape: OvalBorder(),
-                            color: Colors.grey[300],
-                            image: DecorationImage(
-                              image: NetworkImage("https://picsum.photos/40/40"),
-                              fit: BoxFit.cover,
-                            ),
+                        Text(
+                          'Hi, Welcome Back',
+                          style: AppTextStyle.bodySmallMid(
+                            context,
+                            color: AppColors.primaryText,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hi, Welcome Back',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontFamily: 'Poppins',
-                                  height: 1.2,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Good Morning',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontFamily: 'Poppins',
-                                  height: 1.2,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 2),
+                        Text(
+                          'Good Morning',
+                          style: AppTextStyle.bodySmall2x(
+                            context,
+                            color: AppColors.primaryText,
                           ),
                         ),
                       ],
                     ),
+                  ],
+                ),
+
+                // Notification Icon
+                SvgPicture.asset(
+                  'assets/icons/notificationIcon.svg',
+                  width: 24,
+                  height: 24,
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+              ],
+            ),
+
+            SizedBox(height: screenHeight * 0.03),
+
+            Text(
+              'Total balance',
+              style: AppTextStyle.bodySmall2x(context,color: Colors.white60),
+            ),
+
+            SizedBox(height: screenHeight * 0.01),
+
+            Text(
+              "\$5,450.500",
+              style: AppTextStyle.h0(context,color: Colors.white),
+            ),
+
+            SizedBox(height: screenHeight * 0.03),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: PrimaryButton(
+                    buttonText:'Deposit',
+                    buttonType: ButtonType.primary,
+                    onPressed: (){},
+                    textStyle: AppTextStyle.buttonsMedium(context),
+                    leftIcon:  'assets/icons/depositAdd.svg',
+                    iconSize: screenWidth * 0.04,
+                    buttonWidth: screenWidth * 0.5,
                   ),
+                ),
 
-                  Center(
-                    child: SvgPicture.asset(
-                      'assets/icons/notificationIcon.svg',
-                      height: 24, // Icon size
-                      width: 24,
-                      colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                    ),
-                  )
+                SizedBox(width: screenHeight * 0.03),
 
-                ],
-              ),
+                Expanded(
+                  child: PrimaryButton(
+                    buttonText:'Withdraw',
+                    buttonType: ButtonType.primary,
+                    onPressed: (){},
+                    textStyle: AppTextStyle.buttonsMedium(context),
+                    leftIcon:  'assets/icons/depositAdd.svg',
+                    iconSize: screenWidth * 0.04,
+                    buttonWidth: screenWidth * 0.5,
+                  ),
+                ),
+              ],
             )
+
+
           ],
         ),
       )
