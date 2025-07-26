@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as https;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/models/login_model.dart';
@@ -12,6 +12,7 @@ class ApiService {
     required String email,
     required String password,
   })async{
+
     final headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -21,24 +22,36 @@ class ApiService {
       'email': email,
       'password': password,
     });
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/auth/login');
 
-    final response = await http.post(
-      Uri.parse(ApiEndpoints.login),
+
+    final response = await https.post(
+      // Uri.parse(ApiEndpoints.login),
+      url,
       headers: headers,
       body: body,
     );
+    print("Response body: ${response.body}");
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      print("✅ Full JSON Response:\n${jsonEncode(data)}");
+
       final loginResponse = LoginResponseModel.fromJson(data);
       await LocalStorageService.saveToken(loginResponse.token);
-      print("✅Login successful: ${response.body}");
+      print("✅ Saved Token: ${loginResponse.token}");
 
     return loginResponse;
     } else {
-      final error = jsonDecode(response.body);
-      final message = error['message'] ?? 'Login failed';
-      throw Exception(message);
+      try{
+        final error = jsonDecode(response.body);
+        final message = error['message'] ?? 'Login failed';
+        throw Exception(message);
+      }catch(e){
+        throw Exception('Unexpected error: ${response.body}');
+
+      }
+
     }
   }
 

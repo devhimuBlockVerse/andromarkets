@@ -38,7 +38,23 @@ class _SignInViewState extends State<SignInView> {
     super.dispose();
   }
 
-  void _handleLogin(BuildContext context, AuthViewModel authViewModel) {
+  // void _handleLogin(BuildContext context, AuthViewModel authViewModel) {
+  //   final email = emailController.text.trim();
+  //   final password = passwordController.text.trim();
+  //
+  //   if (email.isEmpty || password.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Please enter email and password")),
+  //     );
+  //     return;
+  //   }
+  //
+  //   authViewModel.login(email, password, context);
+  // }
+  Future<void>_signIn()async{
+
+    final authViewModel = context.read<AuthViewModel>();
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -49,7 +65,18 @@ class _SignInViewState extends State<SignInView> {
       return;
     }
 
-    authViewModel.login(email, password, context);
+    try{
+      authViewModel.setLoading(true);
+      await authViewModel.login(email, password, context);
+    }catch(e){
+      print("_signIn Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }finally{
+      authViewModel.setLoading(false);
+    }
+
   }
 
   Future googleSignIn()async{
@@ -170,12 +197,20 @@ class _SignInViewState extends State<SignInView> {
         SizedBox(height: screenHeight * 0.02),
 
         /// Sign In
+
         PrimaryButton(
             buttonText: 'Sign In',
             buttonType: ButtonType.primary,
-            onPressed:()=> _handleLogin(context,authViewModel),
+            onPressed:_signIn,
             textStyle: AppTextStyle.buttonsMedium(context),
         ),
+
+        // PrimaryButton(
+        //     buttonText: 'Sign In',
+        //     buttonType: ButtonType.primary,
+        //     onPressed:()=> _handleLogin(context,authViewModel),
+        //     textStyle: AppTextStyle.buttonsMedium(context),
+        // ),
 
         SizedBox(height: screenHeight * 0.02),
 

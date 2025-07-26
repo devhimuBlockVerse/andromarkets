@@ -1,7 +1,9 @@
+import 'package:andromarkets/presentation/viewmodel/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/services/api_service.dart';
 import '../../data/models/login_model.dart';
+import '../bottom_navigation.dart';
 
 class AuthViewModel with ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -12,6 +14,7 @@ class AuthViewModel with ChangeNotifier {
   LoginResponseModel? _user;
   LoginResponseModel? get user => _user;
 
+  ///Login Auth
   Future<void> login(String email, String password, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
@@ -21,8 +24,25 @@ class AuthViewModel with ChangeNotifier {
       _user = loginData;
       notifyListeners();
 
-      // Navigate or show success toast
-    } catch (e) {
+      // if(loginData.google2faRequired){
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text("Two-Factor Authentication required.")),
+      //   );
+      //   // Navigator.push(context, MaterialPageRoute(builder: (_) => TwoFactorScreen(token: loginData.token)));
+      //   return;
+      // }
+
+      await DashboardViewModel().saveLoginResponse(loginData);
+
+      /// If 2FA not Required
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const BottomNavigation()),
+            (Route<dynamic> route) => false,
+      );
+    } catch (e,stackTrace) {
+      debugPrintStack(label: '🔴 Login Error', stackTrace: stackTrace);
+      print("AuthViewModel.login Error :${e.toString()}");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
@@ -31,4 +51,11 @@ class AuthViewModel with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+
 }

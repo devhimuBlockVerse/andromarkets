@@ -22,24 +22,27 @@ class UserModel {
 }
 
 class LoginResponseModel {
-  final UserModel user;
+  final UserModel? user;
   final String token;
   final List<String> roles;
   final List<String> permissions;
+  final bool google2faRequired;
 
   LoginResponseModel({
     required this.user,
     required this.token,
     required this.roles,
     required this.permissions,
+    required this.google2faRequired,
   });
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
-      user: UserModel.fromJson(json['user']),
+      user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
       token: json['token'],
       roles: List<String>.from(json['roles']),
       permissions: List<String>.from(json['permissions']),
+      google2faRequired: json['google2fa_required'] ?? false,
     );
   }
 }

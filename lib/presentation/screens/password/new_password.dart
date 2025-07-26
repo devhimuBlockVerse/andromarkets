@@ -195,20 +195,12 @@ class _NewPasswordState extends State<NewPassword> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
-            Image.asset(
-              'assets/icons/passwordResetGIF.gif',
+            SvgPicture.asset(
+              'assets/icons/passwordResetSuccess.svg',
               width: screenWidth * 0.3,
               height: screenWidth * 0.3,
               fit: BoxFit.contain,
             ),
-
-            // SvgPicture.asset(
-            //   'assets/icons/passwordResetSuccess.svg',
-            //   width: screenWidth * 0.3,
-            //   height: screenWidth * 0.3,
-            //   fit: BoxFit.contain,
-            // ),
 
 
             SizedBox(height: screenHeight * 0.04),

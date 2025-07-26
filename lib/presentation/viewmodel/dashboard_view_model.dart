@@ -37,20 +37,20 @@ class DashboardViewModel extends ChangeNotifier {
 
   Future<void> saveLoginResponse(LoginResponseModel loginResponse) async {
     final prefs = await SharedPreferences.getInstance();
+    final user = loginResponse.user;
+
     prefs.setString('login_response', json.encode({
-      'user': {
-        'id': loginResponse.user.id,
-        'name': loginResponse.user.name,
-        'email': loginResponse.user.email,
-        'email_verified_at': loginResponse.user.emailVerifiedAt,
-      },
+      'user': user != null ? {
+        'id': user.id,
+        'name': user.name,
+        'email': user.email,
+        'email_verified_at': user.emailVerifiedAt,
+      } : null,
       'token': loginResponse.token,
       'roles': loginResponse.roles,
       'permissions': loginResponse.permissions,
+      'google2fa_required': loginResponse.google2faRequired,
     }));
   }
-
-
-
 
 }
