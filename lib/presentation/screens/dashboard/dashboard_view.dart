@@ -44,9 +44,6 @@ class _DashboardViewState extends State<DashboardView> {
 
   ];
 
-
-
-
   TextEditingController referredController = TextEditingController();
 
   @override
@@ -87,34 +84,13 @@ class _DashboardViewState extends State<DashboardView> {
                       backgroundImage: (widget.user != null && widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
                           ? NetworkImage(widget.user!.photoUrl!)
                           : null,
-                      // backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
-                      //     ? NetworkImage(widget.user!.photoUrl!)
-                      //     : null,
-                      // child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
-                      //     ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
-                      //     : null,
+
                       child: (widget.user == null || widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
                           ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
                           : null,
 
                     ),
-                    // if (widget.user != null)
-                    //   CircleAvatar(
-                    //     radius: screenWidth * 0.06,
-                    //     backgroundColor: Colors.grey[300],
-                    //     backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
-                    //         ? NetworkImage(widget.user!.photoUrl!)
-                    //         : null,
-                    //     child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
-                    //         ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
-                    //         : null,
-                    //   )
-                    // else
-                    //   CircleAvatar(
-                    //     radius: screenWidth * 0.06,
-                    //     backgroundColor: Colors.grey[300],
-                    //     child: Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white),
-                    //   ),
+
 
 
                      SizedBox(width: screenWidth * 0.02),
