@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../core/enums/button_type.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final String buttonText;
+  final String? buttonText;
   final ButtonType buttonType;
   final VoidCallback onPressed;
   final TextStyle textStyle;
@@ -16,7 +16,7 @@ class PrimaryButton extends StatelessWidget {
   final double? buttonHeight;
   const PrimaryButton({
     super.key,
-    required this.buttonText,
+    this.buttonText,
     required this.buttonType,
     required this.onPressed,
     required this.textStyle,
@@ -34,7 +34,7 @@ class PrimaryButton extends StatelessWidget {
       case ButtonType.tertiary:
         return AppColors.secondaryButtonColor;
       case ButtonType.quaternary:
-        return Color(0XFF8B949E);
+        return Colors.transparent;
     }
   }
 
@@ -80,7 +80,7 @@ class PrimaryButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side:  BorderSide(width: 0.4, color: (buttonType == ButtonType.secondary || buttonType == ButtonType.primary) ? AppColors.primaryColor : AppColors.primaryBackgroundColor),
+            side:  BorderSide(width: 0.4, color: (buttonType == ButtonType.secondary || buttonType == ButtonType.primary) ? AppColors.primaryColor : buttonType == ButtonType.quaternary ? Color(0XFF8B949E) : AppColors.primaryBackgroundColor),
           ),
           padding: EdgeInsets.zero,
           elevation: 0,
@@ -89,21 +89,38 @@ class PrimaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
-            _buildIcon(leftIcon, iconSize ?? 24.0),
-            SizedBox(width: spacing),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  buttonText,
-                  style: textStyle.copyWith(color: textColor),
-                  textAlign: TextAlign.center,
+            //   _buildIcon(leftIcon, iconSize ?? 24.0),
+            //   SizedBox(width: spacing),
+            //
+            //   Flexible(
+            //   child: FittedBox(
+            //     fit: BoxFit.scaleDown,
+            //     child: Text(
+            //       buttonText!,
+            //       style: textStyle.copyWith(color: textColor),
+            //       textAlign: TextAlign.center,
+            //     ),
+            //   ),
+            // ),
+            //
+            // SizedBox(width: spacing),
+            // _buildIcon(rightIcon, iconSize ?? 24.0),
+            if (leftIcon != null) _buildIcon(leftIcon, iconSize ?? 24.0),
+            if (leftIcon != null && (buttonText?.isNotEmpty ?? false)) SizedBox(width: spacing),
+            if ((buttonText?.isNotEmpty ?? false))
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    buttonText!,
+                    style: textStyle.copyWith(color: textColor),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(width: spacing),
-            _buildIcon(rightIcon, iconSize ?? 24.0),
+            if ((buttonText?.isNotEmpty ?? false) && rightIcon != null) SizedBox(width: spacing),
+            if (rightIcon != null) _buildIcon(rightIcon, iconSize ?? 24.0),
+
           ],
         ),
       ),

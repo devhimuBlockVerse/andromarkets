@@ -18,7 +18,7 @@ class CircularIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final double buttonSize = screenWidth * 0.12;
+    final double buttonSize = screenWidth * 0.10;
     final double iconSize = buttonSize * 0.7;
 
     return Material(

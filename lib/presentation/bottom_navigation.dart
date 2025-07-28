@@ -5,30 +5,36 @@ import 'package:andromarkets/presentation/screens/trade/trade_view.dart';
 import 'package:andromarkets/presentation/screens/wallet/wallet_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../config/theme/app_colors.dart';
 
 
 class BottomNavigation extends StatefulWidget {
   final int initialIndex;
-  const BottomNavigation({super.key,  this.initialIndex = 1});
+  final GoogleSignInAccount? user;
+
+  const BottomNavigation({super.key,  this.initialIndex = 1,this.user});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
 class _BottomNavigationState extends State<BottomNavigation> with TickerProviderStateMixin {
-  int _currentIndex = 2;
+  int _currentIndex = 1;
 
   late AnimationController _bounceController;
 
 
-  final List<Widget> _pages = [
-    DashboardView(),
-    WalletView(),
-    TradeView(),
-    ProfileView()
-  ];
+  late final List<Widget> _pages;
+
+
+  // final List<Widget> _pages = [
+  //   DashboardView(),
+  //   WalletView(),
+  //   TradeView(),
+  //   ProfileView()
+  // ];
 
   final List<String> _labels = [ 'Menu', 'Wallet', 'Account', 'Profile',];
 
@@ -49,7 +55,17 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
       duration: Duration(milliseconds: 200),
     );
     _currentIndex = widget.initialIndex;
+
+    _pages = [
+      DashboardView(user: widget.user),
+      WalletView(),
+      TradeView(),
+      ProfileView(),
+    ];
+
   }
+
+
 
   @override
   void dispose() {

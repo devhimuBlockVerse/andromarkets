@@ -10,11 +10,13 @@ import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
 import '../../../core/enums/button_type.dart';
 import '../../../data/models/action_data.dart';
+import '../../../data/models/trading_account.dart';
 import '../../components/actionItemComponent.dart';
 import '../../components/buttonComponent.dart';
 import '../../components/circularButtonComponent.dart';
 import '../../components/copyLinkComponent.dart';
 import '../../components/gradientContainer.dart';
+import '../../components/tradingAccountCard.dart';
 
 class DashboardView extends StatefulWidget {
   final GoogleSignInAccount? user;
@@ -41,6 +43,9 @@ class _DashboardViewState extends State<DashboardView> {
     'assets/icons/whatsapp.svg',
 
   ];
+
+
+
 
   TextEditingController referredController = TextEditingController();
 
@@ -76,33 +81,40 @@ class _DashboardViewState extends State<DashboardView> {
               children: [
                  Row(
                   children: [
-                    // CircleAvatar(
-                    //   radius: screenWidth * 0.06,
-                    //   backgroundColor: Colors.grey[300],
-                    //   backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
-                    //       ? NetworkImage(widget.user!.photoUrl!)
-                    //       : null,
-                    //   child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
-                    //       ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
-                    //       : null,
-                    // ),
-                    if (widget.user != null)
-                      CircleAvatar(
-                        radius: screenWidth * 0.06,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
-                            ? NetworkImage(widget.user!.photoUrl!)
-                            : null,
-                        child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
-                            ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
-                            : null,
-                      )
-                    else
-                      CircleAvatar(
-                        radius: screenWidth * 0.06,
-                        backgroundColor: Colors.grey[300],
-                        child: Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white),
-                      ),
+                    CircleAvatar(
+                      radius: screenWidth * 0.06,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: (widget.user != null && widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+                          ? NetworkImage(widget.user!.photoUrl!)
+                          : null,
+                      // backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+                      //     ? NetworkImage(widget.user!.photoUrl!)
+                      //     : null,
+                      // child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+                      //     ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+                      //     : null,
+                      child: (widget.user == null || widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+                          ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+                          : null,
+
+                    ),
+                    // if (widget.user != null)
+                    //   CircleAvatar(
+                    //     radius: screenWidth * 0.06,
+                    //     backgroundColor: Colors.grey[300],
+                    //     backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+                    //         ? NetworkImage(widget.user!.photoUrl!)
+                    //         : null,
+                    //     child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+                    //         ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+                    //         : null,
+                    //   )
+                    // else
+                    //   CircleAvatar(
+                    //     radius: screenWidth * 0.06,
+                    //     backgroundColor: Colors.grey[300],
+                    //     child: Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white),
+                    //   ),
 
 
                      SizedBox(width: screenWidth * 0.02),
@@ -291,33 +303,6 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         ),
         SizedBox(height: size.height * 0.02),
-
-        // Wrap(
-        //   spacing: size.width * 0.06,
-        //   runSpacing: size.height * 0.02,
-        //   alignment: WrapAlignment.center,
-        //   children: [
-        //     ActionItem(
-        //       isSelected: false,
-        //       iconPath: 'assets/icons/depositWallet.svg',
-        //       label: 'Deposit',
-        //       size: size,
-        //       onTap: (){},
-        //     ),
-        //     ActionItem(
-        //       iconPath: 'assets/icons/withDrawIcon.svg',
-        //       label: 'Withdraw',
-        //       size: size,
-        //       onTap: (){},
-        //     ),
-        //     ActionItem(
-        //       iconPath: 'assets/icons/verify.svg',
-        //       label: 'Verify',
-        //       size: size,
-        //       onTap: (){},
-        //     ),
-        //   ],
-        // ),
         Wrap(
           spacing: size.width * 0.06,
           runSpacing: size.height * 0.02,
@@ -393,9 +378,33 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
-
   Widget _tradingAccounts(){
     final size = MediaQuery.of(context).size;
+
+
+    final List<TradingAccount> accounts = [
+      TradingAccount(
+        name: "Standard",
+        currency: "USD",
+        balance: "\$100.000",
+        isReal: true,
+        isDemo: false,
+        platform: "MT5",
+        iconColor: AppColors.primaryColor,
+        borderColor: AppColors.primaryColor,
+      ),
+      TradingAccount(
+        name: "Ultra Low",
+        currency: "USD",
+        balance: "\$100.000",
+        isReal: false,
+        isDemo: true,
+        platform: "MT5",
+        iconColor: Color(0XFF8B949E),
+        borderColor: Color(0XFF8B949E),
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -407,7 +416,9 @@ class _DashboardViewState extends State<DashboardView> {
               style: AppTextStyle.h3(context,color: AppColors.primaryText),
             ),
             CircularIconButton(
-              onTap: () {},
+              onTap: () {
+
+              },
               icon: Icons.add,
               backgroundColor: AppColors.primaryColor,
             )
@@ -417,33 +428,17 @@ class _DashboardViewState extends State<DashboardView> {
 
         SizedBox(height: size.height * 0.04),
 
-        GradientBoxContainer(
-          width: size.width,
-          height: size.height * 0.15,
-          child: Column(
-            children: [
-              PrimaryButton(
-                buttonText: 'Trade',
-                buttonType: ButtonType.primary,
-                onPressed: (){},
-                textStyle: AppTextStyle.bodySmall(context),
-                leftIcon: 'assets/icons/trade.svg',
-                iconSize: size.height * 0.02,
-                buttonHeight: size.height * 0.045,
-              ),
-              PrimaryButton(
-                buttonText: 'Trade',
-                buttonType: ButtonType.quaternary,
-                onPressed: (){},
-                textStyle: AppTextStyle.bodySmall(context),
-                leftIcon: 'assets/icons/trade.svg',
-                iconSize: size.height * 0.02,
-                buttonHeight: size.height * 0.045,
-              ),
+        ...accounts.map((acc) => Padding(
+          padding: EdgeInsets.only(bottom: size.height * 0.02),
+          child: TradingAccountCard(
+            account: acc,
+            onTrade: (){},
+            onDeposit: (){},
+            onTransfer: (){},
 
-            ],
           ),
-        )
+        )),
+
 
       ],
     );
@@ -525,101 +520,5 @@ class _DashboardViewState extends State<DashboardView> {
 //     )
 //   );
 // }
-
-
-
-// class CustomLabeledInputField extends StatelessWidget {
-//   final String hintText;
-//   final String labelText;
-//   final TextEditingController? controller;
-//   final bool isReadOnly;
-//   final String? trailingIconAsset;
-//   final VoidCallback? onTrailingIconTap;
-//
-//   const CustomLabeledInputField({
-//     super.key,
-//     required this.labelText,
-//     required this.hintText,
-//     this.controller,
-//     this.isReadOnly = false,
-//     this.trailingIconAsset,
-//     this.onTrailingIconTap,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final screenHeight = MediaQuery.of(context).size.height;
-//     final textScale = MediaQuery.of(context).textScaleFactor;
-//     final baseFontSize = screenWidth < screenHeight ? screenWidth * 0.03 : screenHeight * 0.04;
-//     final fontSize = baseFontSize * textScale;
-//
-//     return Container(
-//       width: double.infinity,
-//       height: screenHeight * 0.05,
-//       decoration: BoxDecoration(
-//         color: Color(0XFF2D2E33),
-//         borderRadius: BorderRadius.circular(screenWidth * 0.02),
-//       ),
-//       padding: EdgeInsets.symmetric(
-//         horizontal: screenWidth * 0.022,
-//       ),
-//       child: IntrinsicHeight(
-//         child: Row(
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           mainAxisAlignment: MainAxisAlignment.start,
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             Text(
-//               labelText,
-//               style: AppTextStyle.bodySmall2x(context,color: AppColors.primaryColor),
-//
-//             ),
-//             SizedBox(width: screenWidth * 0.02),
-//             Expanded(
-//               child: Row(
-//                 mainAxisSize: MainAxisSize.min,
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 children: [
-//                   Expanded(
-//                     child: TextFormField(
-//                       readOnly: isReadOnly,
-//                       controller: controller,
-//                       decoration: InputDecoration(
-//                         hintText: hintText,
-//                         hintStyle: AppTextStyle.bodySmall2x(context,color: AppColors.primaryText),
-//                         border: InputBorder.none,
-//                         isDense: true,
-//                         contentPadding: EdgeInsets.zero,
-//                       ),
-//                       cursorColor: Colors.white,
-//                     ),
-//                   ),
-//                   if (trailingIconAsset != null)
-//                     GestureDetector(
-//                       onTap: onTrailingIconTap,
-//                       child: Padding(
-//                         padding: const EdgeInsets.symmetric(horizontal: 6.0),
-//                         child: SvgPicture.asset(
-//                           trailingIconAsset!,
-//                           height: fontSize * 1.8,
-//                           fit: BoxFit.contain,
-//                         ),
-//                       ),
-//                     ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-
 
 

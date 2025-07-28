@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
+import '../../../core/enums/button_type.dart';
+import '../../../core/services/google_sign_service.dart';
+import '../../components/buttonComponent.dart';
+import '../signIn/sign_in_view.dart';
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -54,6 +58,15 @@ class _ProfileViewState extends State<ProfileView> {
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 
+            PrimaryButton(
+              buttonText:'Sign Out',
+              buttonType: ButtonType.primary,
+              onPressed:  ()async{
+               await GoogleSignInApi.logout();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignInView()));
+              },
+              textStyle: AppTextStyle.buttonsMedium(context),
+            ),
 
                 ]
             )

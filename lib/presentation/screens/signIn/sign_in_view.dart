@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../core/enums/button_type.dart';
 import '../../../core/services/google_sign_service.dart';
+import '../../bottom_navigation.dart';
 import '../../components/textFieldComponent.dart';
 import '../../viewmodel/dashboard_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,19 +39,6 @@ class _SignInViewState extends State<SignInView> {
     super.dispose();
   }
 
-  // void _handleLogin(BuildContext context, AuthViewModel authViewModel) {
-  //   final email = emailController.text.trim();
-  //   final password = passwordController.text.trim();
-  //
-  //   if (email.isEmpty || password.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Please enter email and password")),
-  //     );
-  //     return;
-  //   }
-  //
-  //   authViewModel.login(email, password, context);
-  // }
   Future<void>_signIn()async{
 
     final authViewModel = context.read<AuthViewModel>();
@@ -87,9 +75,8 @@ class _SignInViewState extends State<SignInView> {
         const SnackBar(content: Text("Sign in failed")),
       );
     }else{
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardView(
-          user: user
-      )));
+      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardView(user: user)));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => BottomNavigation(user: user,)));
     }
 
   }
