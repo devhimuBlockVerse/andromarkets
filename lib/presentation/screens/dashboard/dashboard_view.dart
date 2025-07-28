@@ -1,6 +1,7 @@
 import 'package:andromarkets/core/services/google_sign_service.dart';
 import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -8,7 +9,12 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
 import '../../../core/enums/button_type.dart';
+import '../../../data/models/action_data.dart';
+import '../../components/actionItemComponent.dart';
 import '../../components/buttonComponent.dart';
+import '../../components/circularButtonComponent.dart';
+import '../../components/copyLinkComponent.dart';
+import '../../components/gradientContainer.dart';
 
 class DashboardView extends StatefulWidget {
   final GoogleSignInAccount? user;
@@ -20,6 +26,23 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
 
+  int _selectedActionIndex = -1;
+
+  final List<ActionData> _actions = [
+    ActionData('assets/icons/depositWallet.svg', 'Deposit'),
+    ActionData('assets/icons/withDrawIcon.svg', 'Withdraw'),
+    ActionData('assets/icons/verify.svg', 'Verify'),
+  ];
+
+  final List<String>_socialActions=[
+    'assets/icons/facebook.svg',
+    'assets/icons/twitter.svg',
+    'assets/icons/telegram.svg',
+    'assets/icons/whatsapp.svg',
+
+  ];
+
+  TextEditingController referredController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +60,10 @@ class _DashboardViewState extends State<DashboardView> {
   Widget body(){
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
-
-
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,20 +76,37 @@ class _DashboardViewState extends State<DashboardView> {
               children: [
                  Row(
                   children: [
-                     Container(
-                      width: screenWidth * 0.11,
-                      height: screenWidth * 0.11,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: const DecorationImage(
-                          image: NetworkImage("https://picsum.photos/40/40"),
-                          fit: BoxFit.cover,
-                        ),
-                        color: Colors.grey[300],
+                    // CircleAvatar(
+                    //   radius: screenWidth * 0.06,
+                    //   backgroundColor: Colors.grey[300],
+                    //   backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+                    //       ? NetworkImage(widget.user!.photoUrl!)
+                    //       : null,
+                    //   child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+                    //       ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+                    //       : null,
+                    // ),
+                    if (widget.user != null)
+                      CircleAvatar(
+                        radius: screenWidth * 0.06,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+                            ? NetworkImage(widget.user!.photoUrl!)
+                            : null,
+                        child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+                            ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+                            : null,
+                      )
+                    else
+                      CircleAvatar(
+                        radius: screenWidth * 0.06,
+                        backgroundColor: Colors.grey[300],
+                        child: Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Welcome Texts
+
+
+                     SizedBox(width: screenWidth * 0.02),
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -128,7 +166,7 @@ class _DashboardViewState extends State<DashboardView> {
                     onPressed: (){},
                     textStyle: AppTextStyle.buttonsMedium(context),
                     leftIcon:  'assets/icons/depositAdd.svg',
-                    iconSize: screenWidth * 0.04,
+                    iconSize: screenWidth * 0.05,
                     buttonWidth: screenWidth * 0.5,
                   ),
                 ),
@@ -138,93 +176,450 @@ class _DashboardViewState extends State<DashboardView> {
                 Expanded(
                   child: PrimaryButton(
                     buttonText:'Withdraw',
-                    buttonType: ButtonType.primary,
+                    buttonType: ButtonType.tertiary,
                     onPressed: (){},
                     textStyle: AppTextStyle.buttonsMedium(context),
-                    leftIcon:  'assets/icons/depositAdd.svg',
-                    iconSize: screenWidth * 0.04,
+                    leftIcon:  'assets/icons/withDrawIcon.svg',
+                    iconSize: screenWidth * 0.06,
                     buttonWidth: screenWidth * 0.5,
                   ),
                 ),
-              ],
-            )
 
+              ],
+            ),
+
+            SizedBox(height: screenHeight * 0.05),
+
+            _claimBonus(),
+
+            SizedBox(height: screenHeight * 0.05),
+
+            _quickAction(),
+
+            SizedBox(height: screenHeight * 0.05),
+
+            _referralSection(),
+
+            SizedBox(height: screenHeight * 0.05),
+
+            _tradingAccounts()
 
           ],
         ),
       )
     );
   }
-  // Widget body(){
-  //   final screenWidth = MediaQuery.of(context).size.width * 1;
-  //   final screenHeight = MediaQuery.of(context).size.height * 1;
-  //   if (widget.user == null) {
-  //     return Center(
-  //       child: Text(
-  //         "No user info found. Please sign in again.",
-  //         style: AppTextStyle.h3(context, color: AppColors.primaryText),
-  //       ),
-  //     );
-  //   }
-  //
-  //   return SingleChildScrollView(
-  //     physics: const BouncingScrollPhysics(),
-  //     child: SizedBox(
-  //       height: screenHeight,
-  //       child: Padding(
-  //         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
-  //         child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           crossAxisAlignment: CrossAxisAlignment.center,
-  //           children: [
-  //             Text(
-  //               'Profile',
-  //               style: AppTextStyle.h2(context,color: AppColors.primaryText),
-  //             ),
-  //
-  //             SizedBox(height: screenHeight * 0.03),
-  //
-  //             CircleAvatar(
-  //               radius: screenWidth * 0.1,
-  //               backgroundColor: Colors.grey[300],
-  //               backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
-  //                   ? NetworkImage(widget.user!.photoUrl!)
-  //                   : null,
-  //               child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
-  //                   ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
-  //                   : null,
-  //             ),
-  //
-  //
-  //             SizedBox(height: screenHeight * 0.03),
-  //
-  //             Text(
-  //               'Name: ${widget.user!.displayName ?? "N/A"}',
-  //               style: AppTextStyle.h3(context,color: AppColors.primaryText),
-  //             ),
-  //
-  //             SizedBox(height: screenHeight * 0.01),
-  //
-  //             Text(
-  //               'Email: ${widget.user!.email}',
-  //               style: AppTextStyle.buttonsMedium(context,color: AppColors.primaryText),
-  //             ),
-  //
-  //             SizedBox(height: screenHeight * 0.03),
-  //
-  //             PrimaryButton(
-  //               buttonText:'Sign Out',
-  //               buttonType: ButtonType.primary,
-  //               onPressed:  ()async{
-  //                await GoogleSignInApi.logout();
-  //                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignInView()));
-  //               },
-  //               textStyle: AppTextStyle.buttonsMedium(context),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     )
-  //   );
-  // }
+
+  Widget _claimBonus() {
+    final size = MediaQuery.of(context).size;
+
+    return Container(
+      width: size.width,
+      decoration: const ShapeDecoration(
+        gradient: LinearGradient(
+          begin: Alignment(1.0, -0.09),
+          end: Alignment(-1, 0.09),
+          colors: [Color(0xFF1F1E24), Color(0xFF1F1E24)],
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+        ),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: size.height * 0.02,
+        vertical: size.height * 0.008,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Deposit Now & Get\n',
+                      style: AppTextStyle.bodyBase(context, color: AppColors.primaryText),
+                    ),
+                    TextSpan(
+                      text: '100%',
+                      style: AppTextStyle.bodyBase(context, color: AppColors.primaryColor),
+                    ),
+                    TextSpan(
+                      text: ' Bonus',
+                      style: AppTextStyle.bodyBase(context, color: AppColors.primaryText),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: size.height * 0.015),
+              PrimaryButton(
+                buttonText: 'Claim Bonus',
+                buttonType: ButtonType.primary,
+                onPressed: () {},
+                textStyle: AppTextStyle.buttonsMedium(context),
+                buttonHeight: size.height * 0.035,
+                buttonWidth: size.width * 0.32,
+              ),
+            ],
+          ),
+          Image.asset(
+            'assets/images/claimBonusImg.png',
+            height: size.height * 0.13,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.low,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickAction() {
+    final size = MediaQuery.of(context).size;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Quick Actions",
+          style: AppTextStyle.bodyBase(
+            context,
+            color: AppColors.primaryText,
+          ),
+        ),
+        SizedBox(height: size.height * 0.02),
+
+        // Wrap(
+        //   spacing: size.width * 0.06,
+        //   runSpacing: size.height * 0.02,
+        //   alignment: WrapAlignment.center,
+        //   children: [
+        //     ActionItem(
+        //       isSelected: false,
+        //       iconPath: 'assets/icons/depositWallet.svg',
+        //       label: 'Deposit',
+        //       size: size,
+        //       onTap: (){},
+        //     ),
+        //     ActionItem(
+        //       iconPath: 'assets/icons/withDrawIcon.svg',
+        //       label: 'Withdraw',
+        //       size: size,
+        //       onTap: (){},
+        //     ),
+        //     ActionItem(
+        //       iconPath: 'assets/icons/verify.svg',
+        //       label: 'Verify',
+        //       size: size,
+        //       onTap: (){},
+        //     ),
+        //   ],
+        // ),
+        Wrap(
+          spacing: size.width * 0.06,
+          runSpacing: size.height * 0.02,
+          alignment: WrapAlignment.center,
+          children: List.generate(_actions.length,(index){
+            final item = _actions[index];
+            return ActionItem(
+                iconPath: item.iconPath,
+                label: item.label,
+                size: size,
+                isSelected:  _selectedActionIndex == index,
+                onTap: (){
+                  setState(() {
+                    _selectedActionIndex = index;
+                  });
+                }
+            );
+          })
+        ),
+      ],
+    );
+  }
+
+  Widget _referralSection(){
+    final size = MediaQuery.of(context).size;
+    return GradientBoxContainer(
+      width: size.width,
+      // height: size.height * 0.15,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Refer & Earn \$100 Per Friend - No Cap!",
+            style: AppTextStyle.bodyBase(context,color: AppColors.primaryText),
+          ),
+
+          SizedBox(height: size.height * 0.02),
+
+          CopyLinkBox(
+            labelText: 'Referral Link:',
+            hintText: ' https://mycoinpoll.com?ref=125482458661',
+            controller: referredController,
+            isReadOnly: true,
+            trailingIconAsset: 'assets/icons/copyIcon.svg',
+            onTrailingIconTap: () {
+              const referralLink = 'https://mycoinpoll.com?ref=125482458661';
+              Clipboard.setData(const ClipboardData(text:referralLink));
+            },
+          ),
+
+          SizedBox(height: size.height * 0.02),
+
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: _socialActions.map((iconPath){
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                child: SvgPicture.asset(
+                  iconPath,
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+              );
+            }).toList(),
+          ),
+
+
+
+        ],
+      )
+    );
+  }
+
+
+  Widget _tradingAccounts(){
+    final size = MediaQuery.of(context).size;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Trading Accounts",
+              style: AppTextStyle.h3(context,color: AppColors.primaryText),
+            ),
+            CircularIconButton(
+              onTap: () {},
+              icon: Icons.add,
+              backgroundColor: AppColors.primaryColor,
+            )
+
+          ],
+        ),
+
+        SizedBox(height: size.height * 0.04),
+
+        GradientBoxContainer(
+          width: size.width,
+          height: size.height * 0.15,
+          child: Column(
+            children: [
+              PrimaryButton(
+                buttonText: 'Trade',
+                buttonType: ButtonType.primary,
+                onPressed: (){},
+                textStyle: AppTextStyle.bodySmall(context),
+                leftIcon: 'assets/icons/trade.svg',
+                iconSize: size.height * 0.02,
+                buttonHeight: size.height * 0.045,
+              ),
+              PrimaryButton(
+                buttonText: 'Trade',
+                buttonType: ButtonType.quaternary,
+                onPressed: (){},
+                textStyle: AppTextStyle.bodySmall(context),
+                leftIcon: 'assets/icons/trade.svg',
+                iconSize: size.height * 0.02,
+                buttonHeight: size.height * 0.045,
+              ),
+
+            ],
+          ),
+        )
+
+      ],
+    );
+  }
+
+
 }
+
+///Google Sign In Profile Code
+// Widget body(){
+//   final screenWidth = MediaQuery.of(context).size.width * 1;
+//   final screenHeight = MediaQuery.of(context).size.height * 1;
+//   if (widget.user == null) {
+//     return Center(
+//       child: Text(
+//         "No user info found. Please sign in again.",
+//         style: AppTextStyle.h3(context, color: AppColors.primaryText),
+//       ),
+//     );
+//   }
+//
+//   return SingleChildScrollView(
+//     physics: const BouncingScrollPhysics(),
+//     child: SizedBox(
+//       height: screenHeight,
+//       child: Padding(
+//         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             Text(
+//               'Profile',
+//               style: AppTextStyle.h2(context,color: AppColors.primaryText),
+//             ),
+//
+//             SizedBox(height: screenHeight * 0.03),
+//
+//             CircleAvatar(
+//               radius: screenWidth * 0.1,
+//               backgroundColor: Colors.grey[300],
+//               backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+//                   ? NetworkImage(widget.user!.photoUrl!)
+//                   : null,
+//               child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+//                   ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+//                   : null,
+//             ),
+//
+//
+//             SizedBox(height: screenHeight * 0.03),
+//
+//             Text(
+//               'Name: ${widget.user!.displayName ?? "N/A"}',
+//               style: AppTextStyle.h3(context,color: AppColors.primaryText),
+//             ),
+//
+//             SizedBox(height: screenHeight * 0.01),
+//
+//             Text(
+//               'Email: ${widget.user!.email}',
+//               style: AppTextStyle.buttonsMedium(context,color: AppColors.primaryText),
+//             ),
+//
+//             SizedBox(height: screenHeight * 0.03),
+//
+//             PrimaryButton(
+//               buttonText:'Sign Out',
+//               buttonType: ButtonType.primary,
+//               onPressed:  ()async{
+//                await GoogleSignInApi.logout();
+//                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignInView()));
+//               },
+//               textStyle: AppTextStyle.buttonsMedium(context),
+//             ),
+//           ],
+//         ),
+//       ),
+//     )
+//   );
+// }
+
+
+
+// class CustomLabeledInputField extends StatelessWidget {
+//   final String hintText;
+//   final String labelText;
+//   final TextEditingController? controller;
+//   final bool isReadOnly;
+//   final String? trailingIconAsset;
+//   final VoidCallback? onTrailingIconTap;
+//
+//   const CustomLabeledInputField({
+//     super.key,
+//     required this.labelText,
+//     required this.hintText,
+//     this.controller,
+//     this.isReadOnly = false,
+//     this.trailingIconAsset,
+//     this.onTrailingIconTap,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final screenWidth = MediaQuery.of(context).size.width;
+//     final screenHeight = MediaQuery.of(context).size.height;
+//     final textScale = MediaQuery.of(context).textScaleFactor;
+//     final baseFontSize = screenWidth < screenHeight ? screenWidth * 0.03 : screenHeight * 0.04;
+//     final fontSize = baseFontSize * textScale;
+//
+//     return Container(
+//       width: double.infinity,
+//       height: screenHeight * 0.05,
+//       decoration: BoxDecoration(
+//         color: Color(0XFF2D2E33),
+//         borderRadius: BorderRadius.circular(screenWidth * 0.02),
+//       ),
+//       padding: EdgeInsets.symmetric(
+//         horizontal: screenWidth * 0.022,
+//       ),
+//       child: IntrinsicHeight(
+//         child: Row(
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           mainAxisAlignment: MainAxisAlignment.start,
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Text(
+//               labelText,
+//               style: AppTextStyle.bodySmall2x(context,color: AppColors.primaryColor),
+//
+//             ),
+//             SizedBox(width: screenWidth * 0.02),
+//             Expanded(
+//               child: Row(
+//                 mainAxisSize: MainAxisSize.min,
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 children: [
+//                   Expanded(
+//                     child: TextFormField(
+//                       readOnly: isReadOnly,
+//                       controller: controller,
+//                       decoration: InputDecoration(
+//                         hintText: hintText,
+//                         hintStyle: AppTextStyle.bodySmall2x(context,color: AppColors.primaryText),
+//                         border: InputBorder.none,
+//                         isDense: true,
+//                         contentPadding: EdgeInsets.zero,
+//                       ),
+//                       cursorColor: Colors.white,
+//                     ),
+//                   ),
+//                   if (trailingIconAsset != null)
+//                     GestureDetector(
+//                       onTap: onTrailingIconTap,
+//                       child: Padding(
+//                         padding: const EdgeInsets.symmetric(horizontal: 6.0),
+//                         child: SvgPicture.asset(
+//                           trailingIconAsset!,
+//                           height: fontSize * 1.8,
+//                           fit: BoxFit.contain,
+//                         ),
+//                       ),
+//                     ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+

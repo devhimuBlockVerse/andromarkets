@@ -31,6 +31,10 @@ class PrimaryButton extends StatelessWidget {
         return AppColors.primaryColor;
       case ButtonType.secondary:
         return AppColors.primaryBackgroundColor;
+      case ButtonType.tertiary:
+        return AppColors.secondaryButtonColor;
+      case ButtonType.quaternary:
+        return Color(0XFF8B949E);
     }
   }
 
@@ -40,8 +44,13 @@ class PrimaryButton extends StatelessWidget {
         return AppColors.black;
       case ButtonType.secondary:
         return AppColors.primaryColor;
+      case ButtonType.tertiary:
+        return AppColors.primaryText;
+      case ButtonType.quaternary:
+        return AppColors.primaryText;
     }
   }
+
 
   Widget _buildIcon(String? iconPath, double size) {
     return iconPath != null
@@ -50,9 +59,8 @@ class PrimaryButton extends StatelessWidget {
       width: size,
       height: size,
       color: iconColor,
-    )
-        : SizedBox(width: size, height: size);
-  }
+    ) : SizedBox.shrink();
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +69,7 @@ class PrimaryButton extends StatelessWidget {
 
     final defaultWidth  = width * 0.8;
     final defaultHeight  = width * 0.12;
-     final spacing = width * 0.02;
+    final spacing = width * 0.02;
 
     return SizedBox(
       width: buttonWidth ?? defaultWidth,
@@ -72,15 +80,17 @@ class PrimaryButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(width: 0.4, color: AppColors.primaryColor),
+            side:  BorderSide(width: 0.4, color: (buttonType == ButtonType.secondary || buttonType == ButtonType.primary) ? AppColors.primaryColor : AppColors.primaryBackgroundColor),
           ),
           padding: EdgeInsets.zero,
           elevation: 0,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildIcon(leftIcon, iconSize!),
+
+            _buildIcon(leftIcon, iconSize ?? 24.0),
             SizedBox(width: spacing),
             Flexible(
               child: FittedBox(
@@ -93,7 +103,7 @@ class PrimaryButton extends StatelessWidget {
               ),
             ),
             SizedBox(width: spacing),
-            _buildIcon(rightIcon, iconSize!),
+            _buildIcon(rightIcon, iconSize ?? 24.0),
           ],
         ),
       ),
