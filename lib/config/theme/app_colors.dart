@@ -49,6 +49,19 @@ class AppColors {
     ],
   );
 
+  static const LinearGradient blueGradient =  LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Color(0xFF1F1E24),
+      Color(0xFF1F1E25),
+    ],
+    stops: [
+      0.0,
+      1.0,
+    ],
+  );
+
   static const Color primaryButtonColor = Color(0xFFFCD331);
   static Color secondaryButtonColor = Color(0xFFFFFFFF).withOpacity(0.1);
 

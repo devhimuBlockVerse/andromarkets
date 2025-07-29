@@ -190,7 +190,14 @@ class _DashboardViewState extends State<DashboardView> {
 
             SizedBox(height: screenHeight * 0.05),
 
-            _tradingAccounts()
+            _tradingAccounts(),
+
+            SizedBox(height: screenHeight * 0.05),
+
+
+            _bonusSection(),
+
+            SizedBox(height: screenHeight * 0.05),
 
           ],
         ),
@@ -340,6 +347,8 @@ class _DashboardViewState extends State<DashboardView> {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
                 child: SvgPicture.asset(
+                  fit: BoxFit.contain,
+                  width: size.height * 0.04,
                   iconPath,
                   colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 ),
@@ -416,6 +425,105 @@ class _DashboardViewState extends State<DashboardView> {
         )),
 
 
+      ],
+    );
+  }
+
+  Widget _bonusSection() {
+    final size = MediaQuery.of(context).size;
+    final isLandscape = size.width > size.height;
+
+     final double padding = size.shortestSide * 0.03;
+    final double imageWidth = isLandscape ? size.height * 0.45 : size.width * 0.35;
+    final double imageTopOffset = -imageWidth * 0.4;
+    final double imageRightOffset = -imageWidth * 0.12;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        /// Root Container
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(padding),
+          decoration: BoxDecoration(
+            gradient: AppColors.blueGradient,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Bonus Text Info
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "\$300 ",
+                      style: AppTextStyle.h2(
+                        context,
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "Every week\ngiveaway on bitcoin",
+                      style: AppTextStyle.bodySmall(
+                        context,
+                        color: AppColors.descriptions.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: size.height * 0.02),
+
+              /// Progress Bar Section
+              GradientBoxContainer(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LinearProgressIndicator(
+                      color: AppColors.primaryColor,
+                      backgroundColor: AppColors.secondaryButtonColor,
+                      value: 0.5,
+                      minHeight: size.height * 0.005,
+                    ),
+                    SizedBox(height: size.height * 0.01),
+                    Text(
+                      "Unlock a 100% Tradable Bonus",
+                      style: AppTextStyle.bodySmall(
+                        context,
+                        color: AppColors.descriptions.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: size.height * 0.03),
+
+              /// Claim Bonus Button
+              PrimaryButton(
+                buttonText: 'Claim Your Bonus',
+                buttonType: ButtonType.primary,
+                onPressed: () {},
+                textStyle: AppTextStyle.bodySmall(context),
+              ),
+            ],
+          ),
+        ),
+
+        /// Positioned Bonus Image (50% outside top-right)
+        Positioned(
+          top: imageTopOffset,
+          right: imageRightOffset,
+          child: Image.asset(
+            'assets/images/bonusImg.png',
+            width: imageWidth,
+            fit: BoxFit.fill,
+            filterQuality: FilterQuality.low,
+          ),
+        ),
       ],
     );
   }
