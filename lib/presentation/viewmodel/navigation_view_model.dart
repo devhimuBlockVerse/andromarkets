@@ -2,6 +2,8 @@ import 'package:andromarkets/presentation/screens/bonuses/bonus_view.dart';
 import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:andromarkets/presentation/screens/funds/transfer_view.dart';
 import 'package:andromarkets/presentation/screens/funds/withdraw_view.dart';
+import 'package:andromarkets/presentation/screens/pamm/pamm_account_list.dart';
+import 'package:andromarkets/presentation/screens/pamm/pamm_leaderboard.dart';
 import 'package:andromarkets/presentation/screens/profile/profile_view.dart';
 import 'package:andromarkets/presentation/screens/social_trading/account_list.dart';
 import 'package:andromarkets/presentation/screens/social_trading/leaderboard_view.dart';
@@ -97,6 +99,42 @@ class NavigationViewModel extends ChangeNotifier {
           id: 'social_trading.leaderboard',
           title: 'Transfer',
           screenBuilder: (context) => const LeaderboardView(),
+        ),
+
+      ],
+    ),
+    NavItem(
+      id: 'pamm',
+      title: 'Pamm',
+      iconPath: 'assets/icons/dashboardIcon.svg',
+      subItems: [
+        NavItem(
+          id: 'pamm.accountList',
+          title: 'Deposit',
+          screenBuilder: (context) => const PammAccountList(),
+        ),
+        NavItem(
+          id: 'pamm.leaderboard',
+          title: 'Transfer',
+          screenBuilder: (context) => const PammLeaderboard(),
+        ),
+
+      ],
+    ),
+    NavItem(
+      id: 'partnership',
+      title: 'Partnership Programs',
+      iconPath: 'assets/icons/dashboardIcon.svg',
+      subItems: [
+        NavItem(
+          id: 'partnership.dashboard',
+          title: 'Deposit',
+          screenBuilder: (context) => const PartnershipDashboard(),
+        ),
+        NavItem(
+          id: 'partnership.reports',
+          title: 'Transfer',
+          screenBuilder: (context) => const PartnershipTransfer(),
         ),
 
       ],

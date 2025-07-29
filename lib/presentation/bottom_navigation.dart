@@ -3,6 +3,7 @@ import 'package:andromarkets/presentation/screens/bonuses/bonus_view.dart';
 import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
 import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:andromarkets/presentation/screens/funds/transfer_view.dart';
+import 'package:andromarkets/presentation/screens/pamm/pamm_account_list.dart';
 import 'package:andromarkets/presentation/screens/profile/profile_view.dart';
 import 'package:andromarkets/presentation/screens/side_navigation.dart';
 import 'package:andromarkets/presentation/screens/social_trading/leaderboard_view.dart';
@@ -69,6 +70,8 @@ class _BottomNavigationState extends State<BottomNavigation>
       'bonus': () => const BonusView(),
       'social_trading.account': () => const AccountListView(),
       'social_trading.leaderboard': () => const LeaderboardView(),
+      'pamm.accountList': () => const PammAccountList(),
+      'pamm.leaderboard': () => const PammAccountList(),
 
       'logout': () => const ProfileView(),
 
