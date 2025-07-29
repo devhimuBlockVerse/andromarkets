@@ -4,14 +4,15 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
 
-class Demo1 extends StatefulWidget {
-  const Demo1({super.key});
+
+class TransferView extends StatefulWidget {
+  const TransferView({super.key});
 
   @override
-  State<Demo1> createState() => _Demo1State();
+  State<TransferView> createState() => _TransferViewState();
 }
 
-class _Demo1State extends State<Demo1> {
+class _TransferViewState extends State<TransferView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -19,7 +20,7 @@ class _Demo1State extends State<Demo1> {
             backgroundColor: AppColors.primaryBackgroundColor,
             appBar: AppBar(
 
-              title: Text('Demo 1',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
+              title: Text('Transfer',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
               centerTitle: true,
               backgroundColor: AppColors.primaryBackgroundColor,
 
@@ -31,7 +32,6 @@ class _Demo1State extends State<Demo1> {
         )
     );
   }
-
   Widget body() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
@@ -48,7 +48,7 @@ class _Demo1State extends State<Demo1> {
                   SizedBox(height: screenHeight * 0.03),
 
                   Text(
-                    'Wallet Screen Structure',
+                    'Transfer Screen Structure',
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 
@@ -58,5 +58,4 @@ class _Demo1State extends State<Demo1> {
         )
     );
   }
-
 }

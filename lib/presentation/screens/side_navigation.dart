@@ -1,29 +1,33 @@
-import 'dart:convert';
-import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
-import 'package:andromarkets/presentation/screens/demo/demo1.dart';
-import 'package:andromarkets/presentation/screens/demo/demo2.dart';
-import 'package:andromarkets/presentation/screens/demo/demo3.dart';
+
+import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../config/theme/app_colors.dart';
-import '../../data/models/login_model.dart';
 
 class NavItem {
-  final String id;
-  final String title;
-  final String iconPath;
+  final String? id;
+  final String? title;
+  final String? iconPath;
   final Widget Function(BuildContext)? screenBuilder;
   final void Function(BuildContext)? onTap;
+  final bool isDivider;
+  final List<NavItem>? subItems;
 
 
   NavItem({
-    required this.id,
-    required this.title,
-    required this.iconPath,
+    this.id,
+    this.title,
+    this.iconPath,
     this.screenBuilder,
-    this.onTap
+    this.onTap,
+    this.isDivider = false,
+    this.subItems,
   });
+  
+  bool get hasChildren => subItems != null && subItems!.isNotEmpty;
+  factory NavItem.divider(){
+    return NavItem(isDivider: true);
+  }
 }
 
 class SideNavBar extends StatefulWidget {
@@ -45,157 +49,147 @@ class SideNavBar extends StatefulWidget {
 }
 
 class _SideNavBarState extends State<SideNavBar> {
-  UserModel? currentUser;
-  String? uniqueId;
+  final Set<String> _expandedItems = {};
 
-  @override
-  void initState() {
-    super.initState();
+  void _toggleExpand(String id) {
+    setState(() {
+      if (_expandedItems.contains(id)) {
+        _expandedItems.remove(id);
+      } else {
+        _expandedItems.add(id);
+      }
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final drawerWidth = screenWidth * 0.55;
+    final size = MediaQuery.of(context).size;
+    final drawerWidth = size.width * 0.55;
 
-    return SizedBox(
+    return Drawer(
       width: drawerWidth,
-      child: Drawer(
-        shape:  RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Color(0xFF212833), width: 0.5),
+      ),
+      backgroundColor: AppColors.primaryBackgroundColor.withAlpha(490),
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.02,
+            vertical: size.height * 0.02,
           ),
-          side: BorderSide(
-            color: Color(0XFF212833),
-            width: 0.5
-          )
-        ),
-        backgroundColor: AppColors.primaryBackgroundColor.withAlpha(490),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: size.height * 0.02),
+              Image.asset(
+                "assets/images/splashScreenLogo.png",
+                fit: BoxFit.contain,
+                width: drawerWidth * 0.5,
+              ),
+              SizedBox(height: size.height * 0.02),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.navItems.length,
+                  itemBuilder: (context, index) {
+                    final item = widget.navItems[index];
 
-        child: SafeArea(
-          child: ListView(
-           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.020,vertical: screenHeight * 0.020),
-           children: <Widget>[
+                    if (item.isDivider) {
+                      return Container(
+                        height: 0.4,
+                        margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFFFDD27E).withOpacity(0.2),
+                              const Color(0xFFFDD27E).withOpacity(0.2),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
 
-             ...widget.navItems.map((item) => _buildNavItem(context, item, drawerWidth)).toList(),
-
-           ],
-                      ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: drawerWidth * 0.05,
+                          ),
+                          leading: SvgPicture.asset(
+                            item.iconPath ?? '',
+                            width: drawerWidth * 0.07,
+                            height: drawerWidth * 0.07,
+                            fit: BoxFit.scaleDown,
+                          ),
+                          title: Text(
+                            item.title ?? '',
+                            style: AppTextStyle.bodySmall2x(
+                              context,
+                              color: AppColors.secondaryColor3,
+                            ),
+                          ),
+                          trailing: item.hasChildren
+                              ? Icon(
+                            _expandedItems.contains(item.id)
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: AppColors.secondaryColor3,
+                          )
+                              : null,
+                          onTap: () {
+                            if (item.hasChildren) {
+                              _toggleExpand(item.id!);
+                            } else {
+                              Navigator.pop(context);
+                              if (item.onTap != null) {
+                                item.onTap!(context);
+                              } else if (item.screenBuilder != null) {
+                                widget.onScreenSelected(item.id ?? '');
+                              }
+                            }
+                          },
+                        ),
+                        if (item.hasChildren && _expandedItems.contains(item.id))
+                          Padding(
+                            padding: EdgeInsets.only(left: drawerWidth * 0.22),
+                            child: Column(
+                              children: item.subItems!.map((subItem) {
+                                return ListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(
+                                    subItem.title ?? '',
+                                    style: AppTextStyle.bodySmall2x(
+                                      context,
+                                      color: AppColors.secondaryColor3,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    if (subItem.onTap != null) {
+                                      subItem.onTap!(context);
+                                    } else if (subItem.screenBuilder != null) {
+                                      widget.onScreenSelected(subItem.id ?? '');
+                                    }
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
-
-
-  Widget _buildNavItem(BuildContext context, NavItem item, double drawerWidth) {
-    final bool isSelected = item.id == widget.currentScreenId;
-    final double itemHorizontalPadding = drawerWidth * 0.05;
-    final double itemFontSize = drawerWidth * 0.045;
-    final double itemIconSize = drawerWidth * 0.07;
-
-    Widget navTile = ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: itemHorizontalPadding, vertical: drawerWidth * 0.001),
-      leading: SvgPicture.asset(
-        item.iconPath,
-        width: itemIconSize,
-        height: itemIconSize,
-        fit: BoxFit.scaleDown,
-      ),
-      title: Text(
-        item.title,
-        style: TextStyle(
-          color: isSelected ? AppColors.primaryColor : AppColors.secondaryColor3,
-          fontSize: itemFontSize,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-          fontFamily: 'Poppins',
-        ),
-      ),
-      onTap: () async {
-        Navigator.pop(context);
-
-        if (item.onTap != null) {
-          item.onTap!(context);
-        } else if (item.screenBuilder != null) {
-          widget.onScreenSelected(item.id);
-
-        }
-
-      },
-    );
-
-    return Container(
-      margin: EdgeInsets.symmetric(
-      ),
-      child: Column(
-        children: [
-
-          navTile,
-        ],
-      ),
-    );
-
-  }
-
 }
 
-class NavigationProvider extends ChangeNotifier {
-  String _currentScreenId = 'dashboard';
-  String get currentScreenId => _currentScreenId;
-  late final GoogleSignInAccount? user;
-
-  void setScreen(String id) {
-
-    if (_currentScreenId != id) {
-      _currentScreenId = id;
-      notifyListeners();
-    }
-  }
-
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  void openDrawer() {
-    scaffoldKey.currentState?.openDrawer();
-  }
-
-  void closeDrawer() {
-    scaffoldKey.currentState?.closeDrawer();
-  }
-
-  List<NavItem> get drawerNavItems => [
-
-
-    NavItem(
-      id: 'dashboard',
-      title: 'Dashboard',
-      iconPath: 'assets/icons/dashboardIcon.svg',
-      screenBuilder: (context) => const DashboardView(),
-
-    ),
-    NavItem(
-      id: 'demo1',
-      title: 'Demo1',
-      iconPath: 'assets/icons/dashboardIcon.svg',
-      screenBuilder: (context) => const Demo1(),
-    ),
-
-    NavItem(
-      id: 'demo2',
-      title: 'Demo2',
-      iconPath: 'assets/icons/dashboardIcon.svg',
-      screenBuilder: (context) => const Demo2(),
-    ),
-
-    NavItem(
-      id: 'demo3',
-      title: 'Demo3',
-      iconPath: 'assets/icons/dashboardIcon.svg',
-      screenBuilder: (context) => const Demo3(),
-    ),
-
-
-
-  ];
-}

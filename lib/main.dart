@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:andromarkets/config/providers/app_providers.dart';
 import 'package:andromarkets/config/theme/app_colors.dart';
+import 'package:andromarkets/presentation/bottom_navigation.dart';
+import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
  import 'package:andromarkets/presentation/screens/splash/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,8 +32,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor:AppColors.primaryColor),
         ),
-        home: const SplashView()
-        // home: const BottomNavigation()
+        // home: const SplashView()
+        home: const BottomNavigation()
+
       ),
     );
   }

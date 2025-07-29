@@ -1,11 +1,8 @@
-import 'package:andromarkets/core/services/google_sign_service.dart';
-import 'package:andromarkets/presentation/screens/demo/demo3.dart';
-import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
+ import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
@@ -156,7 +153,7 @@ class _DashboardViewState extends State<DashboardView> {
                     buttonText:'Deposit',
                     buttonType: ButtonType.primary,
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> Demo3()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> DepositView()));
                     },
                     textStyle: AppTextStyle.buttonsMedium(context),
                     leftIcon:  'assets/icons/depositAdd.svg',
@@ -361,9 +358,6 @@ class _DashboardViewState extends State<DashboardView> {
               );
             }).toList(),
           ),
-
-
-
         ],
       )
     );

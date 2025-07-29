@@ -3,14 +3,14 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
 
-class Demo2 extends StatefulWidget {
-  const Demo2({super.key});
+class AccountListView extends StatefulWidget {
+  const AccountListView({super.key});
 
   @override
-  State<Demo2> createState() => _Demo2State();
+  State<AccountListView> createState() => _AccountListViewState();
 }
 
-class _Demo2State extends State<Demo2> {
+class _AccountListViewState extends State<AccountListView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -18,7 +18,7 @@ class _Demo2State extends State<Demo2> {
             backgroundColor: AppColors.primaryBackgroundColor,
             appBar: AppBar(
 
-              title: Text('Demo 3',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
+              title: Text('Account List',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
               centerTitle: true,
               backgroundColor: AppColors.primaryBackgroundColor,
 
@@ -30,7 +30,6 @@ class _Demo2State extends State<Demo2> {
         )
     );
   }
-
   Widget body() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
@@ -47,7 +46,7 @@ class _Demo2State extends State<Demo2> {
                   SizedBox(height: screenHeight * 0.03),
 
                   Text(
-                    'Wallet Screen Structure',
+                    'Account List Screen Structure',
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 

@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
-class Demo3 extends StatefulWidget {
-  const Demo3({super.key});
+
+class PammLeaderboard extends StatefulWidget {
+  const PammLeaderboard({super.key});
 
   @override
-  State<Demo3> createState() => _Demo3State();
+  State<PammLeaderboard> createState() => _PammLeaderboardState();
 }
 
-class _Demo3State extends State<Demo3> {
-   @override
+class _PammLeaderboardState extends State<PammLeaderboard> {
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
             backgroundColor: AppColors.primaryBackgroundColor,
             appBar: AppBar(
 
-              title: Text('Demo 3',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
+              title: Text('Pamm LeaderBoard',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
               centerTitle: true,
               backgroundColor: AppColors.primaryBackgroundColor,
 
@@ -29,7 +30,6 @@ class _Demo3State extends State<Demo3> {
         )
     );
   }
-
   Widget body() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
@@ -46,7 +46,7 @@ class _Demo3State extends State<Demo3> {
                   SizedBox(height: screenHeight * 0.03),
 
                   Text(
-                    'Wallet Screen Structure',
+                    'Pamm LeaderBoard Screen Structure',
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 
