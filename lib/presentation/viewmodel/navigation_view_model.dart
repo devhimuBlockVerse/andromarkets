@@ -11,6 +11,8 @@ import 'package:andromarkets/presentation/screens/transaction_history/transactio
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../screens/dashboard/dashboard_view.dart';
+import '../screens/partnership/partnership_dashboard_view.dart';
+import '../screens/partnership/partnership_report_view.dart';
 import '../screens/side_navigation.dart';
 
 class NavigationViewModel extends ChangeNotifier {
@@ -134,7 +136,7 @@ class NavigationViewModel extends ChangeNotifier {
         NavItem(
           id: 'partnership.reports',
           title: 'Transfer',
-          screenBuilder: (context) => const PartnershipTransfer(),
+          screenBuilder: (context) => const PartnershipReports(),
         ),
 
       ],

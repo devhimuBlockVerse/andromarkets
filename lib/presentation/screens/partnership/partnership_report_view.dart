@@ -3,15 +3,14 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
 
-
-class PartnershipDashboard extends StatefulWidget {
-  const PartnershipDashboard({super.key});
+class PartnershipReports extends StatefulWidget {
+  const PartnershipReports({super.key});
 
   @override
-  State<PartnershipDashboard> createState() => _PartnershipDashboardState();
+  State<PartnershipReports> createState() => _PartnershipReportsState();
 }
 
-class _PartnershipDashboardState extends State<PartnershipDashboard> {
+class _PartnershipReportsState extends State<PartnershipReports> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -19,7 +18,7 @@ class _PartnershipDashboardState extends State<PartnershipDashboard> {
             backgroundColor: AppColors.primaryBackgroundColor,
             appBar: AppBar(
 
-              title: Text('Partnership Dashboard',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
+              title: Text('Partnership Reports',style: AppTextStyle.h3(context,color: AppColors.primaryText),),
               centerTitle: true,
               backgroundColor: AppColors.primaryBackgroundColor,
 
@@ -47,7 +46,7 @@ class _PartnershipDashboardState extends State<PartnershipDashboard> {
                   SizedBox(height: screenHeight * 0.03),
 
                   Text(
-                    'Partnership Dashboard Screen Structure',
+                    'Partnership Reports Screen Structure',
                     style: AppTextStyle.caption(context,color: AppColors.descriptions),
                   ),
 
@@ -57,4 +56,5 @@ class _PartnershipDashboardState extends State<PartnershipDashboard> {
         )
     );
   }
+
 }

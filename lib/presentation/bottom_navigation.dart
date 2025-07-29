@@ -4,6 +4,8 @@ import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart'
 import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:andromarkets/presentation/screens/funds/transfer_view.dart';
 import 'package:andromarkets/presentation/screens/pamm/pamm_account_list.dart';
+import 'package:andromarkets/presentation/screens/partnership/partnership_dashboard_view.dart';
+import 'package:andromarkets/presentation/screens/partnership/partnership_report_view.dart';
 import 'package:andromarkets/presentation/screens/profile/profile_view.dart';
 import 'package:andromarkets/presentation/screens/side_navigation.dart';
 import 'package:andromarkets/presentation/screens/social_trading/leaderboard_view.dart';
@@ -72,6 +74,8 @@ class _BottomNavigationState extends State<BottomNavigation>
       'social_trading.leaderboard': () => const LeaderboardView(),
       'pamm.accountList': () => const PammAccountList(),
       'pamm.leaderboard': () => const PammAccountList(),
+      'partnership.dashboard': () => const PartnershipDashboard(),
+      'partnership.reports': () => const PartnershipReports(),
 
       'logout': () => const ProfileView(),
 
