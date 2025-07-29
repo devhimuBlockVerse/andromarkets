@@ -108,7 +108,8 @@ class _BottomNavigationState extends State<BottomNavigation>
       child: Scaffold(
         key: _scaffoldKey,
         drawer: SideNavBar(
-          currentScreenId: 'menu',
+          // currentScreenId: 'menu',
+          currentScreenId:_currentScreenId,
           onScreenSelected:_setScreen,
           navItems: NavigationViewModel().drawerNavItems,
 

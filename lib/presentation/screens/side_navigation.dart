@@ -1,4 +1,3 @@
-
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +22,7 @@ class NavItem {
     this.isDivider = false,
     this.subItems,
   });
-  
+
   bool get hasChildren => subItems != null && subItems!.isNotEmpty;
   factory NavItem.divider(){
     return NavItem(isDivider: true);
@@ -49,15 +48,41 @@ class SideNavBar extends StatefulWidget {
 }
 
 class _SideNavBarState extends State<SideNavBar> {
-  final Set<String> _expandedItems = {};
+  String? _currentlyExpandedParentId;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeExpandedParent();
+  }
+
+  @override
+  void didUpdateWidget(covariant SideNavBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentScreenId != oldWidget.currentScreenId) {
+      _initializeExpandedParent();
+    }
+  }
+
+  void _initializeExpandedParent() {
+    for (var item in widget.navItems) {
+      if (item.hasChildren &&
+          item.subItems!.any((sub) => sub.id == widget.currentScreenId)) {
+        setState(() => _currentlyExpandedParentId = item.id);
+        return;
+      }
+    }
+    if (widget.currentScreenId != null) {
+      final match = widget.navItems
+          .any((item) => item.id == widget.currentScreenId && item.hasChildren);
+      if (match) setState(() => _currentlyExpandedParentId = widget.currentScreenId);
+    }
+  }
 
   void _toggleExpand(String id) {
     setState(() {
-      if (_expandedItems.contains(id)) {
-        _expandedItems.remove(id);
-      } else {
-        _expandedItems.add(id);
-      }
+      _currentlyExpandedParentId =
+      _currentlyExpandedParentId == id ? null : id;
     });
   }
 
@@ -75,18 +100,12 @@ class _SideNavBarState extends State<SideNavBar> {
       backgroundColor: AppColors.primaryBackgroundColor.withAlpha(490),
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.width * 0.02,
-            vertical: size.height * 0.02,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: size.height * 0.02),
               Image.asset(
                 "assets/images/splashScreenLogo.png",
-                fit: BoxFit.contain,
                 width: drawerWidth * 0.5,
               ),
               SizedBox(height: size.height * 0.02),
@@ -97,90 +116,26 @@ class _SideNavBarState extends State<SideNavBar> {
                     final item = widget.navItems[index];
 
                     if (item.isDivider) {
-                      return Container(
-                        height: 0.4,
-                        margin: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFFFDD27E).withOpacity(0.2),
-                              const Color(0xFFFDD27E).withOpacity(0.2),
-                            ],
-                          ),
-                        ),
+                      return Divider(
+                        height: size.height * 0.015,
+                        color: Colors.white10,
                       );
                     }
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: drawerWidth * 0.05,
-                          ),
-                          leading: SvgPicture.asset(
-                            item.iconPath ?? '',
-                            width: drawerWidth * 0.07,
-                            height: drawerWidth * 0.07,
-                            fit: BoxFit.scaleDown,
-                          ),
-                          title: Text(
-                            item.title ?? '',
-                            style: AppTextStyle.bodySmall2x(
-                              context,
-                              color: AppColors.secondaryColor3,
-                            ),
-                          ),
-                          trailing: item.hasChildren
-                              ? Icon(
-                            _expandedItems.contains(item.id)
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: AppColors.secondaryColor3,
-                          )
-                              : null,
-                          onTap: () {
-                            if (item.hasChildren) {
-                              _toggleExpand(item.id!);
-                            } else {
-                              Navigator.pop(context);
-                              if (item.onTap != null) {
-                                item.onTap!(context);
-                              } else if (item.screenBuilder != null) {
-                                widget.onScreenSelected(item.id ?? '');
-                              }
-                            }
-                          },
-                        ),
-                        if (item.hasChildren && _expandedItems.contains(item.id))
-                          Padding(
-                            padding: EdgeInsets.only(left: drawerWidth * 0.22),
-                            child: Column(
-                              children: item.subItems!.map((subItem) {
-                                return ListTile(
-                                  dense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                  title: Text(
-                                    subItem.title ?? '',
-                                    style: AppTextStyle.bodySmall2x(
-                                      context,
-                                      color: AppColors.secondaryColor3,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    if (subItem.onTap != null) {
-                                      subItem.onTap!(context);
-                                    } else if (subItem.screenBuilder != null) {
-                                      widget.onScreenSelected(subItem.id ?? '');
-                                    }
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                      ],
+                    final isExpanded = _currentlyExpandedParentId == item.id;
+                    final isSelected =widget.currentScreenId == item.id ||
+                        _currentlyExpandedParentId  == item.id ||
+                        (item.hasChildren && item.subItems!.any((sub) => sub.id == widget.currentScreenId));
+
+                    return NavItemTile(
+                      item: item,
+                      drawerWidth: drawerWidth,
+                      isExpanded: isExpanded,
+                      isSelected: isSelected,
+                      currentScreenId: widget.currentScreenId,
+                      onExpandToggle: _toggleExpand,
+                      onItemSelected: widget.onScreenSelected,
+                      closeDrawer: () => Navigator.pop(context),
                     );
                   },
                 ),
@@ -193,3 +148,129 @@ class _SideNavBarState extends State<SideNavBar> {
   }
 }
 
+class NavItemTile extends StatelessWidget {
+  final NavItem item;
+  final double drawerWidth;
+  final bool isExpanded;
+  final bool isSelected;
+  final String? currentScreenId;
+  final Function(String id) onExpandToggle;
+  final Function(String id) onItemSelected;
+  final VoidCallback closeDrawer;
+
+  const NavItemTile({
+    super.key,
+    required this.item,
+    required this.drawerWidth,
+    required this.isExpanded,
+    required this.isSelected,
+    required this.currentScreenId,
+    required this.onExpandToggle,
+    required this.onItemSelected,
+    required this.closeDrawer,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = isSelected ? AppColors.primaryColor : const Color(0XFF9C9C9C);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: drawerWidth * 0.05),
+          leading: SvgPicture.asset(
+            item.iconPath ?? '',
+            width: drawerWidth * 0.07,
+            height: drawerWidth * 0.07,
+            colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+          ),
+          title: Text(
+            item.title ?? '',
+            style: AppTextStyle.bodySmall2x(context, color: iconColor),
+          ),
+          trailing: item.hasChildren
+              ? Icon(
+            isExpanded
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
+            color: iconColor,
+          )
+              : null,
+          onTap: () {
+            if (item.hasChildren) {
+              onExpandToggle(item.id!);
+            } else {
+              closeDrawer();
+              if (item.onTap != null) {
+                item.onTap!(context);
+              } else {
+                onItemSelected(item.id ?? '');
+              }
+
+
+             }
+          },
+        ),
+        if (item.hasChildren)
+          AnimatedCrossFade(
+            firstChild: Container(),
+            secondChild: Padding(
+              padding: EdgeInsets.only(left: drawerWidth * 0.22),
+              child: Column(
+                children: item.subItems!.map((sub) {
+                  final isSubSelected = currentScreenId == sub.id;
+                  return SubNavItemTile(
+                    subItem: sub,
+                    isSelected: isSubSelected,
+                    onSelected: (id) {
+                      closeDrawer();
+                      if (sub.onTap != null) {
+                        sub.onTap!(context);
+                      } else {
+                        onItemSelected(id);
+                      }
+
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+            crossFadeState:
+            isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 250),
+          ),
+      ],
+    );
+  }
+}
+
+class SubNavItemTile extends StatelessWidget {
+  final NavItem subItem;
+  final bool isSelected;
+  final Function(String id) onSelected;
+
+  const SubNavItemTile({
+    super.key,
+    required this.subItem,
+    required this.isSelected,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      dense: true,
+      contentPadding: EdgeInsets.zero,
+      visualDensity: const VisualDensity(vertical: -4),
+      title: Text(
+        subItem.title ?? '',
+        style: AppTextStyle.bodySmall2x(
+          context,
+          color: isSelected ? Colors.white : AppColors.secondaryColor3,
+        ),
+      ),
+      onTap: () => onSelected(subItem.id ?? ''),
+    );
+  }
+}
