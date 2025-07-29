@@ -7,6 +7,7 @@ import 'package:andromarkets/presentation/screens/pamm/pamm_leaderboard.dart';
 import 'package:andromarkets/presentation/screens/profile/profile_view.dart';
 import 'package:andromarkets/presentation/screens/social_trading/account_list.dart';
 import 'package:andromarkets/presentation/screens/social_trading/leaderboard_view.dart';
+import 'package:andromarkets/presentation/screens/support/support_view.dart';
 import 'package:andromarkets/presentation/screens/transaction_history/transaction_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -89,17 +90,17 @@ class NavigationViewModel extends ChangeNotifier {
 
     NavItem(
       id: 'social_trading',
-      title: 'Funds',
+      title: 'Social Trading',
       iconPath: 'assets/icons/dashboardIcon.svg',
       subItems: [
         NavItem(
           id: 'social_trading.account',
-          title: 'Deposit',
+          title: 'Account List',
           screenBuilder: (context) => const AccountListView(),
         ),
         NavItem(
           id: 'social_trading.leaderboard',
-          title: 'Transfer',
+          title: 'Leaderboard',
           screenBuilder: (context) => const LeaderboardView(),
         ),
 
@@ -112,12 +113,12 @@ class NavigationViewModel extends ChangeNotifier {
       subItems: [
         NavItem(
           id: 'pamm.accountList',
-          title: 'Deposit',
+          title: 'Account List',
           screenBuilder: (context) => const PammAccountList(),
         ),
         NavItem(
           id: 'pamm.leaderboard',
-          title: 'Transfer',
+          title: 'Leaderboard',
           screenBuilder: (context) => const PammLeaderboard(),
         ),
 
@@ -130,12 +131,12 @@ class NavigationViewModel extends ChangeNotifier {
       subItems: [
         NavItem(
           id: 'partnership.dashboard',
-          title: 'Deposit',
+          title: 'Dashboard',
           screenBuilder: (context) => const PartnershipDashboard(),
         ),
         NavItem(
           id: 'partnership.reports',
-          title: 'Transfer',
+          title: 'Reports',
           screenBuilder: (context) => const PartnershipReports(),
         ),
 
@@ -144,6 +145,15 @@ class NavigationViewModel extends ChangeNotifier {
 
 
     NavItem.divider(),
+
+    NavItem(
+      id: 'support',
+      title: 'Support',
+      iconPath: 'assets/icons/dashboardIcon.svg',
+      screenBuilder: (context) => const SupportView(),
+    ),
+
+
     NavItem(
       id: 'logout',
       title: 'Log Out',

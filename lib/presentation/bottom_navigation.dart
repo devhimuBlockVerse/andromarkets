@@ -21,6 +21,7 @@ import '../config/theme/app_colors.dart';
 import '../data/models/login_model.dart';
 import 'screens/funds/withdraw_view.dart';
 import 'screens/social_trading/account_list.dart';
+import 'screens/support/support_view.dart';
 
 
 class BottomNavigation extends StatefulWidget {
@@ -76,7 +77,7 @@ class _BottomNavigationState extends State<BottomNavigation>
       'pamm.leaderboard': () => const PammAccountList(),
       'partnership.dashboard': () => const PartnershipDashboard(),
       'partnership.reports': () => const PartnershipReports(),
-
+      'support': () => const SupportView(),
       'logout': () => const ProfileView(),
 
 
