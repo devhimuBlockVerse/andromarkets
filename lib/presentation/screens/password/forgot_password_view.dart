@@ -54,6 +54,15 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: screenHeight * 0.02),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Image.asset(
+                  "assets/images/splashScreenLogo.png",
+                  fit: BoxFit.contain,
+                  width: screenWidth * 0.4
+              ),
+            ),
 
             SizedBox(height: screenHeight * 0.03),
 

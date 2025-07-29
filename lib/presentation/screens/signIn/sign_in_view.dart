@@ -75,8 +75,17 @@ class _SignInViewState extends State<SignInView> {
         const SnackBar(content: Text("Sign in failed")),
       );
     }else{
-      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardView(user: user)));
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => BottomNavigation(user: user,)));
+      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => BottomNavigation(user: user,)));
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => BottomNavigation(
+            googleUser: user,
+            initialScreenId: 'dashboard',
+          ),
+        ),
+      );
+
     }
 
   }
@@ -87,15 +96,12 @@ class _SignInViewState extends State<SignInView> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.primaryBackgroundColor,
-        body: Center(
-          child: authViewModel.isLoading
-              ? const CircularProgressIndicator()
-              :  ResponsiveViewState(
-              mobile: body(),
-              tablet: body(),
-           )
-
-        ),
+        body: authViewModel.isLoading
+            ? const CircularProgressIndicator()
+            :  ResponsiveViewState(
+            mobile: body(),
+            tablet: body(),
+         ),
       ),
     );
   }
@@ -114,6 +120,7 @@ class _SignInViewState extends State<SignInView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: screenHeight * 0.05),
 
               Image.asset(
                   "assets/images/splashScreenLogo.png",
@@ -192,12 +199,7 @@ class _SignInViewState extends State<SignInView> {
             textStyle: AppTextStyle.buttonsMedium(context),
         ),
 
-        // PrimaryButton(
-        //     buttonText: 'Sign In',
-        //     buttonType: ButtonType.primary,
-        //     onPressed:()=> _handleLogin(context,authViewModel),
-        //     textStyle: AppTextStyle.buttonsMedium(context),
-        // ),
+
 
         SizedBox(height: screenHeight * 0.02),
 

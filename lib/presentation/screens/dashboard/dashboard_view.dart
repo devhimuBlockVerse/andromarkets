@@ -1,4 +1,5 @@
 import 'package:andromarkets/core/services/google_sign_service.dart';
+import 'package:andromarkets/presentation/screens/demo/demo3.dart';
 import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,9 +52,15 @@ class _DashboardViewState extends State<DashboardView> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.primaryBackgroundColor,
-        body: ResponsiveViewState(
-          mobile: body(),
-          tablet: body(),
+        body: RefreshIndicator(
+          onRefresh:(){
+            print("object");
+            return Future.delayed(const Duration(seconds: 2));
+          },
+          child: ResponsiveViewState(
+            mobile: body(),
+            tablet: body(),
+          ),
         ),
       ),
     );
@@ -88,12 +95,9 @@ class _DashboardViewState extends State<DashboardView> {
                       child: (widget.user == null || widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
                           ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
                           : null,
-
                     ),
 
-
-
-                     SizedBox(width: screenWidth * 0.02),
+                    SizedBox(width: screenWidth * 0.02),
 
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,7 +155,9 @@ class _DashboardViewState extends State<DashboardView> {
                   child: PrimaryButton(
                     buttonText:'Deposit',
                     buttonType: ButtonType.primary,
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> Demo3()));
+                    },
                     textStyle: AppTextStyle.buttonsMedium(context),
                     leftIcon:  'assets/icons/depositAdd.svg',
                     iconSize: screenWidth * 0.05,

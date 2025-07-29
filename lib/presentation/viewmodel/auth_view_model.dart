@@ -24,22 +24,19 @@ class AuthViewModel with ChangeNotifier {
       _user = loginData;
       notifyListeners();
 
-      // if(loginData.google2faRequired){
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text("Two-Factor Authentication required.")),
-      //   );
-      //   // Navigator.push(context, MaterialPageRoute(builder: (_) => TwoFactorScreen(token: loginData.token)));
-      //   return;
-      // }
 
       await DashboardViewModel().saveLoginResponse(loginData);
 
-      /// If 2FA not Required
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const BottomNavigation()),
-            (Route<dynamic> route) => false,
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => BottomNavigation(
+            apiUser: _user,
+            initialScreenId: 'dashboard',
+          ),
+        ),
       );
+
     } catch (e,stackTrace) {
       debugPrintStack(label: '🔴 Login Error', stackTrace: stackTrace);
       print("AuthViewModel.login Error :${e.toString()}");

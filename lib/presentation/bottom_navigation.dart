@@ -1,5 +1,8 @@
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
+import 'package:andromarkets/presentation/screens/demo/demo1.dart';
+import 'package:andromarkets/presentation/screens/demo/demo2.dart';
+import 'package:andromarkets/presentation/screens/demo/demo3.dart';
 import 'package:andromarkets/presentation/screens/profile/profile_view.dart';
 import 'package:andromarkets/presentation/screens/side_navigation.dart';
 import 'package:andromarkets/presentation/screens/trade/trade_view.dart';
@@ -9,13 +12,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../config/theme/app_colors.dart';
+import '../data/models/login_model.dart';
 
 
 class BottomNavigation extends StatefulWidget {
   final int initialIndex;
-  final GoogleSignInAccount? user;
+  final GoogleSignInAccount? googleUser;
+  final LoginResponseModel? apiUser;
+  final String initialScreenId;
 
-  const BottomNavigation({super.key,  this.initialIndex = 0,this.user});
+
+  const BottomNavigation({super.key,  this.initialIndex = 0, this.apiUser,this.googleUser,  this.initialScreenId = 'dashboard'});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
@@ -154,13 +161,11 @@ class BottomNavigation extends StatefulWidget {
 //     );
 //   }
 // }
-
 class _BottomNavigationState extends State<BottomNavigation>
     with TickerProviderStateMixin {
   int _currentIndex = 0;
   late AnimationController _bounceController;
-  late final List<Widget> _pages;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> _labels = ['Menu', 'Wallet', 'Account', 'Profile'];
   final List<String> _imagePaths = [
@@ -169,36 +174,43 @@ class _BottomNavigationState extends State<BottomNavigation>
     'assets/icons/tradeIcon.svg',
     'assets/icons/profileIcon.svg',
   ];
-  late Map<String, Widget> _screens;
+  late Map<String, Widget Function()> _screens;
   String _currentScreenId = 'dashboard';
 
   @override
   void initState() {
     super.initState();
-    _bounceController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    _bounceController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     _currentIndex = widget.initialIndex;
+    _currentScreenId = widget.initialScreenId;
+
+
     _screens = {
-      'dashboard': DashboardView(user: widget.user),
-      'wallet': WalletView(),
-      'trade': TradeView(),
-      'profile': ProfileView(),
-       // Add more screens as needed
+      'dashboard': () => DashboardView(user: widget.googleUser),
+      'demo1': () => const Demo1(),
+      'demo2': () => const Demo2(),
+      'demo3': () => const Demo3(),
+      'wallet': () => const WalletView(),
+      'trade': () => const TradeView(),
+      'profile': () => const ProfileView(),
     };
 
-    // _pages = [WalletView(), TradeView(), ProfileView()];
-  }
+   }
 
   @override
   void dispose() {
     _bounceController.dispose();
     super.dispose();
   }
+
   void _setScreen(String id) {
-    setState(() {
-      _currentScreenId = id;
-    });
+    if (_screens.containsKey(id)) {
+      setState(() {
+        _currentScreenId = id;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +225,7 @@ class _BottomNavigationState extends State<BottomNavigation>
           onScreenSelected:_setScreen,
           navItems: NavigationProvider().drawerNavItems,
         ),
-        body: _screens[_currentScreenId] ?? const SizedBox(),
+        body:  _screens[_currentScreenId]?.call() ?? const SizedBox(),
 
         floatingActionButton: Padding(
           padding: EdgeInsets.only(bottom: screenHeight * 0.01),
@@ -241,8 +253,10 @@ class _BottomNavigationState extends State<BottomNavigation>
                   if (index == 0) {
                     _scaffoldKey.currentState?.openDrawer();
                   } else {
+                    final screenIds = ['wallet', 'trade','profile'];
                     setState(() {
                       _currentIndex = index - 1;
+                      _setScreen(screenIds[_currentIndex]);
                       _bounceController.reset();
                       _bounceController.forward();
                     });

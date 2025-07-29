@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
 import 'package:andromarkets/presentation/screens/demo/demo1.dart';
 import 'package:andromarkets/presentation/screens/demo/demo2.dart';
@@ -7,10 +6,9 @@ import 'package:andromarkets/presentation/screens/demo/demo3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../config/theme/app_colors.dart';
 import '../../data/models/login_model.dart';
+
 class NavItem {
   final String id;
   final String title;
@@ -50,31 +48,11 @@ class _SideNavBarState extends State<SideNavBar> {
   UserModel? currentUser;
   String? uniqueId;
 
-
-
   @override
   void initState() {
     super.initState();
-    _loadCurrentUser();
-    _loadUserId();
+  }
 
-  }
-  Future<void> _loadCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString('user');
-
-    if (userJson != null) {
-      setState(() {
-        currentUser = UserModel.fromJson(jsonDecode(userJson));
-      });
-    }
-  }
-  void _loadUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      uniqueId = prefs.getString('unique_id') ?? '';
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,29 +63,26 @@ class _SideNavBarState extends State<SideNavBar> {
     return SizedBox(
       width: drawerWidth,
       child: Drawer(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-        backgroundColor: Colors.transparent,
-        child: SafeArea(
-          child: Container(
-            decoration: const BoxDecoration(
-              color:   Color(0xff040C16),
-
-              image: DecorationImage(
-                image: AssetImage('assets/images/sideNav_BG.png'),
-                fit: BoxFit.fill,
-              ),
-            ),
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.020,vertical: screenHeight * 0.020),
-              children: <Widget>[
-
-                ...widget.navItems.map((item) => _buildNavItem(context, item, drawerWidth)).toList(),
-
-              ],
-            ),
+        shape:  RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(12),
           ),
+          side: BorderSide(
+            color: Color(0XFF212833),
+            width: 0.5
+          )
+        ),
+        backgroundColor: AppColors.primaryBackgroundColor.withAlpha(490),
+
+        child: SafeArea(
+          child: ListView(
+           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.020,vertical: screenHeight * 0.020),
+           children: <Widget>[
+
+             ...widget.navItems.map((item) => _buildNavItem(context, item, drawerWidth)).toList(),
+
+           ],
+                      ),
         ),
       ),
     );
@@ -145,10 +120,7 @@ class _SideNavBarState extends State<SideNavBar> {
           item.onTap!(context);
         } else if (item.screenBuilder != null) {
           widget.onScreenSelected(item.id);
-          // await Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: item.screenBuilder!),
-          // );
+
         }
 
       },
@@ -156,29 +128,21 @@ class _SideNavBarState extends State<SideNavBar> {
 
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: itemHorizontalPadding / 2,
-        vertical: drawerWidth * 0.02,
       ),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(
-            isSelected
-                ? 'assets/images/sideNavSelectedOptionsBg.png'
-                 : 'assets/images/sideNavUnselectedOptionsBg.png',
-          ),
-          fit: BoxFit.fill,
-        ),
+      child: Column(
+        children: [
+
+          navTile,
+        ],
       ),
-      child: navTile,
     );
 
-    return navTile;
   }
 
 }
 
 class NavigationProvider extends ChangeNotifier {
-  String _currentScreenId = 'milestone';
+  String _currentScreenId = 'dashboard';
   String get currentScreenId => _currentScreenId;
   late final GoogleSignInAccount? user;
 
@@ -201,6 +165,7 @@ class NavigationProvider extends ChangeNotifier {
   }
 
   List<NavItem> get drawerNavItems => [
+
 
     NavItem(
       id: 'dashboard',
