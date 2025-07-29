@@ -102,6 +102,7 @@ class _SideNavBarState extends State<SideNavBar> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: size.height * 0.02),
               Image.asset(
@@ -181,8 +182,8 @@ class NavItemTile extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(horizontal: drawerWidth * 0.05),
           leading: SvgPicture.asset(
             item.iconPath ?? '',
-            width: drawerWidth * 0.07,
-            height: drawerWidth * 0.07,
+            // width: drawerWidth * 0.11,
+            height: drawerWidth * 0.11,
             colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
           ),
           title: Text(

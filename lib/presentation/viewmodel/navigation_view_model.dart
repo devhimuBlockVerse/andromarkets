@@ -53,7 +53,7 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'funds',
       title: 'Funds',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/transaction.svg',
       subItems: [
         NavItem(
           id: 'funds.deposit',
@@ -76,14 +76,14 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'transaction_history',
       title: 'Transaction History',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/transactionHistory.svg',
       screenBuilder: (context) => const TransactionHistoryView(),
 
     ),
     NavItem(
       id: 'bonus',
       title: 'Bonuses',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/bonusIcon.svg',
       screenBuilder: (context) => const BonusView(),
 
     ),
@@ -91,7 +91,7 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'social_trading',
       title: 'Social Trading',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/socialTrading.svg',
       subItems: [
         NavItem(
           id: 'social_trading.account',
@@ -109,7 +109,7 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'pamm',
       title: 'Pamm',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/pammIcon.svg',
       subItems: [
         NavItem(
           id: 'pamm.accountList',
@@ -127,7 +127,7 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'partnership',
       title: 'Partnership Programs',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/partnershipProgramIcon.svg',
       subItems: [
         NavItem(
           id: 'partnership.dashboard',
@@ -149,7 +149,7 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'support',
       title: 'Support',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/supportIcon.svg',
       screenBuilder: (context) => const SupportView(),
     ),
 
@@ -157,7 +157,7 @@ class NavigationViewModel extends ChangeNotifier {
     NavItem(
       id: 'logout',
       title: 'Log Out',
-      iconPath: 'assets/icons/dashboardIcon.svg',
+      iconPath: 'assets/icons/logoutIcon.svg',
       screenBuilder: (context) => const ProfileView(),
     ),
 
