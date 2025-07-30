@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../core/enums/button_type.dart';
 import '../../../core/services/google_sign_service.dart';
-import '../../bottom_navigation.dart';
+import '../../widgets/bottom_navigation.dart';
 import '../../components/textFieldComponent.dart';
 import '../../viewmodel/dashboard_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';

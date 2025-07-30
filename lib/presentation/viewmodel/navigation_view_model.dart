@@ -11,10 +11,11 @@ import 'package:andromarkets/presentation/screens/support/support_view.dart';
 import 'package:andromarkets/presentation/screens/transaction_history/transaction_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../data/models/nav_items.dart';
 import '../screens/dashboard/dashboard_view.dart';
 import '../screens/partnership/partnership_dashboard_view.dart';
 import '../screens/partnership/partnership_report_view.dart';
-import '../screens/side_navigation.dart';
+import '../widgets/side_navigation.dart';
 
 class NavigationViewModel extends ChangeNotifier {
   String _currentScreenId = 'dashboard';

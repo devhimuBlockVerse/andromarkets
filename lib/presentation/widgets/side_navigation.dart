@@ -2,32 +2,7 @@ import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../config/theme/app_colors.dart';
-
-class NavItem {
-  final String? id;
-  final String? title;
-  final String? iconPath;
-  final Widget Function(BuildContext)? screenBuilder;
-  final void Function(BuildContext)? onTap;
-  final bool isDivider;
-  final List<NavItem>? subItems;
-
-
-  NavItem({
-    this.id,
-    this.title,
-    this.iconPath,
-    this.screenBuilder,
-    this.onTap,
-    this.isDivider = false,
-    this.subItems,
-  });
-
-  bool get hasChildren => subItems != null && subItems!.isNotEmpty;
-  factory NavItem.divider(){
-    return NavItem(isDivider: true);
-  }
-}
+import '../../data/models/nav_items.dart';
 
 class SideNavBar extends StatefulWidget {
   final String? currentScreenId;
@@ -182,8 +157,7 @@ class NavItemTile extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(horizontal: drawerWidth * 0.05),
           leading: SvgPicture.asset(
             item.iconPath ?? '',
-            // width: drawerWidth * 0.11,
-            height: drawerWidth * 0.11,
+             height: drawerWidth * 0.11,
             colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
           ),
           title: Text(

@@ -7,7 +7,7 @@ import 'package:andromarkets/presentation/screens/pamm/pamm_account_list.dart';
 import 'package:andromarkets/presentation/screens/partnership/partnership_dashboard_view.dart';
 import 'package:andromarkets/presentation/screens/partnership/partnership_report_view.dart';
 import 'package:andromarkets/presentation/screens/profile/profile_view.dart';
-import 'package:andromarkets/presentation/screens/side_navigation.dart';
+import 'package:andromarkets/presentation/widgets/side_navigation.dart';
 import 'package:andromarkets/presentation/screens/social_trading/leaderboard_view.dart';
 import 'package:andromarkets/presentation/screens/trade/trade_view.dart';
 import 'package:andromarkets/presentation/screens/transaction_history/transaction_history_view.dart';
@@ -16,12 +16,11 @@ import 'package:andromarkets/presentation/viewmodel/navigation_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-import '../config/theme/app_colors.dart';
-import '../data/models/login_model.dart';
-import 'screens/funds/withdraw_view.dart';
-import 'screens/social_trading/account_list.dart';
-import 'screens/support/support_view.dart';
+import '../../config/theme/app_colors.dart';
+import '../../data/models/login_model.dart';
+import '../screens/funds/withdraw_view.dart';
+import '../screens/social_trading/account_list.dart';
+import '../screens/support/support_view.dart';
 
 
 class BottomNavigation extends StatefulWidget {
@@ -108,7 +107,6 @@ class _BottomNavigationState extends State<BottomNavigation>
       child: Scaffold(
         key: _scaffoldKey,
         drawer: SideNavBar(
-          // currentScreenId: 'menu',
           currentScreenId:_currentScreenId,
           onScreenSelected:_setScreen,
           navItems: NavigationViewModel().drawerNavItems,

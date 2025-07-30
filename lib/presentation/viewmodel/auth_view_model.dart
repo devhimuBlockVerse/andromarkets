@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/api_service.dart';
 import '../../data/models/login_model.dart';
-import '../bottom_navigation.dart';
+import '../widgets/bottom_navigation.dart';
 
 class AuthViewModel with ChangeNotifier {
   final ApiService _apiService = ApiService();
