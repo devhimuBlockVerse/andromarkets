@@ -23,7 +23,6 @@ import '../screens/funds/withdraw_view.dart';
 import '../screens/social_trading/account_list.dart';
 import '../screens/support/support_view.dart';
 
-
 class BottomNavigation extends StatefulWidget {
   final int initialIndex;
   final GoogleSignInAccount? googleUser;
@@ -47,7 +46,8 @@ class BottomNavigation extends StatefulWidget {
 
 
 
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
+  int _currentIndex = -1;
   late AnimationController _bounceController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -67,7 +67,7 @@ class BottomNavigation extends StatefulWidget {
   void initState() {
     super.initState();
     _bounceController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    _currentIndex = widget.initialIndex;
+    // _currentIndex = widget.initialIndex;
 
     final Map<String, Widget> screenData = {
       'dashboard':  DashboardView(user: widget.googleUser),
@@ -159,8 +159,7 @@ class BottomNavigation extends StatefulWidget {
     print('Setting screen to: $id, index: $index');
 
     if(index != -1){
-      // Close FAB menu if open
-      if (_isExpanded) {
+       if (_isExpanded) {
         _fabController.reverse();
       }
 
@@ -200,6 +199,7 @@ class BottomNavigation extends StatefulWidget {
                 children: _screenWidgets,
               ),
 
+
               if(_isExpanded)
                 Positioned.fill(
                   child: GestureDetector(
@@ -211,10 +211,7 @@ class BottomNavigation extends StatefulWidget {
                     },
                     child: Stack(
                       children: [
-                        ModalBarrier(
-                          dismissible: true,
-                          color: Colors.transparent,
-                        ),
+                        ModalBarrier(dismissible: true, color: Colors.transparent,),
                         BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                           child: Container(color: Colors.transparent),
@@ -289,10 +286,10 @@ class BottomNavigation extends StatefulWidget {
                   backgroundColor: AppColors.primaryButtonColor,
                   shape: const CircleBorder(),
                   elevation: 4,
-                  child: Icon(
-                     _isExpanded ? Icons.close : Icons.add,
+                  child: SvgPicture.asset(
+                     _isExpanded ? 'assets/icons/crossIcon.svg' : 'assets/icons/transaction.svg',
                     color: AppColors.black,
-                    size: screenWidth * 0.08,
+                    height: screenWidth * 0.08,
                   ),
                 ),
               ),

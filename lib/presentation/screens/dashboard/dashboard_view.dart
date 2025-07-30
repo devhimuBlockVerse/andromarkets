@@ -31,6 +31,7 @@ class _DashboardViewState extends State<DashboardView> {
   final List<ActionData> _actions = [
     ActionData('assets/icons/depositWallet.svg', 'Deposit'),
     ActionData('assets/icons/withDrawIcon.svg', 'Withdraw'),
+    // ActionData('assets/icons/verify.svg', 'Verify'),
     ActionData('assets/icons/verify.svg', 'Verify'),
   ];
 
@@ -427,6 +428,20 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         )),
 
+        SizedBox(height: size.height * 0.02),
+
+        Center(
+          child: PrimaryButton(
+            buttonText:'View All',
+            buttonType: ButtonType.tertiary,
+            onPressed: (){},
+            textStyle: AppTextStyle.label(context),
+            buttonWidth: size.width * 0.3,
+            buttonHeight: size.height * 0.040,
+          ),
+        ),
+
+        SizedBox(height: size.height * 0.02),
 
       ],
     );
@@ -511,6 +526,8 @@ class _DashboardViewState extends State<DashboardView> {
                 buttonType: ButtonType.primary,
                 onPressed: () {},
                 textStyle: AppTextStyle.bodySmall(context),
+                rightIcon: "assets/icons/rightArrowIcon.svg",
+                iconSize: size.height * 0.02,
               ),
             ],
           ),
