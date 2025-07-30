@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/presentation/screens/bonuses/bonus_view.dart';
 import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
@@ -39,7 +38,7 @@ class BottomNavigation extends StatefulWidget {
 }
 
 
-class _BottomNavigationState extends State<BottomNavigation> with TickerProviderStateMixin {
+ class _BottomNavigationState extends State<BottomNavigation> with TickerProviderStateMixin {
 
   bool _isExpanded = false;
   late AnimationController _fabController;
@@ -59,42 +58,48 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
     'assets/icons/tradeIcon.svg',
     'assets/icons/profileIcon.svg',
   ];
-  late Map<String, Widget Function()> _screens;
-  String _currentScreenId = 'dashboard';
+  late List<String> _screenIds;
+  late List<Widget> _screenWidgets;
+
+  int _currentScreenIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _bounceController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     _currentIndex = widget.initialIndex;
-    _currentScreenId = widget.initialScreenId;
-    _screens = {
-      'dashboard': () => DashboardView(user: widget.googleUser),
-      'wallet': () => const WalletView(),
-      'trade': () => const TradeView(),
-      'profile': () => const ProfileView(),
-      'funds.deposit': () => const DepositView(),
-      'funds.transfer': () => const TransferView(),
-      'funds.withdraw': () => const WithdrawView(),
-      'transaction_history': () => const TransactionHistoryView(),
-      'bonus': () => const BonusView(),
-      'social_trading.account': () => const AccountListView(),
-      'social_trading.leaderboard': () => const LeaderboardView(),
-      'pamm.accountList': () => const PammAccountList(),
-      'pamm.leaderboard': () => const PammAccountList(),
-      'partnership.dashboard': () => const PartnershipDashboard(),
-      'partnership.reports': () => const PartnershipReports(),
-      'support': () => const SupportView(),
-      'logout': () => const ProfileView(),
 
-
+    final Map<String, Widget> screenData = {
+      'dashboard':  DashboardView(user: widget.googleUser),
+      'wallet':  const WalletView(),
+      'trade':  const TradeView(),
+      'profile':  const ProfileView(),
+      'funds.deposit':  const DepositView(),
+      'funds.transfer':  const TransferView(),
+      'funds.withdraw':  const WithdrawView(),
+      'transaction_history':  const TransactionHistoryView(),
+      'bonus':  const BonusView(),
+      'social_trading.account':  const AccountListView(),
+      'social_trading.leaderboard':  const LeaderboardView(),
+      'pamm.accountList':  const PammAccountList(),
+      'pamm.leaderboard':  const PammAccountList(),
+      'partnership.dashboard':  const PartnershipDashboard(),
+      'partnership.reports':  const PartnershipReports(),
+      'support':  const SupportView(),
+      'logout':  const ProfileView(),
     };
+    _screenIds = screenData.keys.toList();
+    _screenWidgets = screenData.values.toList();
+
+    _currentScreenIndex = _screenIds.indexOf(widget.initialScreenId);
+    if(_currentScreenIndex == -1){
+      _currentScreenIndex = 0;
+    }
 
     _fabController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-
 
     _offset1 = Tween<Offset>(
       begin: const Offset(0, 0),
@@ -138,11 +143,36 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
     super.dispose();
   }
 
+  // void _setScreen(String id) {
+  //   final index = _screenIds.indexOf(id);
+  //   print('Setting screen to: $id, index: $index');
+  //   if(index != -1){
+  //     setState(() {
+  //       _currentScreenIndex = index;
+  //     });
+  //   }
+  // }
+
+
   void _setScreen(String id) {
-    if (_screens.containsKey(id)) {
+    final index = _screenIds.indexOf(id);
+    print('Setting screen to: $id, index: $index');
+
+    if(index != -1){
+      // Close FAB menu if open
+      if (_isExpanded) {
+        _fabController.reverse();
+      }
+
       setState(() {
-        _currentScreenId = id;
+        _currentScreenIndex = index;
+        _isExpanded = false;
+        if (id.startsWith('funds.')) {
+          _currentIndex = -1;
+        }
       });
+
+      _scaffoldKey.currentState?.closeDrawer();
     }
   }
 
@@ -157,40 +187,50 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
+        drawerEnableOpenDragGesture:  !_isExpanded,
         drawer: SideNavBar(
-          currentScreenId: _currentScreenId,
+          currentScreenId: _screenIds[_currentScreenIndex],
           onScreenSelected: _setScreen,
           navItems: NavigationViewModel().drawerNavItems,
         ),
-        body: _screens[_currentScreenId]?.call() ?? const SizedBox(),
+        body: Stack(
+            children:[
+              IndexedStack(
+                index: _currentScreenIndex,
+                children: _screenWidgets,
+              ),
+
+              if(_isExpanded)
+                Positioned.fill(
+                  child: GestureDetector(
+                    onTap: () {
+                      _fabController.reverse();
+                      setState(() {
+                        _isExpanded = false;
+                      });
+                    },
+                    child: Stack(
+                      children: [
+                        ModalBarrier(
+                          dismissible: true,
+                          color: Colors.transparent,
+                        ),
+                        BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                          child: Container(color: Colors.transparent),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ]
+        ),
+
 
         floatingActionButton: Stack(
           alignment: Alignment.bottomCenter,
           children: [
 
-            if(_isExpanded)
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: (){
-                    _fabController.reverse();
-                    setState(() {
-                      _isExpanded = false;
-                    });
-                  },
-                  child:Stack(
-                    children: [
-                      ModalBarrier(
-                        dismissible: true,
-                        color: Colors.transparent,
-                      ),
-                      BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                        child: Container(color: Colors.transparent),
-                      ),
-                    ],
-                  )
-                ),
-              ),
 
             SlideTransition(
               position: _offset1,
@@ -200,7 +240,7 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
                   icon: Icons.attach_money,
                   label: 'Deposit',
                   onPressed: () => _setScreen('funds.deposit'),
-                ),
+                 ),
               ),
             ),
 
@@ -212,7 +252,7 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
                   icon: Icons.sync_alt,
                   label: 'Transfer',
                   onPressed: () => _setScreen('funds.transfer'),
-                ),
+                 ),
               ),
             ),
 
@@ -224,6 +264,7 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
                   icon: Icons.arrow_upward,
                   label: 'Withdraw',
                   onPressed: () => _setScreen('funds.withdraw'),
+                  // routeName: 'withdraw',
                 ),
               ),
             ),
@@ -261,62 +302,66 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-        bottomNavigationBar: Container(
-          height: isPortrait ? screenHeight * 0.08 : screenHeight * 0.12,
-          color: const Color(0XFF262932),
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(4, (index) {
-              bool isSelected = index == 0 ? false : _currentIndex == index - 1;
+        bottomNavigationBar: IgnorePointer(
+          ignoring: _isExpanded,
+          child: Container(
+            height: isPortrait ? screenHeight * 0.08 : screenHeight * 0.12,
+            color: const Color(0XFF262932),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(4, (index) {
+                bool isSelected = index == 0 ? false : _currentIndex == index - 1;
 
-              return InkWell(
-                onTap: () {
-                  if (index == 0) {
-                    _scaffoldKey.currentState?.openDrawer();
-                  } else {
-                    final screenIds = ['wallet', 'trade', 'profile'];
-                    setState(() {
-                      _currentIndex = index - 1;
-                      _setScreen(screenIds[_currentIndex]);
-                      _bounceController.reset();
-                      _bounceController.forward();
-                    });
-                  }
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedBuilder(
-                      animation: _bounceController,
-                      builder: (context, child) {
-                        double scale =
-                        isSelected ? 1.3 + _bounceController.value * 0.1 : 1.0;
-                        return Transform.scale(scale: scale, child: child);
-                      },
-                      child: SvgPicture.asset(
-                        _imagePaths[index],
-                        height: screenHeight * 0.032,
-                        width: screenHeight * 0.032,
-                        color: isSelected
-                            ? AppColors.primaryColor
-                            : const Color(0XFF787A8D),
+                return InkWell(
+                  onTap: () {
+                    if(_isExpanded) return;
+                    if (index == 0) {
+                      _scaffoldKey.currentState?.openDrawer();
+                    } else {
+                      final screenIds = ['wallet', 'trade', 'profile'];
+                      setState(() {
+                        _currentIndex = index - 1;
+                        _setScreen(screenIds[_currentIndex]);
+                        _bounceController.reset();
+                        _bounceController.forward();
+                      });
+                    }
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AnimatedBuilder(
+                        animation: _bounceController,
+                        builder: (context, child) {
+                          double scale =
+                          isSelected ? 1.3 + _bounceController.value * 0.1 : 1.0;
+                          return Transform.scale(scale: scale, child: child);
+                        },
+                        child: SvgPicture.asset(
+                          _imagePaths[index],
+                          height: screenHeight * 0.032,
+                          width: screenHeight * 0.032,
+                          color: isSelected
+                              ? AppColors.primaryColor
+                              : const Color(0XFF787A8D),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: screenHeight * 0.005),
-                    Text(
-                      _labels[index],
-                      style: AppTextStyle.bodySmall2x(context).copyWith(
-                        fontSize: screenWidth * 0.03,
-                        color: isSelected
-                            ? AppColors.primaryColor
-                            : const Color(0XFF787A8D),
+                      SizedBox(height: screenHeight * 0.005),
+                      Text(
+                        _labels[index],
+                        style: AppTextStyle.bodySmall2x(context).copyWith(
+                          fontSize: screenWidth * 0.03,
+                          color: isSelected
+                              ? AppColors.primaryColor
+                              : const Color(0XFF787A8D),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    ],
+                  ),
+                );
+              }),
+            ),
           ),
         ),
       ),
@@ -328,38 +373,55 @@ class _BottomNavigationState extends State<BottomNavigation> with TickerProvider
     required IconData icon,
     required String label,
     required VoidCallback onPressed,
-  }){
+   }){
     final screenWidth = MediaQuery.of(context).size.width;
-    return GestureDetector(
-      onTap:()async{
-        await _fabController.reverse();
-        setState(() {
-          _isExpanded = false;
-        });
-        await Future.delayed(const Duration(milliseconds: 100));
-        onPressed();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration:  BoxDecoration(
-          color: const Color(0XFF2D303A),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2),blurRadius: 6),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: Colors.white,size: screenWidth * 0.045,),
-            SizedBox(width: screenWidth * 0.02),
-            Text(label, style: AppTextStyle.bodySmall2x(context).copyWith(color: Colors.white))
-          ],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(30),
+        // onTap:(){
+        //   print('_buildQuickOption tapped on $label');
+        //
+        //   setState(() {
+        //     _fabController.reverse();
+        //     _isExpanded = false;
+        //     _currentIndex = -1;
+        //   });
+        //
+        //   Future.delayed(const Duration(milliseconds: 200), () {
+        //     onPressed();
+        //   });
+        //
+        // },
+        onTap: () {
+           _fabController.reverse();
+          setState(() => _isExpanded = false);
+           Future.delayed(const Duration(milliseconds: 200), () {
+            onPressed();
+          });
+        },
+
+          child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration:  BoxDecoration(
+            color: const Color(0XFF2D303A),
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.2),blurRadius: 6),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: Colors.white,size: screenWidth * 0.045,),
+              SizedBox(width: screenWidth * 0.02),
+              Text(label, style: AppTextStyle.bodySmall2x(context).copyWith(color: Colors.white))
+            ],
+          ),
         ),
       ),
     );
   }
-
 
 }
