@@ -100,34 +100,46 @@ class _BottomNavigationState extends State<BottomNavigation>
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final isPortrait = mediaQuery.orientation == Orientation.portrait;
 
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
         drawer: SideNavBar(
-          currentScreenId:_currentScreenId,
-          onScreenSelected:_setScreen,
+          currentScreenId: _currentScreenId,
+          onScreenSelected: _setScreen,
           navItems: NavigationViewModel().drawerNavItems,
-
         ),
-        body:  _screens[_currentScreenId]?.call() ?? const SizedBox(),
+        body: _screens[_currentScreenId]?.call() ?? const SizedBox(),
 
         floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: screenHeight * 0.01),
-          child: FloatingActionButton(
-            onPressed: () {
-              print('Central Add Button Pressed!');
-            },
-            backgroundColor: AppColors.primaryButtonColor,
-            shape: CircleBorder(),
-            child: Icon(Icons.add, color: AppColors.black, size: screenWidth * 0.08),
+          padding: EdgeInsets.only(bottom: screenHeight * 0.009),
+          child: SizedBox(
+            height: screenWidth * 0.12,
+            width: screenWidth * 0.12,
+            child: FloatingActionButton(
+              onPressed: () {
+                print('Central Add Button Pressed!');
+              },
+              backgroundColor: AppColors.primaryButtonColor,
+              shape: const CircleBorder(),
+              elevation: 4,
+              child: Icon(
+                Icons.add,
+                color: AppColors.black,
+                size: screenWidth * 0.08,
+              ),
+            ),
           ),
         ),
+
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
         bottomNavigationBar: Container(
-          height: screenHeight * 0.08,
+          height: isPortrait ? screenHeight * 0.08 : screenHeight * 0.12,
           color: const Color(0XFF262932),
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
           child: Row(
@@ -140,7 +152,7 @@ class _BottomNavigationState extends State<BottomNavigation>
                   if (index == 0) {
                     _scaffoldKey.currentState?.openDrawer();
                   } else {
-                    final screenIds = ['wallet', 'trade','profile'];
+                    final screenIds = ['wallet', 'trade', 'profile'];
                     setState(() {
                       _currentIndex = index - 1;
                       _setScreen(screenIds[_currentIndex]);
@@ -161,17 +173,18 @@ class _BottomNavigationState extends State<BottomNavigation>
                       },
                       child: SvgPicture.asset(
                         _imagePaths[index],
-                        height: 25,
-                        width: 26,
+                        height: screenHeight * 0.032,
+                        width: screenHeight * 0.032,
                         color: isSelected
                             ? AppColors.primaryColor
                             : const Color(0XFF787A8D),
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: screenHeight * 0.005),
                     Text(
                       _labels[index],
                       style: AppTextStyle.bodySmall2x(context).copyWith(
+                        fontSize: screenWidth * 0.03,
                         color: isSelected
                             ? AppColors.primaryColor
                             : const Color(0XFF787A8D),
@@ -186,4 +199,6 @@ class _BottomNavigationState extends State<BottomNavigation>
       ),
     );
   }
+
+
 }

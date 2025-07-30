@@ -61,10 +61,12 @@ class _SideNavBarState extends State<SideNavBar> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final drawerWidth = size.width * 0.55;
+    final mediaQuery = MediaQuery.of(context);
+    final screenSize = mediaQuery.size;
+    final drawerWidth = screenSize.width * 0.55;
 
     return Drawer(
       width: drawerWidth,
@@ -75,32 +77,36 @@ class _SideNavBarState extends State<SideNavBar> {
       backgroundColor: AppColors.primaryBackgroundColor.withAlpha(490),
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+          padding: EdgeInsets.symmetric(horizontal: drawerWidth * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: size.height * 0.02),
+              SizedBox(height: screenSize.height * 0.03),
               Image.asset(
                 "assets/images/splashScreenLogo.png",
                 width: drawerWidth * 0.5,
               ),
-              SizedBox(height: size.height * 0.02),
+              SizedBox(height: screenSize.height * 0.03),
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
                   itemCount: widget.navItems.length,
+                  separatorBuilder: (_, index) {
+                    final item = widget.navItems[index];
+                    return item.isDivider
+                        ? Divider(
+                      height: screenSize.height * 0.015,
+                      color: Colors.white10,
+                    )
+                        : SizedBox(height: screenSize.height * 0.008);
+                  },
                   itemBuilder: (context, index) {
                     final item = widget.navItems[index];
 
-                    if (item.isDivider) {
-                      return Divider(
-                        height: size.height * 0.015,
-                        color: Colors.white10,
-                      );
-                    }
+                    if (item.isDivider) return const SizedBox();
 
                     final isExpanded = _currentlyExpandedParentId == item.id;
-                    final isSelected =widget.currentScreenId == item.id ||
-                        _currentlyExpandedParentId  == item.id ||
+                    final isSelected = widget.currentScreenId == item.id ||
+                        _currentlyExpandedParentId == item.id ||
                         (item.hasChildren && item.subItems!.any((sub) => sub.id == widget.currentScreenId));
 
                     return NavItemTile(
@@ -122,6 +128,7 @@ class _SideNavBarState extends State<SideNavBar> {
       ),
     );
   }
+
 }
 
 class NavItemTile extends StatelessWidget {
@@ -166,6 +173,7 @@ class NavItemTile extends StatelessWidget {
           ),
           trailing: item.hasChildren
               ? Icon(
+            size: drawerWidth * 0.12,
             isExpanded
                 ? Icons.keyboard_arrow_up
                 : Icons.keyboard_arrow_down,

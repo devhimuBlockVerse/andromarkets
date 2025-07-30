@@ -119,11 +119,12 @@ class _DashboardViewState extends State<DashboardView> {
                   ],
                 ),
 
-                // Notification Icon
+
                 SvgPicture.asset(
                   'assets/icons/notificationIcon.svg',
-                  width: 24,
-                  height: 24,
+                  width: screenWidth * 0.06,
+                  height: screenWidth * 0.06,
+                  // height: 24,
                   colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 ),
               ],
@@ -264,11 +265,13 @@ class _DashboardViewState extends State<DashboardView> {
               ),
             ],
           ),
-          Image.asset(
-            'assets/images/claimBonusImg.png',
-            height: size.height * 0.13,
-            fit: BoxFit.cover,
-            filterQuality: FilterQuality.low,
+          Flexible(
+            child: Image.asset(
+              'assets/images/claimBonusImg.png',
+              height: size.height * 0.13,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.low,
+            ),
           ),
         ],
       ),
