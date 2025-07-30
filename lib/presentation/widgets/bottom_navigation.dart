@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/presentation/screens/bonuses/bonus_view.dart';
 import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
@@ -36,11 +38,19 @@ class BottomNavigation extends StatefulWidget {
   State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
-class _BottomNavigationState extends State<BottomNavigation>
-    with TickerProviderStateMixin {
+
+class _BottomNavigationState extends State<BottomNavigation> with TickerProviderStateMixin {
+
+  bool _isExpanded = false;
+  late AnimationController _fabController;
+  late Animation<Offset> _offset1 , _offset2, _offset3;
+  late Animation<double> _opacity1 , _opacity2, _opacity3;
+
+
+
   int _currentIndex = 0;
   late AnimationController _bounceController;
-   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> _labels = ['Menu', 'Wallet', 'Account', 'Profile'];
   final List<String> _imagePaths = [
@@ -58,8 +68,6 @@ class _BottomNavigationState extends State<BottomNavigation>
     _bounceController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     _currentIndex = widget.initialIndex;
     _currentScreenId = widget.initialScreenId;
-
-
     _screens = {
       'dashboard': () => DashboardView(user: widget.googleUser),
       'wallet': () => const WalletView(),
@@ -81,11 +89,52 @@ class _BottomNavigationState extends State<BottomNavigation>
 
 
     };
+
+    _fabController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+
+    _offset1 = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, -1.5),
+    ).animate(CurvedAnimation(
+        parent: _fabController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+
+    _offset2 = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, -2.8),
+    ).animate(CurvedAnimation(
+      parent: _fabController,
+      curve: const Interval(0.1, 0.8, curve: Curves.easeOut),
+    ));
+
+    _offset3 = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, -4.0),
+    ).animate(CurvedAnimation(
+      parent: _fabController,
+      curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
+    ));
+
+    _opacity1 = _fabController.drive(
+      CurveTween(curve: const Interval(0.0, 0.6)),
+    );
+    _opacity2 = _fabController.drive(
+      CurveTween(curve: const Interval(0.1, 0.8)),
+    );
+    _opacity3 = _fabController.drive(
+      CurveTween(curve: const Interval(0.2, 1.0)),
+    );
    }
 
   @override
   void dispose() {
     _bounceController.dispose();
+    _fabController.dispose();
     super.dispose();
   }
 
@@ -115,25 +164,99 @@ class _BottomNavigationState extends State<BottomNavigation>
         ),
         body: _screens[_currentScreenId]?.call() ?? const SizedBox(),
 
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: screenHeight * 0.009),
-          child: SizedBox(
-            height: screenWidth * 0.12,
-            width: screenWidth * 0.12,
-            child: FloatingActionButton(
-              onPressed: () {
-                print('Central Add Button Pressed!');
-              },
-              backgroundColor: AppColors.primaryButtonColor,
-              shape: const CircleBorder(),
-              elevation: 4,
-              child: Icon(
-                Icons.add,
-                color: AppColors.black,
-                size: screenWidth * 0.08,
+        floatingActionButton: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+
+            if(_isExpanded)
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: (){
+                    _fabController.reverse();
+                    setState(() {
+                      _isExpanded = false;
+                    });
+                  },
+                  child:Stack(
+                    children: [
+                      ModalBarrier(
+                        dismissible: true,
+                        color: Colors.transparent,
+                      ),
+                      BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                        child: Container(color: Colors.transparent),
+                      ),
+                    ],
+                  )
+                ),
+              ),
+
+            SlideTransition(
+              position: _offset1,
+              child: FadeTransition(
+                opacity: _opacity1,
+                child: _buildQuickOption(
+                  icon: Icons.attach_money,
+                  label: 'Deposit',
+                  onPressed: () => _setScreen('funds.deposit'),
+                ),
               ),
             ),
-          ),
+
+            SlideTransition(
+              position: _offset2,
+              child: FadeTransition(
+                opacity: _opacity2,
+                child: _buildQuickOption(
+                  icon: Icons.sync_alt,
+                  label: 'Transfer',
+                  onPressed: () => _setScreen('funds.transfer'),
+                ),
+              ),
+            ),
+
+            SlideTransition(
+              position: _offset3,
+              child: FadeTransition(
+                opacity: _opacity3,
+                child: _buildQuickOption(
+                  icon: Icons.arrow_upward,
+                  label: 'Withdraw',
+                  onPressed: () => _setScreen('funds.withdraw'),
+                ),
+              ),
+            ),
+
+
+            Padding(
+              padding: EdgeInsets.only(bottom: screenHeight * 0.009),
+              child: SizedBox(
+                height: screenWidth * 0.12,
+                width: screenWidth * 0.12,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    if(_isExpanded){
+                      _fabController.reverse();
+                    }else{
+                      _fabController.forward();
+                    }
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  backgroundColor: AppColors.primaryButtonColor,
+                  shape: const CircleBorder(),
+                  elevation: 4,
+                  child: Icon(
+                     _isExpanded ? Icons.close : Icons.add,
+                    color: AppColors.black,
+                    size: screenWidth * 0.08,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -195,6 +318,44 @@ class _BottomNavigationState extends State<BottomNavigation>
               );
             }),
           ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildQuickOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }){
+    final screenWidth = MediaQuery.of(context).size.width;
+    return GestureDetector(
+      onTap:()async{
+        await _fabController.reverse();
+        setState(() {
+          _isExpanded = false;
+        });
+        await Future.delayed(const Duration(milliseconds: 100));
+        onPressed();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration:  BoxDecoration(
+          color: const Color(0XFF2D303A),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.2),blurRadius: 6),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white,size: screenWidth * 0.045,),
+            SizedBox(width: screenWidth * 0.02),
+            Text(label, style: AppTextStyle.bodySmall2x(context).copyWith(color: Colors.white))
+          ],
         ),
       ),
     );
