@@ -304,7 +304,7 @@ class BottomNavigation extends StatefulWidget {
           child: Container(
             height: isPortrait ? screenHeight * 0.08 : screenHeight * 0.12,
             color: const Color(0XFF262932),
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(4, (index) {
@@ -344,7 +344,7 @@ class BottomNavigation extends StatefulWidget {
                               : const Color(0XFF787A8D),
                         ),
                       ),
-                      SizedBox(height: screenHeight * 0.005),
+                      SizedBox(height: screenHeight * 0.004),
                       Text(
                         _labels[index],
                         style: AppTextStyle.bodySmall2x(context).copyWith(
