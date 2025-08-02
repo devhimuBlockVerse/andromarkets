@@ -24,11 +24,14 @@ class AccountView extends StatefulWidget {
   State<AccountView> createState() => _AccountViewState();
 }
 
-class _AccountViewState extends State<AccountView> {
+class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
   int _selectedActionIndex = -1;
   bool _isObscured = true;
   int? _expandedIndex;
+
+  late final TabController _tabController;
+  TextEditingController referredController = TextEditingController();
 
 
   final List<ActionData> _actions = [
@@ -36,7 +39,6 @@ class _AccountViewState extends State<AccountView> {
     ActionData('assets/icons/withDrawIcon.svg', 'Withdraw'),
      ActionData('assets/icons/verify.svg', 'Verify'),
   ];
-
   final List<String>_socialActions=[
     'assets/icons/facebook.svg',
     'assets/icons/twitter.svg',
@@ -45,7 +47,20 @@ class _AccountViewState extends State<AccountView> {
 
   ];
 
-  TextEditingController referredController = TextEditingController();
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -620,76 +635,156 @@ class _AccountViewState extends State<AccountView> {
     );
   }
 
-  
-  void _showExpandedSheet(BuildContext context , TradingAccount account){
+  void _showExpandedSheet(BuildContext context, TradingAccount account) {
     final size = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (_){
-          return DraggableScrollableSheet(
-            initialChildSize: 0.4,
-              maxChildSize: 0.8,
-              minChildSize: 0.3,
-              builder: (_, controller) => Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: size.width * 0.07,
-                  vertical: size.height * 0.02,
-                ),
+    // Sample data for tab 1 and tab 2 (replace with API data later)
+    final List<String> realAccountDetails = [
+      "Platform: ${account.platform}",
+      "Currency: ${account.currency}",
+      "Balance: ${account.balance}",
+    ];
 
-                decoration: ShapeDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment(0.62, 0.79),
-                    end: Alignment(-0.62, -0.79),
-                    colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
+    final List<String> demoAccountDetails = [
+      "Recent Transactions",
+      "- Deposit \$100",
+      "- Withdraw \$50",
+      "- Buy BTC",
+    ];
+
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.5,
+          maxChildSize: 0.85,
+          minChildSize: 0.3,
+          builder: (_, controller) => Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: size.width * 0.05,
+              vertical: size.height * 0.02,
+            ),
+            decoration: ShapeDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.62, 0.79),
+                end: Alignment(-0.62, -0.79),
+                colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
-                child: ListView(
-                  controller: controller,
-                  children: [
-                    Center(
-                      child: Container(
-                        height: 4,
-                        width: size.width * 0.4,
-                        margin: const EdgeInsets.only(bottom: 18),
-                         decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+              ),
+            ),
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Drag Handle
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: size.width * 0.3,
+                      margin: const EdgeInsets.only(bottom: 18),
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+                  ),
+
+                  // Header Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
+                      CircularIconButton(
+                        onTap: () {},
+                        icon: Icons.add,
+                        backgroundColor: AppColors.primaryColor,
+                      ),
+                    ],
+                  ),
 
 
+                  TabBar(
+                    labelColor: AppColors.primaryColor,
+                    unselectedLabelColor: Color(0XFFECF6FF),
+                    indicatorColor: AppColors.primaryColor,
+                    labelStyle: AppTextStyle.bodySmallMid(context),
+                    indicatorWeight: 0.02,
+                    dividerColor: AppColors.stroke,
+                     indicatorSize: TabBarIndicatorSize.tab,
+                     tabs: const [
+                      Tab(text: 'Real'),
+                      Tab(text: 'Demo'),
+                    ],
+                  ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  const SizedBox(height: 10),
+
+                  // Tab Views
+                  Expanded(
+                    child: TabBarView(
                       children: [
-                        Text("All Accounts", style: AppTextStyle.h3(context,color: AppColors.primaryText)),
-                        CircularIconButton(
-                          onTap: () {},
-                          icon: Icons.add,
-                          backgroundColor: AppColors.primaryColor,
+                        // Tab 1
+                        ListView.separated(
+                          controller: controller,
+                          physics: BouncingScrollPhysics(),
+                          itemCount: realAccountDetails.length,
+                          separatorBuilder: (context,index)=>Divider(color: AppColors.stroke),
+                          itemBuilder: (context,index){
+                            final text = realAccountDetails[index];
+                            final isHeader = index == 0;
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                              child: Text(text,
+                                  style: isHeader ? AppTextStyle.bodySmallMid(context,color: AppColors.primaryText)
+                                      : AppTextStyle.bodySmall(context).copyWith(
+                                color: isHeader ? AppColors.primaryColor : AppColors.primaryText
+                              )),
+                            );
+                            
+                          },
+
+                        ),
+
+                        // Tab 2
+                        ListView.separated(
+                          controller: controller,
+                          physics: BouncingScrollPhysics(),
+                          itemCount: realAccountDetails.length,
+                          separatorBuilder: (context,index)=>Divider(color: AppColors.stroke),
+                          itemBuilder: (context,index){
+                            final text = realAccountDetails[index];
+                            final isHeader = index == 0;
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                              child: Text(text,style: isHeader ? AppTextStyle.bodySmallMid(context,color: AppColors.primaryText)
+                                  : AppTextStyle.bodySmall(context).copyWith(
+                                  color: isHeader ? AppColors.primaryColor : AppColors.primaryText
+                              )),
+                            );
+
+                          },
+
                         ),
                       ],
                     ),
-
-                    Text("Currency: ${account.currency}", style: TextStyle(color: Colors.white70)),
-                    Text("Balance: ${account.balance}", style: TextStyle(color: Colors.white70)),
-
-                  ],
-                ),
-              )
-          );
-        }
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
+
 }
 
 ///Google Sign In Profile Code
