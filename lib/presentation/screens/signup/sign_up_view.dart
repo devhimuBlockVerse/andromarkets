@@ -10,7 +10,7 @@ import '../../../core/enums/button_type.dart';
 import '../../../core/services/google_sign_service.dart';
 import '../../components/buttonComponent.dart';
 import '../../components/textFieldComponent.dart';
-import '../dashboard/dashboard_view.dart';
+import '../account/account_view.dart';
 
 
 class SignUpView extends StatefulWidget {
@@ -57,7 +57,7 @@ class _SignUpViewState extends State<SignUpView> {
         const SnackBar(content: Text("Sign in failed")),
       );
     }else{
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardView(
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AccountView(
           user: user
       )));
     }

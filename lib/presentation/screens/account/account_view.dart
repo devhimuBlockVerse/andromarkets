@@ -16,17 +16,18 @@ import '../../components/copyLinkComponent.dart';
 import '../../components/gradientContainer.dart';
 import '../../components/tradingAccountCard.dart';
 
-class DashboardView extends StatefulWidget {
+class AccountView extends StatefulWidget {
   final GoogleSignInAccount? user;
-  const DashboardView({super.key,  this.user});
+  const AccountView({super.key,  this.user});
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
+  State<AccountView> createState() => _AccountViewState();
 }
 
-class _DashboardViewState extends State<DashboardView> {
+class _AccountViewState extends State<AccountView> {
 
   int _selectedActionIndex = -1;
+  bool _isObscured = true;
 
   final List<ActionData> _actions = [
     ActionData('assets/icons/depositWallet.svg', 'Deposit'),
@@ -133,53 +134,7 @@ class _DashboardViewState extends State<DashboardView> {
 
             SizedBox(height: screenHeight * 0.03),
 
-            Text(
-              'Total balance',
-              style: AppTextStyle.bodySmall2x(context,color: Colors.white60),
-            ),
-
-            SizedBox(height: screenHeight * 0.01),
-
-            Text(
-              "\$5,450.500",
-              style: AppTextStyle.h0(context,color: Colors.white),
-            ),
-
-            SizedBox(height: screenHeight * 0.03),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: PrimaryButton(
-                    buttonText:'Deposit',
-                    buttonType: ButtonType.primary,
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> DepositView()));
-                    },
-                    textStyle: AppTextStyle.buttonsMedium(context),
-                    leftIcon:  'assets/icons/depositAdd.svg',
-                    iconSize: screenWidth * 0.05,
-                    buttonWidth: screenWidth * 0.5,
-                  ),
-                ),
-
-                SizedBox(width: screenHeight * 0.03),
-
-                Expanded(
-                  child: PrimaryButton(
-                    buttonText:'Withdraw',
-                    buttonType: ButtonType.tertiary,
-                    onPressed: (){},
-                    textStyle: AppTextStyle.buttonsMedium(context),
-                    leftIcon:  'assets/icons/withDrawIcon.svg',
-                    iconSize: screenWidth * 0.06,
-                    buttonWidth: screenWidth * 0.5,
-                  ),
-                ),
-
-              ],
-            ),
+            _totalBalanceCard(),
 
             SizedBox(height: screenHeight * 0.05),
 
@@ -208,6 +163,89 @@ class _DashboardViewState extends State<DashboardView> {
         ),
       )
     );
+  }
+
+  Widget _totalBalanceCard(){
+    final screenWidth = MediaQuery.of(context).size.width * 1;
+    final screenHeight = MediaQuery.of(context).size.height * 1;
+    double balance = 5450.500;
+    return GradientBoxContainer(
+      width: screenWidth,
+      borderSide:BorderSide(width: 0.8,strokeAlign: BorderSide.strokeAlignOutside,color: AppColors.stroke),
+      child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             children: [
+              Text(
+                'Total balance',
+                style: AppTextStyle.bodySmall2x(context,color: Colors.white60),
+              ),
+              IconButton(
+                iconSize: screenWidth * 0.06,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: AppColors.primaryText,
+                  )
+              ),
+
+            ],
+          ),
+           SizedBox(height: screenHeight * 0.001),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                _isObscured ? "*******" : "\$${balance.toStringAsFixed(3)}",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyle.h1(context,color: Colors.white),
+              ),
+              IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () => setState(() => _isObscured = !_isObscured),
+                  icon: Icon(_isObscured ? Icons.visibility_off_outlined : Icons.visibility,
+                    color: AppColors.primaryText,
+                  )
+              ),
+            ],
+          ),
+
+          SizedBox(height: screenHeight * 0.015),
+
+          PrimaryButton(
+            buttonText:'Deposit',
+            buttonType: ButtonType.primary,
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> DepositView()));
+            },
+            textStyle: AppTextStyle.label(context),
+            leftIcon:  'assets/icons/depositAdd.svg',
+            iconSize: screenWidth * 0.04,
+            buttonHeight: screenHeight * 0.05,
+          ),
+          SizedBox(height: screenHeight * 0.015),
+
+          PrimaryButton(
+              buttonText:'Withdraw',
+              buttonType: ButtonType.tertiary,
+              onPressed: (){},
+              textStyle: AppTextStyle.label(context),
+              leftIcon:  'assets/icons/rightArrowIcon.svg',
+              iconColor: AppColors.gray,
+              iconSize: screenWidth * 0.05,
+              buttonHeight: screenHeight * 0.05
+          ),
+          SizedBox(height: screenHeight * 0.005),
+        ],
+      ),
+    );
+
   }
 
   Widget _claimBonus() {

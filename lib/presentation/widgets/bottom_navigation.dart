@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/presentation/screens/bonuses/bonus_view.dart';
-import 'package:andromarkets/presentation/screens/dashboard/dashboard_view.dart';
 import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:andromarkets/presentation/screens/funds/transfer_view.dart';
 import 'package:andromarkets/presentation/screens/pamm/pamm_account_list.dart';
@@ -19,6 +18,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../config/theme/app_colors.dart';
 import '../../data/models/login_model.dart';
+import '../screens/account/account_view.dart';
+import '../screens/funds/funds_screen_view.dart';
 import '../screens/funds/withdraw_view.dart';
 import '../screens/social_trading/account_list.dart';
 import '../screens/support/support_view.dart';
@@ -30,7 +31,7 @@ class BottomNavigation extends StatefulWidget {
   final String initialScreenId;
 
 
-  const BottomNavigation({super.key,  this.initialIndex = 0, this.apiUser,this.googleUser,  this.initialScreenId = 'dashboard'});
+  const BottomNavigation({super.key,  this.initialIndex = 0, this.apiUser,this.googleUser,  this.initialScreenId = 'account'});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
@@ -40,22 +41,17 @@ class BottomNavigation extends StatefulWidget {
  class _BottomNavigationState extends State<BottomNavigation> with TickerProviderStateMixin {
 
   bool _isExpanded = false;
-  late AnimationController _fabController;
-  late Animation<Offset> _offset1 , _offset2, _offset3;
-  late Animation<double> _opacity1 , _opacity2, _opacity3;
 
-
-
-  // int _currentIndex = 0;
   int _currentIndex = -1;
   late AnimationController _bounceController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final List<String> _labels = ['Menu', 'Wallet', 'Account', 'Profile'];
+  final List<String> _labels = ['Menu', 'Trade', 'Funds', 'Wallet', 'History'];
   final List<String> _imagePaths = [
     'assets/icons/menuIcon.svg',
-    'assets/icons/walletIcon.svg',
     'assets/icons/tradeIcon.svg',
+    'assets/icons/fundsIcon.svg',
+    'assets/icons/walletIcon.svg',
     'assets/icons/profileIcon.svg',
   ];
   late List<String> _screenIds;
@@ -67,12 +63,12 @@ class BottomNavigation extends StatefulWidget {
   void initState() {
     super.initState();
     _bounceController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    // _currentIndex = widget.initialIndex;
 
     final Map<String, Widget> screenData = {
-      'dashboard':  DashboardView(user: widget.googleUser),
+      'account':  AccountView(user: widget.googleUser),
       'wallet':  const WalletView(),
       'trade':  const TradeView(),
+      'funds':  const FundsScreenView(),
       'profile':  const ProfileView(),
       'funds.deposit':  const DepositView(),
       'funds.transfer':  const TransferView(),
@@ -96,62 +92,13 @@ class BottomNavigation extends StatefulWidget {
       _currentScreenIndex = 0;
     }
 
-    _fabController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _offset1 = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, -1.5),
-    ).animate(CurvedAnimation(
-        parent: _fabController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
-
-    _offset2 = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, -2.8),
-    ).animate(CurvedAnimation(
-      parent: _fabController,
-      curve: const Interval(0.1, 0.8, curve: Curves.easeOut),
-    ));
-
-    _offset3 = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, -4.0),
-    ).animate(CurvedAnimation(
-      parent: _fabController,
-      curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
-    ));
-
-    _opacity1 = _fabController.drive(
-      CurveTween(curve: const Interval(0.0, 0.6)),
-    );
-    _opacity2 = _fabController.drive(
-      CurveTween(curve: const Interval(0.1, 0.8)),
-    );
-    _opacity3 = _fabController.drive(
-      CurveTween(curve: const Interval(0.2, 1.0)),
-    );
    }
 
   @override
   void dispose() {
     _bounceController.dispose();
-    _fabController.dispose();
-    super.dispose();
+     super.dispose();
   }
-
-  // void _setScreen(String id) {
-  //   final index = _screenIds.indexOf(id);
-  //   print('Setting screen to: $id, index: $index');
-  //   if(index != -1){
-  //     setState(() {
-  //       _currentScreenIndex = index;
-  //     });
-  //   }
-  // }
 
 
   void _setScreen(String id) {
@@ -159,9 +106,6 @@ class BottomNavigation extends StatefulWidget {
     print('Setting screen to: $id, index: $index');
 
     if(index != -1){
-       if (_isExpanded) {
-        _fabController.reverse();
-      }
 
       setState(() {
         _currentScreenIndex = index;
@@ -192,122 +136,19 @@ class BottomNavigation extends StatefulWidget {
           onScreenSelected: _setScreen,
           navItems: NavigationViewModel().drawerNavItems,
         ),
-        body: Stack(
-            children:[
-              IndexedStack(
-                index: _currentScreenIndex,
-                children: _screenWidgets,
-              ),
-
-
-              if(_isExpanded)
-                Positioned.fill(
-                  child: GestureDetector(
-                    onTap: () {
-                      _fabController.reverse();
-                      setState(() {
-                        _isExpanded = false;
-                      });
-                    },
-                    child: Stack(
-                      children: [
-                        ModalBarrier(dismissible: true, color: Colors.transparent,),
-                        BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                          child: Container(color: Colors.transparent),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ]
+         body: IndexedStack(
+          index: _currentScreenIndex,
+          children: _screenWidgets,
         ),
-
-
-        floatingActionButton: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-
-
-            SlideTransition(
-              position: _offset1,
-              child: FadeTransition(
-                opacity: _opacity1,
-                child: _buildQuickOption(
-                  icon: Icons.attach_money,
-                  label: 'Deposit',
-                  onPressed: () => _setScreen('funds.deposit'),
-                 ),
-              ),
-            ),
-
-            SlideTransition(
-              position: _offset2,
-              child: FadeTransition(
-                opacity: _opacity2,
-                child: _buildQuickOption(
-                  icon: Icons.sync_alt,
-                  label: 'Transfer',
-                  onPressed: () => _setScreen('funds.transfer'),
-                 ),
-              ),
-            ),
-
-            SlideTransition(
-              position: _offset3,
-              child: FadeTransition(
-                opacity: _opacity3,
-                child: _buildQuickOption(
-                  icon: Icons.arrow_upward,
-                  label: 'Withdraw',
-                  onPressed: () => _setScreen('funds.withdraw'),
-                  // routeName: 'withdraw',
-                ),
-              ),
-            ),
-
-
-            Padding(
-              padding: EdgeInsets.only(bottom: screenHeight * 0.009),
-              child: SizedBox(
-                height: screenWidth * 0.12,
-                width: screenWidth * 0.12,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    if(_isExpanded){
-                      _fabController.reverse();
-                    }else{
-                      _fabController.forward();
-                    }
-                    setState(() {
-                      _isExpanded = !_isExpanded;
-                    });
-                  },
-                  backgroundColor: AppColors.primaryButtonColor,
-                  shape: const CircleBorder(),
-                  elevation: 4,
-                  child: SvgPicture.asset(
-                     _isExpanded ? 'assets/icons/crossIcon.svg' : 'assets/icons/transaction.svg',
-                    color: AppColors.black,
-                    height: screenWidth * 0.08,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
         bottomNavigationBar: IgnorePointer(
           ignoring: _isExpanded,
           child: Container(
             height: isPortrait ? screenHeight * 0.08 : screenHeight * 0.12,
             color: const Color(0XFF262932),
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(4, (index) {
+              children: List.generate(5, (index) {
                 bool isSelected = index == 0 ? false : _currentIndex == index - 1;
 
                 return InkWell(
@@ -316,7 +157,7 @@ class BottomNavigation extends StatefulWidget {
                     if (index == 0) {
                       _scaffoldKey.currentState?.openDrawer();
                     } else {
-                      final screenIds = ['wallet', 'trade', 'profile'];
+                      final screenIds = ['trade', 'funds', 'wallet', 'transaction_history'];
                       setState(() {
                         _currentIndex = index - 1;
                         _setScreen(screenIds[_currentIndex]);
@@ -359,62 +200,6 @@ class BottomNavigation extends StatefulWidget {
                 );
               }),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildQuickOption({
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-   }){
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(30),
-        // onTap:(){
-        //   print('_buildQuickOption tapped on $label');
-        //
-        //   setState(() {
-        //     _fabController.reverse();
-        //     _isExpanded = false;
-        //     _currentIndex = -1;
-        //   });
-        //
-        //   Future.delayed(const Duration(milliseconds: 200), () {
-        //     onPressed();
-        //   });
-        //
-        // },
-        onTap: () {
-           _fabController.reverse();
-          setState(() => _isExpanded = false);
-           Future.delayed(const Duration(milliseconds: 200), () {
-            onPressed();
-          });
-        },
-
-          child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration:  BoxDecoration(
-            color: const Color(0XFF2D303A),
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.2),blurRadius: 6),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: Colors.white,size: screenWidth * 0.045,),
-              SizedBox(width: screenWidth * 0.02),
-              Text(label, style: AppTextStyle.bodySmall2x(context).copyWith(color: Colors.white))
-            ],
           ),
         ),
       ),

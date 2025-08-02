@@ -9,6 +9,7 @@ class AppColors {
   static Color descriptions = Color(0xFFFFFFFF).withOpacity(0.8);
 
   static const Color black = Color(0xFF191919);
+  static const Color stroke = Color(0xFF212833);
 
   static const Color redErrorCall = Color(0xFFFF3E70);
 
@@ -66,6 +67,8 @@ class AppColors {
   static Color secondaryButtonColor = Color(0xFFFFFFFF).withOpacity(0.1);
 
   static const Color primaryBackgroundColor= Color(0xFF16171D);
+  static const Color masterBg= Color(0xFF0D1117);
+
 
 }
 

@@ -13,9 +13,7 @@ import '../../../core/services/google_sign_service.dart';
 import '../../widgets/bottom_navigation.dart';
 import '../../components/textFieldComponent.dart';
 import '../../viewmodel/dashboard_view_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../dashboard/dashboard_view.dart';
 
 
 class SignInView extends StatefulWidget {

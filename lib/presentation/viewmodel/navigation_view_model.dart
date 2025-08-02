@@ -12,13 +12,12 @@ import 'package:andromarkets/presentation/screens/transaction_history/transactio
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../data/models/nav_items.dart';
-import '../screens/dashboard/dashboard_view.dart';
-import '../screens/partnership/partnership_dashboard_view.dart';
+import '../screens/account/account_view.dart';
+ import '../screens/partnership/partnership_dashboard_view.dart';
 import '../screens/partnership/partnership_report_view.dart';
-import '../widgets/side_navigation.dart';
 
 class NavigationViewModel extends ChangeNotifier {
-  String _currentScreenId = 'dashboard';
+  String _currentScreenId = 'account';
   String get currentScreenId => _currentScreenId;
   late final GoogleSignInAccount? user;
 
@@ -44,10 +43,10 @@ class NavigationViewModel extends ChangeNotifier {
 
     NavItem.divider(),
     NavItem(
-      id: 'dashboard',
-      title: 'Dashboard',
+      id: 'account',
+      title: 'Account',
       iconPath: 'assets/icons/dashboardIcon.svg',
-      screenBuilder: (context) => const DashboardView(),
+      screenBuilder: (context) => const AccountView(),
 
     ),
 
