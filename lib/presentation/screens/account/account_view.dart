@@ -469,10 +469,7 @@ class _AccountViewState extends State<AccountView> {
               onTransfer: (){},
               isObscured: _isObscured,
               onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
-              isExpanded: _expandedIndex == index,
-              onToggleExpand: ()=> setState(() {
-                _expandedIndex = _expandedIndex == index ? null : index;
-              }),
+              onExpandTap: ()=>  _showExpandedSheet(context, acc),
             ),
           );
         }),
@@ -623,6 +620,76 @@ class _AccountViewState extends State<AccountView> {
     );
   }
 
+  
+  void _showExpandedSheet(BuildContext context , TradingAccount account){
+    final size = MediaQuery.of(context).size;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (_){
+          return DraggableScrollableSheet(
+            initialChildSize: 0.4,
+              maxChildSize: 0.8,
+              minChildSize: 0.3,
+              builder: (_, controller) => Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.07,
+                  vertical: size.height * 0.02,
+                ),
+
+                decoration: ShapeDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(0.62, 0.79),
+                    end: Alignment(-0.62, -0.79),
+                    colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                ),
+                child: ListView(
+                  controller: controller,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 4,
+                        width: size.width * 0.4,
+                        margin: const EdgeInsets.only(bottom: 18),
+                         decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+
+
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("All Accounts", style: AppTextStyle.h3(context,color: AppColors.primaryText)),
+                        CircularIconButton(
+                          onTap: () {},
+                          icon: Icons.add,
+                          backgroundColor: AppColors.primaryColor,
+                        ),
+                      ],
+                    ),
+
+                    Text("Currency: ${account.currency}", style: TextStyle(color: Colors.white70)),
+                    Text("Balance: ${account.balance}", style: TextStyle(color: Colors.white70)),
+
+                  ],
+                ),
+              )
+          );
+        }
+    );
+  }
 }
 
 ///Google Sign In Profile Code
@@ -700,3 +767,5 @@ class _AccountViewState extends State<AccountView> {
 // }
 
 
+
+ 

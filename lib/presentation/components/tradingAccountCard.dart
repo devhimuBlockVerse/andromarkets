@@ -15,8 +15,7 @@ class TradingAccountCard extends StatelessWidget {
   final VoidCallback? onTransfer;
   final bool isObscured;
   final VoidCallback onToggleVisibility;
-  final VoidCallback onToggleExpand;
-  final bool isExpanded;
+  final VoidCallback onExpandTap;
 
 
   const TradingAccountCard({
@@ -24,9 +23,10 @@ class TradingAccountCard extends StatelessWidget {
     required this.account,
     required this.onTrade,
     required this.onDeposit,
-    this.onTransfer, required this.isObscured,
+    this.onTransfer,
+    required this.isObscured,
     required this.onToggleVisibility,
-    required this.onToggleExpand, required this.isExpanded,
+    required this.onExpandTap,
    });
 
   @override
@@ -81,9 +81,9 @@ class TradingAccountCard extends StatelessWidget {
                       iconSize: size.height * 0.038,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      onPressed:onToggleExpand,
+                      onPressed:onExpandTap,
                       icon: Icon(
-                        isExpanded ? Icons.keyboard_arrow_up_outlined  : Icons.keyboard_arrow_down_outlined,
+                        Icons.keyboard_arrow_down_outlined,
                         color: AppColors.primaryText,
                       )
                   ),
