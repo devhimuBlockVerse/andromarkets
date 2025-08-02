@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor:AppColors.primaryColor),
         ),
-        home: const SplashView()
-        // home: const BottomNavigation()
+        // home: const SplashView()
+        home: const BottomNavigation()
 
       ),
     );

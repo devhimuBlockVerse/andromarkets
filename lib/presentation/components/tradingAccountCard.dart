@@ -6,6 +6,7 @@ import '../../core/enums/button_type.dart';
 import '../../data/models/trading_account.dart';
 import 'buttonComponent.dart';
 import 'gradientContainer.dart';
+
 class TradingAccountCard extends StatelessWidget {
 
   final TradingAccount account;
@@ -14,6 +15,8 @@ class TradingAccountCard extends StatelessWidget {
   final VoidCallback? onTransfer;
   final bool isObscured;
   final VoidCallback onToggleVisibility;
+  final VoidCallback onToggleExpand;
+  final bool isExpanded;
 
 
   const TradingAccountCard({
@@ -21,7 +24,9 @@ class TradingAccountCard extends StatelessWidget {
     required this.account,
     required this.onTrade,
     required this.onDeposit,
-    this.onTransfer, required this.isObscured, required this.onToggleVisibility,
+    this.onTransfer, required this.isObscured,
+    required this.onToggleVisibility,
+    required this.onToggleExpand, required this.isExpanded,
    });
 
   @override
@@ -61,6 +66,8 @@ class TradingAccountCard extends StatelessWidget {
                 ),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (account.isReal || account.isDemo)
                     _tag(context, account.isReal ? "Real" : "Demo", account.borderColor),
@@ -70,7 +77,18 @@ class TradingAccountCard extends StatelessWidget {
                       account.platform,
                        Color(0XFF8B949E)
                   ),
-                ],
+                   IconButton(
+                      iconSize: size.height * 0.038,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed:onToggleExpand,
+                      icon: Icon(
+                        isExpanded ? Icons.keyboard_arrow_up_outlined  : Icons.keyboard_arrow_down_outlined,
+                        color: AppColors.primaryText,
+                      )
+                  ),
+
+                 ],
               ),
             ],
           ),

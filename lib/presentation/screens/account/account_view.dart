@@ -28,6 +28,8 @@ class _AccountViewState extends State<AccountView> {
 
   int _selectedActionIndex = -1;
   bool _isObscured = true;
+  int? _expandedIndex;
+
 
   final List<ActionData> _actions = [
     ActionData('assets/icons/depositWallet.svg', 'Deposit'),
@@ -153,9 +155,9 @@ class _AccountViewState extends State<AccountView> {
 
             SizedBox(height: screenHeight * 0.05),
 
-            //
             // _bonusSection(),
 
+            _openPositions(),
             SizedBox(height: screenHeight * 0.05),
 
           ],
@@ -186,7 +188,7 @@ class _AccountViewState extends State<AccountView> {
                 style: AppTextStyle.bodySmall2x(context,color: Colors.white60,lineHeight: 0.8)
               ),
               IconButton(
-                iconSize: screenWidth * 0.05,
+                iconSize: screenWidth * 0.06,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {},
@@ -455,17 +457,26 @@ class _AccountViewState extends State<AccountView> {
 
         SizedBox(height: size.height * 0.04),
 
-        ...accounts.map((acc) => Padding(
-          padding: EdgeInsets.only(bottom: size.height * 0.02),
-          child: TradingAccountCard(
-            account: acc,
-            onTrade: (){},
-            onDeposit: (){},
-            onTransfer: (){},
-            isObscured: _isObscured,
-            onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
-           ),
-        )),
+        ...accounts.asMap().entries.map((entry){
+          int index = entry.key;
+          TradingAccount acc = entry.value;
+          return  Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.02),
+            child: TradingAccountCard(
+              account: acc,
+              onTrade: (){},
+              onDeposit: (){},
+              onTransfer: (){},
+              isObscured: _isObscured,
+              onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
+              isExpanded: _expandedIndex == index,
+              onToggleExpand: ()=> setState(() {
+                _expandedIndex = _expandedIndex == index ? null : index;
+              }),
+            ),
+          );
+        }),
+
 
 
       ],
@@ -573,6 +584,44 @@ class _AccountViewState extends State<AccountView> {
     );
   }
 
+  Widget _openPositions(){
+    final size = MediaQuery.of(context).size;
+
+
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Open Positions",
+              style: AppTextStyle.h3(context,color: AppColors.primaryText),
+            ),
+            IconButton(
+                iconSize: size.width * 0.06,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {},
+                icon: Icon(
+                  Icons.more_vert,
+                  color: AppColors.primaryText,
+                )
+            ),
+
+          ],
+        ),
+
+        SizedBox(height: size.height * 0.04),
+
+
+
+
+      ],
+    );
+  }
 
 }
 
