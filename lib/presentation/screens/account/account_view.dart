@@ -32,8 +32,7 @@ class _AccountViewState extends State<AccountView> {
   final List<ActionData> _actions = [
     ActionData('assets/icons/depositWallet.svg', 'Deposit'),
     ActionData('assets/icons/withDrawIcon.svg', 'Withdraw'),
-    // ActionData('assets/icons/verify.svg', 'Verify'),
-    ActionData('assets/icons/verify.svg', 'Verify'),
+     ActionData('assets/icons/verify.svg', 'Verify'),
   ];
 
   final List<String>_socialActions=[
@@ -140,13 +139,13 @@ class _AccountViewState extends State<AccountView> {
 
             _claimBonus(),
 
-            SizedBox(height: screenHeight * 0.05),
-
-            _quickAction(),
-
-            SizedBox(height: screenHeight * 0.05),
-
-            _referralSection(),
+            // SizedBox(height: screenHeight * 0.05),
+            //
+            // _quickAction(),
+            //
+            // SizedBox(height: screenHeight * 0.05),
+            //
+            // _referralSection(),
 
             SizedBox(height: screenHeight * 0.05),
 
@@ -154,8 +153,8 @@ class _AccountViewState extends State<AccountView> {
 
             SizedBox(height: screenHeight * 0.05),
 
-
-            _bonusSection(),
+            //
+            // _bonusSection(),
 
             SizedBox(height: screenHeight * 0.05),
 
@@ -171,7 +170,11 @@ class _AccountViewState extends State<AccountView> {
     double balance = 5450.500;
     return GradientBoxContainer(
       width: screenWidth,
-      borderSide:BorderSide(width: 0.8,strokeAlign: BorderSide.strokeAlignOutside,color: AppColors.stroke),
+      borderSide:BorderSide(
+          width: 1,
+          strokeAlign: BorderSide.strokeAlignOutside,
+          color: AppColors.stroke
+      ),
       child: Column(
          crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -180,10 +183,10 @@ class _AccountViewState extends State<AccountView> {
              children: [
               Text(
                 'Total balance',
-                style: AppTextStyle.bodySmall2x(context,color: Colors.white60),
+                style: AppTextStyle.bodySmall2x(context,color: Colors.white60,lineHeight: 0.8)
               ),
               IconButton(
-                iconSize: screenWidth * 0.06,
+                iconSize: screenWidth * 0.05,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {},
@@ -201,9 +204,8 @@ class _AccountViewState extends State<AccountView> {
             children: [
               Text(
                 _isObscured ? "*******" : "\$${balance.toStringAsFixed(3)}",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyle.h1(context,color: Colors.white),
+                 overflow: TextOverflow.ellipsis,
+                style: AppTextStyle.h1(context,color: Colors.white,lineHeight: 1.0),
               ),
               IconButton(
                   padding: EdgeInsets.zero,
@@ -216,7 +218,7 @@ class _AccountViewState extends State<AccountView> {
             ],
           ),
 
-          SizedBox(height: screenHeight * 0.015),
+           SizedBox(height: 6),
 
           PrimaryButton(
             buttonText:'Deposit',
@@ -241,7 +243,7 @@ class _AccountViewState extends State<AccountView> {
               iconSize: screenWidth * 0.05,
               buttonHeight: screenHeight * 0.05
           ),
-          SizedBox(height: screenHeight * 0.005),
+
         ],
       ),
     );
@@ -420,16 +422,16 @@ class _AccountViewState extends State<AccountView> {
         iconColor: AppColors.primaryColor,
         borderColor: AppColors.primaryColor,
       ),
-      TradingAccount(
-        name: "Ultra Low",
-        currency: "USD",
-        balance: "\$100.000",
-        isReal: false,
-        isDemo: true,
-        platform: "MT5",
-        iconColor: Color(0XFF8B949E),
-        borderColor: Color(0XFF8B949E),
-      ),
+      // TradingAccount(
+      //   name: "Ultra Low",
+      //   currency: "USD",
+      //   balance: "\$100.000",
+      //   isReal: false,
+      //   isDemo: true,
+      //   platform: "MT5",
+      //   iconColor: Color(0XFF8B949E),
+      //   borderColor: Color(0XFF8B949E),
+      // ),
     ];
 
     return Column(
@@ -443,12 +445,10 @@ class _AccountViewState extends State<AccountView> {
               style: AppTextStyle.h3(context,color: AppColors.primaryText),
             ),
             CircularIconButton(
-              onTap: () {
-
-              },
+              onTap: () {},
               icon: Icons.add,
               backgroundColor: AppColors.primaryColor,
-            )
+            ),
 
           ],
         ),
@@ -462,24 +462,11 @@ class _AccountViewState extends State<AccountView> {
             onTrade: (){},
             onDeposit: (){},
             onTransfer: (){},
-
-          ),
+            isObscured: _isObscured,
+            onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
+           ),
         )),
 
-        SizedBox(height: size.height * 0.02),
-
-        Center(
-          child: PrimaryButton(
-            buttonText:'View All',
-            buttonType: ButtonType.tertiary,
-            onPressed: (){},
-            textStyle: AppTextStyle.label(context),
-            buttonWidth: size.width * 0.3,
-            buttonHeight: size.height * 0.040,
-          ),
-        ),
-
-        SizedBox(height: size.height * 0.02),
 
       ],
     );

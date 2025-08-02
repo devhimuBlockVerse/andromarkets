@@ -19,5 +19,5 @@ class TradingAccount {
     required this.platform,
     required this.iconColor,
     required this.borderColor,
-  });
+   });
 }

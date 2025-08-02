@@ -29,23 +29,22 @@ class BottomNavigation extends StatefulWidget {
   final GoogleSignInAccount? googleUser;
   final LoginResponseModel? apiUser;
   final String initialScreenId;
-
-
   const BottomNavigation({super.key,  this.initialIndex = 0, this.apiUser,this.googleUser,  this.initialScreenId = 'account'});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
-
  class _BottomNavigationState extends State<BottomNavigation> with TickerProviderStateMixin {
 
   bool _isExpanded = false;
-
   int _currentIndex = -1;
+  late List<String> _screenIds;
+  late List<Widget> _screenWidgets;
+  int _currentScreenIndex = 0;
+
   late AnimationController _bounceController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final List<String> _labels = ['Menu', 'Trade', 'Funds', 'Wallet', 'History'];
   final List<String> _imagePaths = [
     'assets/icons/menuIcon.svg',
@@ -54,10 +53,6 @@ class BottomNavigation extends StatefulWidget {
     'assets/icons/walletIcon.svg',
     'assets/icons/profileIcon.svg',
   ];
-  late List<String> _screenIds;
-  late List<Widget> _screenWidgets;
-
-  int _currentScreenIndex = 0;
 
   @override
   void initState() {
@@ -90,6 +85,13 @@ class BottomNavigation extends StatefulWidget {
     _currentScreenIndex = _screenIds.indexOf(widget.initialScreenId);
     if(_currentScreenIndex == -1){
       _currentScreenIndex = 0;
+    }else {
+      final screenIds = ['trade', 'funds', 'wallet', 'transaction_history'];
+      final id = _screenIds[_currentScreenIndex];
+      final bottomNavIndex = screenIds.indexOf(id);
+      if (bottomNavIndex != -1) {
+        _currentIndex = bottomNavIndex;
+      }
     }
 
    }
@@ -100,25 +102,20 @@ class BottomNavigation extends StatefulWidget {
      super.dispose();
   }
 
-
   void _setScreen(String id) {
     final index = _screenIds.indexOf(id);
-    print('Setting screen to: $id, index: $index');
-
-    if(index != -1){
-
+    if (index != -1) {
       setState(() {
         _currentScreenIndex = index;
         _isExpanded = false;
-        if (id.startsWith('funds.')) {
-          _currentIndex = -1;
-        }
+        final screenIds = ['trade', 'funds', 'wallet', 'transaction_history'];
+        final bottomNavIndex = screenIds.indexOf(id);
+        _currentIndex = bottomNavIndex;
       });
 
       _scaffoldKey.currentState?.closeDrawer();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +146,7 @@ class BottomNavigation extends StatefulWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(5, (index) {
-                bool isSelected = index == 0 ? false : _currentIndex == index - 1;
+                 bool isSelected = index > 0 && _currentIndex == index - 1;
 
                 return InkWell(
                   onTap: () {
@@ -157,7 +154,7 @@ class BottomNavigation extends StatefulWidget {
                     if (index == 0) {
                       _scaffoldKey.currentState?.openDrawer();
                     } else {
-                      final screenIds = ['trade', 'funds', 'wallet', 'transaction_history'];
+                      final screenIds = ['trade', 'funds', 'wallet', 'transaction_history'] ;
                       setState(() {
                         _currentIndex = index - 1;
                         _setScreen(screenIds[_currentIndex]);
@@ -178,8 +175,8 @@ class BottomNavigation extends StatefulWidget {
                         },
                         child: SvgPicture.asset(
                           _imagePaths[index],
-                          height: screenHeight * 0.032,
-                          width: screenHeight * 0.032,
+                          height: screenHeight * 0.030,
+                          width: screenHeight * 0.030,
                           color: isSelected
                               ? AppColors.primaryColor
                               : const Color(0XFF787A8D),
@@ -205,5 +202,4 @@ class BottomNavigation extends StatefulWidget {
       ),
     );
   }
-
 }

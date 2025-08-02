@@ -31,7 +31,6 @@ class GradientBoxContainer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-
       padding: padding ?? const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -40,11 +39,13 @@ class GradientBoxContainer extends StatelessWidget {
           colors: gradientColors ?? const [Color(0xFF0D1117), Color(0xFF1D242D)],
           stops: stops
         ),
+
         borderRadius: borderRadius,
         border: Border.all(
           width: borderSide?.width ?? 1,
           color: borderSide?.color ?? const Color(0xFF212833),
         ),
+
       ),
       child: child,
     );

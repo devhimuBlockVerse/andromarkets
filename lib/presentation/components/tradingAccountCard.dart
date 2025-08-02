@@ -12,14 +12,17 @@ class TradingAccountCard extends StatelessWidget {
   final VoidCallback onTrade;
   final VoidCallback onDeposit;
   final VoidCallback? onTransfer;
+  final bool isObscured;
+  final VoidCallback onToggleVisibility;
+
 
   const TradingAccountCard({
     super.key,
     required this.account,
     required this.onTrade,
     required this.onDeposit,
-    this.onTransfer,
-  });
+    this.onTransfer, required this.isObscured, required this.onToggleVisibility,
+   });
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +30,7 @@ class TradingAccountCard extends StatelessWidget {
     return GradientBoxContainer(
       width: size.width,
       gradientColors: account.isDemo ? [Color(0xFF191919), Color(0xFF191919)] : null,
+      borderSide: BorderSide(width: 1, strokeAlign: BorderSide.strokeAlignOutside, color: AppColors.stroke),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -61,13 +65,32 @@ class TradingAccountCard extends StatelessWidget {
                   if (account.isReal || account.isDemo)
                     _tag(context, account.isReal ? "Real" : "Demo", account.borderColor),
                   SizedBox(width: size.width * 0.02),
-                  _tag(context, account.platform, account.borderColor),
+                  _tag(
+                      context,
+                      account.platform,
+                       Color(0XFF8B949E)
+                  ),
                 ],
               ),
             ],
           ),
-          SizedBox(height: size.height * 0.02),
-          Text(account.balance, style: AppTextStyle.h2(context, color: AppColors.primaryText)),
+          SizedBox(height: size.height * 0.01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text( isObscured ? '*******' : account.balance, style: AppTextStyle.h2(context, color: AppColors.primaryText)),
+              SizedBox(width: size.width * 0.02),
+              IconButton(
+                  onPressed: onToggleVisibility,
+                  icon: Icon(
+                    isObscured ? Icons.visibility_off_outlined : Icons.visibility,
+                    color: AppColors.primaryText,
+                    size: size.height * 0.032,
+                  )
+              )
+             ],
+          ),
           SizedBox(width: size.width * 0.9, child: Divider(color: Colors.white12)),
           SizedBox(height: size.height * 0.02),
           PrimaryButton(

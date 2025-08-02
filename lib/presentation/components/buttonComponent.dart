@@ -67,11 +67,11 @@ class PrimaryButton extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
 
-    final defaultWidth  = width * 0.8;
+    // final defaultWidth  = width * 0.8;
     final defaultHeight  = width * 0.12;
     final spacing = width * 0.02;
-
-    return SizedBox(
+    final defaultWidth  = double.infinity;
+     return SizedBox(
       width: buttonWidth ?? defaultWidth,
       height: buttonHeight ?? defaultHeight,
       child: ElevatedButton(
@@ -89,22 +89,7 @@ class PrimaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            //   _buildIcon(leftIcon, iconSize ?? 24.0),
-            //   SizedBox(width: spacing),
-            //
-            //   Flexible(
-            //   child: FittedBox(
-            //     fit: BoxFit.scaleDown,
-            //     child: Text(
-            //       buttonText!,
-            //       style: textStyle.copyWith(color: textColor),
-            //       textAlign: TextAlign.center,
-            //     ),
-            //   ),
-            // ),
-            //
-            // SizedBox(width: spacing),
-            // _buildIcon(rightIcon, iconSize ?? 24.0),
+
             if (leftIcon != null) _buildIcon(leftIcon, iconSize ?? 24.0),
             if (leftIcon != null && (buttonText?.isNotEmpty ?? false)) SizedBox(width: spacing),
             if ((buttonText?.isNotEmpty ?? false))

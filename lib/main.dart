@@ -6,6 +6,8 @@ import 'package:andromarkets/presentation/widgets/bottom_navigation.dart';
  import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'presentation/screens/splash/splash_view.dart';
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
@@ -30,8 +32,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor:AppColors.primaryColor),
         ),
-        // home: const SplashView()
-        home: const BottomNavigation()
+        home: const SplashView()
+        // home: const BottomNavigation()
 
       ),
     );
