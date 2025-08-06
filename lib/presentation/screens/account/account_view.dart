@@ -15,6 +15,7 @@ import '../../components/circularButtonComponent.dart';
 import '../../components/copyLinkComponent.dart';
 import '../../components/gradientContainer.dart';
 import '../../components/tradingAccountCard.dart';
+import 'table_view.dart';
 
 class AccountView extends StatefulWidget {
   final GoogleSignInAccount? user;
@@ -47,8 +48,59 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
   ];
 
+  final List<Map<String, dynamic>> _mockData =[
+    {
+      'symbol': 'XAUUSD',
+      'status': 'Buy',
+      'statusColor': AppColors.green,
+      'volume': '0.1',
+      'profit': '+1232.4',
+      // 'expanded': false,
+
+    },
+    {
+      'symbol': 'XAUUSD',
+      'status': 'Sell',
+      'statusColor': AppColors.green,
+      'volume': '0.1',
+      'profit': '-1232.4',
+      // 'expanded': false,
+
+    },
+    {
+      'symbol': 'XAUUSD',
+      'status': 'Buy',
+      'statusColor': AppColors.green,
+      'volume': '0.1',
+      'profit': '+1232.4',
+      // 'expanded': false,
+
+    },
+  ];
+  final List<Map<String, dynamic>> _mockPendingData = [
+    {
+      'symbol': 'BTCUSD',
+      'status': 'Buy',
+      'volume': '0.2',
+      'profit': '+0.0',
+      // 'expanded': false,
+    },
+  ];
+
+  String _selectedView = 'Open Positions';
+  final List<String> _dropdownOptions = ['Open Positions', 'Pending Order'];
 
 
+
+  // void _toggleExpand(int index, bool isOpen){
+  //   setState(() {
+  //     if(isOpen){
+  //       _mockData[index]['expanded'] = !_mockData[index]['expanded'];
+  //     }else{
+  //       _mockPendingData[index]['expanded'] = !_mockPendingData[index]['expanded'];
+  //     }
+  //   });
+  // }
 
   @override
   void initState() {
@@ -168,12 +220,24 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
             _tradingAccounts(),
 
-            SizedBox(height: screenHeight * 0.05),
+            SizedBox(height: screenHeight * 0.02),
 
             // _bonusSection(),
 
-            _openPositions(),
-            SizedBox(height: screenHeight * 0.05),
+            // _openPositions(context),
+            OpenPositionsWidget(),
+            SizedBox(height: screenHeight * 0.01),
+            PrimaryButton(
+                buttonText:'Close All Position',
+                buttonType: ButtonType.tertiary,
+                onPressed: (){},
+                textStyle: AppTextStyle.label(context),
+                // leftIcon:  'assets/icons/crossIcon.svg',
+                // iconColor: AppColors.gray,
+                // iconSize: screenWidth * 0.05,
+                buttonHeight:screenHeight * 0.05
+            ),
+            SizedBox(height: screenHeight * 0.03),
 
           ],
         ),
@@ -251,7 +315,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
           SizedBox(height: screenHeight * 0.015),
 
           PrimaryButton(
-              buttonText:'Withdraw',
+              buttonText:'My Wallet',
               buttonType: ButtonType.tertiary,
               onPressed: (){},
               textStyle: AppTextStyle.label(context),
@@ -596,196 +660,287 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     );
   }
 
-  Widget _openPositions(){
+
+
+  Widget _openPositions(BuildContext context){
     final size = MediaQuery.of(context).size;
-
-
+    final isOpen = _selectedView == 'Open Positions';
+    final data = isOpen ? _mockData : _mockPendingData;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "Open Positions",
-              style: AppTextStyle.h3(context,color: AppColors.primaryText),
-            ),
-            IconButton(
-                iconSize: size.width * 0.06,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onPressed: () {},
-                icon: Icon(
-                  Icons.more_vert,
-                  color: AppColors.primaryText,
-                )
-            ),
+           children: [
 
-          ],
+             DropdownButton<String>(
+                 value: _selectedView,
+                 iconSize: size.height * 0.05,
+                 iconEnabledColor: Colors.white,
+                 dropdownColor: AppColors.primaryBackgroundColor,
+                 items: _dropdownOptions.map((String value) {
+                   return DropdownMenuItem<String>(
+                     value: value,
+                     child: Text(value, style: AppTextStyle.bodySmall(context, color: AppColors.primaryText)),
+                   );
+                 }).toList(),
+                 onChanged:(value){
+                   setState(() {
+                     _selectedView = value!;
+                   });
+                 }
+             ),
+           ],
         ),
 
-        SizedBox(height: size.height * 0.04),
 
+        Table(
+          columnWidths: const{
+            0: FlexColumnWidth(2),
+            1: FlexColumnWidth(2),
+            2: FlexColumnWidth(1.5),
+            3: FlexColumnWidth(2),
+            4: FlexColumnWidth(0.5),
+          },
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
 
+          children: [
+            _tableRow(context,['Symbol', 'Status', 'Volume', 'Profit', ], isHeader: true, ),
+            ...List.generate(data.length * 2 -1, (i){
+              if(i.isOdd){
+                return _dividerRow();
+              }
+              final index = i ~/ 2;
+              final row = data[index];
+              final isBuy = row['status'] == 'Buy';
+              final profit = row['profit'];
+              final isPositive = profit.contains('+');
 
+              return TableRow(
+                children: [
+                  _tableCell(row['symbol']),
+                  _tableCellWithDot(row['status'], isBuy ? AppColors.green : AppColors.redErrorCall, context),
+                  _tableCell(row['volume']),
+                  _tableCell(
+                    row['profit'],
+                    color: isPositive ? AppColors.green : AppColors.redErrorCall,
+                  ),
+                ]);
+            }),
+          ],
+        )
 
       ],
     );
   }
+   TableRow _tableRow(BuildContext context,List<String> cells, {bool isHeader = false}) {
+    final size = MediaQuery.of(context).size;
+    return TableRow(
+      children: List.generate(cells.length, (i) {
+        final text = cells[i];
 
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: size.height * 0.019),
+          child: Text(
+            text,
+            style: AppTextStyle.bodySmall2x(
+              context,
+              color: isHeader ? AppColors.secondaryColor3 : AppColors.primaryText,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+   Widget _tableCell(String text, {Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        text,
+        style: AppTextStyle.bodySmall2x(context, color: color ?? AppColors.primaryText),
+      ),
+    );
+  }
+  Widget _tableCellWithDot(String text, Color dotColor, BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          margin: const EdgeInsets.only(right: 6),
+          decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+        ),
+        Text(text, style: AppTextStyle.bodySmall2x(context, color: AppColors.primaryText)),
+      ],
+    );
+  }
+  TableRow _dividerRow() {
+    return TableRow(
+      children: List.generate(4, (_) => Divider(color: AppColors.stroke, height: 1)),
+    );
+  }
+  void _showRowDetailsBottomSheet(BuildContext context, Map<String, dynamic> rowData) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 0.08, vertical: size.height * 0.08),
+        decoration: BoxDecoration(
+          color: AppColors.primaryBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 4,
+              width: 40,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(8)),
+            ),
+            Text("Trade Details", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
+            const SizedBox(height: 20),
+            ...rowData.entries.map((e) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("${e.key.capitalize()}: ", style: AppTextStyle.bodySmall2x(context, color: Colors.grey)),
+                  Flexible(child: Text("${e.value}", style: AppTextStyle.bodySmall2x(context, color: AppColors.primaryText))),
+                ],
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+
+  /// Bottom sheet
   void _showExpandedSheet(BuildContext context, TradingAccount account) {
     final size = MediaQuery.of(context).size;
     // Sample data for tab 1 and tab 2 (replace with API data later)
     final List<String> realAccountDetails = [
+      (account.name),
       "Platform: ${account.platform}",
       "Currency: ${account.currency}",
       "Balance: ${account.balance}",
     ];
 
     final List<String> demoAccountDetails = [
-      "Recent Transactions",
-      "- Deposit \$100",
-      "- Withdraw \$50",
-      "- Buy BTC",
+      "Demo",
+      "Deposit: \$100",
+      "Withdraw: \$50",
     ];
-
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          maxChildSize: 0.85,
-          minChildSize: 0.3,
-          builder: (_, controller) => Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: size.width * 0.05,
-              vertical: size.height * 0.02,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        maxChildSize: 0.85,
+        minChildSize: 0.3,
+        builder: (_, controller) => Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.05,
+            vertical: size.height * 0.02,
+          ),
+          decoration: ShapeDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(0.62, 0.79),
+              end: Alignment(-0.62, -0.79),
+              colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
             ),
-            decoration: ShapeDecoration(
-              gradient: LinearGradient(
-                begin: Alignment(0.62, 0.79),
-                end: Alignment(-0.62, -0.79),
-                colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-            ),
-            child: DefaultTabController(
-              length: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Drag Handle
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: size.width * 0.3,
-                      margin: const EdgeInsets.only(bottom: 18),
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-
-                  // Header Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
-                      CircularIconButton(
-                        onTap: () {},
-                        icon: Icons.add,
-                        backgroundColor: AppColors.primaryColor,
-                      ),
-                    ],
-                  ),
-
-
-                  TabBar(
-                    labelColor: AppColors.primaryColor,
-                    unselectedLabelColor: Color(0XFFECF6FF),
-                    indicatorColor: AppColors.primaryColor,
-                    labelStyle: AppTextStyle.bodySmallMid(context),
-                    indicatorWeight: 0.02,
-                    dividerColor: AppColors.stroke,
-                     indicatorSize: TabBarIndicatorSize.tab,
-                     tabs: const [
-                      Tab(text: 'Real'),
-                      Tab(text: 'Demo'),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Tab Views
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        // Tab 1
-                        ListView.separated(
-                          controller: controller,
-                          physics: BouncingScrollPhysics(),
-                          itemCount: realAccountDetails.length,
-                          separatorBuilder: (context,index)=>Divider(color: AppColors.stroke),
-                          itemBuilder: (context,index){
-                            final text = realAccountDetails[index];
-                            final isHeader = index == 0;
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                              child: Text(text,
-                                  style: isHeader ? AppTextStyle.bodySmallMid(context,color: AppColors.primaryText)
-                                      : AppTextStyle.bodySmall(context).copyWith(
-                                color: isHeader ? AppColors.primaryColor : AppColors.primaryText
-                              )),
-                            );
-                            
-                          },
-
-                        ),
-
-                        // Tab 2
-                        ListView.separated(
-                          controller: controller,
-                          physics: BouncingScrollPhysics(),
-                          itemCount: realAccountDetails.length,
-                          separatorBuilder: (context,index)=>Divider(color: AppColors.stroke),
-                          itemBuilder: (context,index){
-                            final text = realAccountDetails[index];
-                            final isHeader = index == 0;
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                              child: Text(text,style: isHeader ? AppTextStyle.bodySmallMid(context,color: AppColors.primaryText)
-                                  : AppTextStyle.bodySmall(context).copyWith(
-                                  color: isHeader ? AppColors.primaryColor : AppColors.primaryText
-                              )),
-                            );
-
-                          },
-
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
             ),
           ),
+          child: DefaultTabController(
+            length: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    height: 4,
+                    width: size.width * 0.3,
+                    margin: const EdgeInsets.only(bottom: 18),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
+                    CircularIconButton(
+                      onTap: () {},
+                      icon: Icons.add,
+                      backgroundColor: AppColors.primaryColor,
+                    ),
+                  ],
+                ),
+                TabBar(
+                  labelColor: AppColors.primaryColor,
+                  unselectedLabelColor: Color(0XFFECF6FF),
+                  indicatorColor: AppColors.primaryColor,
+                  labelStyle: AppTextStyle.bodySmallMid(context),
+                  dividerColor: AppColors.stroke,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  tabs: const [Tab(text: 'Real'), Tab(text: 'Demo')],
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _buildDetailsList(context, controller, realAccountDetails),
+                      _buildDetailsList(context, controller, demoAccountDetails),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildDetailsList(BuildContext context, ScrollController controller, List<String> details) {
+    return ListView.separated(
+      controller: controller,
+      physics: const BouncingScrollPhysics(),
+      itemCount: details.length,
+      separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
+      itemBuilder: (_, index) {
+        final text = details[index];
+        final isHeader = index == 0;
+        return Text(
+          text,
+          style: isHeader
+              ? AppTextStyle.bodySmallMid(context, color: AppColors.primaryColor)
+              : AppTextStyle.bodySmall2x(context).copyWith(color: AppColors.primaryText),
         );
       },
     );
   }
 
 }
+
+ extension StringCasingExtension on String {
+   String capitalize() => '${this[0].toUpperCase()}${substring(1)}';
+ }
 
 ///Google Sign In Profile Code
 // Widget body(){
