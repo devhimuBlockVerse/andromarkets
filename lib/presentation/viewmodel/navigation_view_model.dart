@@ -73,13 +73,13 @@ class NavigationViewModel extends ChangeNotifier {
 
       ],
      ),
-    NavItem(
-      id: 'transaction_history',
-      title: 'Transaction History',
-      iconPath: 'assets/icons/transactionHistory.svg',
-      screenBuilder: (context) => const TransactionHistoryView(),
-
-    ),
+    // NavItem(
+    //   id: 'transaction_history',
+    //   title: 'Transaction History',
+    //   iconPath: 'assets/icons/transactionHistory.svg',
+    //   screenBuilder: (context) => const TransactionHistoryView(),
+    //
+    // ),
     NavItem(
       id: 'bonus',
       title: 'Bonuses',

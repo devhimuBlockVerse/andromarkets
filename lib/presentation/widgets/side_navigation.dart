@@ -155,7 +155,11 @@ class NavItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = isSelected ? AppColors.primaryColor : const Color(0XFF9C9C9C);
+    final isLogout = item.id == 'logout';
+    final iconColor = isLogout
+        ? AppColors.redErrorCall
+        : (isSelected ? AppColors.primaryColor : const Color(0XFF9C9C9C));
+    // final iconColor = isSelected ? AppColors.primaryColor : const Color(0XFF9C9C9C);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +173,14 @@ class NavItemTile extends StatelessWidget {
           ),
           title: Text(
             item.title ?? '',
-            style: AppTextStyle.bodySmall2x(context, color: iconColor),
+            style: AppTextStyle.bodySmall2x(
+                context,
+                // color: iconColor
+              color: isLogout
+                  ? AppColors.redErrorCall
+                  : (isSelected ? AppColors.primaryColor : const Color(0XFF9C9C9C)),
+
+            ),
           ),
           trailing: item.hasChildren
               ? Icon(

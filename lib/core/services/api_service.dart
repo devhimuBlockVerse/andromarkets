@@ -74,3 +74,4 @@ class LocalStorageService {
     await prefs.remove('token');
   }
 }
+
