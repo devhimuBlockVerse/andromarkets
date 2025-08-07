@@ -1,5 +1,4 @@
- import 'dart:convert';
-
+import 'dart:convert';
 import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -657,11 +656,8 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   }
 
   Widget _buildDetailsList(
-      BuildContext context,
-      ScrollController controller,
-      List<TradingAccount> accounts,
-      bool isArchive) {
-
+      BuildContext context, ScrollController controller,
+      List<TradingAccount> accounts, bool isArchive) {
     final size = MediaQuery.of(context).size;
     return StatefulBuilder(
       builder: (BuildContext context,StateSetter setSheetState) => ListView.separated(
@@ -696,21 +692,15 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                   });
                 },
                 onLongPress: (){
-                  if(!isArchive){
+                  if(!isArchive || isArchive){
                     print('Long-pressed account: ${account.name} #${account.accountNumber}');
                     setSheetState(() {
                       _longPressedAccount = account;
                     });
                   }
                 },
-                trailing: isArchive
-                    ? IconButton(onPressed: ()=> _restoreAccount(account),
-                    icon: Icon(Icons.restore,color: AppColors.primaryColor,)
-                ) : null,
               ),
-
-
-                Visibility(
+              Visibility(
                   visible: !isArchive && isLongPressed,
                   child: Builder(
                     builder: (context){
@@ -727,6 +717,26 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                     }
                   ),
                 ),
+              Visibility(
+                  visible: isArchive && isLongPressed,
+                  child: Builder(
+                    builder: (context){
+                      print('Rendering Restore PrimaryButton for ${account.name} #${account.accountNumber}');
+
+                      return PrimaryButton(
+                        onPressed: ()=> _restoreAccount(account),
+                        buttonText:'Restore',
+                        buttonType: ButtonType.tertiary,
+                        textStyle: AppTextStyle.bodySmall(context),
+                        leftIcon:  'assets/icons/archiveIcon.svg',
+                        iconColor: AppColors.primaryText,
+                        iconSize: size.height * 0.02,
+                        buttonHeight: size.height * 0.04,
+                      );
+                    }
+                  ),
+                ),
+
 
             ],
           );
