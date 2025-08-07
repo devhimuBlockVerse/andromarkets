@@ -668,12 +668,11 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
         ..insert(0, _selectedAccount!);
     }
     return StatefulBuilder(
-      builder: (BuildContext context,StateSetter setSheetState) => ListView.separated(
+      builder: (BuildContext context,StateSetter setSheetState) => ListView.builder(
         key: ValueKey(_longPressedAccount?.accountNumber ?? 'listview'),
         controller: controller,
         physics: const BouncingScrollPhysics(),
         itemCount: sortedAccounts.length,
-        separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
         itemBuilder: (context, index) {
           final account = sortedAccounts[index];
           final isSelected = _selectedAccount == account;
@@ -681,14 +680,26 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
           print('Building ListTile for ${account.name} #${account.accountNumber}, isLongPressed: $isLongPressed');
 
           return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
                 key: ValueKey(account.accountNumber),
-                title: Text(
-                  "${account.name}\t\t #${account.accountNumber} ${account.balance}",
-                  style: AppTextStyle.bodySmallMid(
-                    context,
-                    color: isSelected ? AppColors.primaryColor : AppColors.descriptions
+                title: Container(
+                  padding: EdgeInsets.symmetric(horizontal: size.height * 0.01),
+                  height: size.height * 0.05,
+                  alignment: Alignment.centerLeft,
+                  decoration: BoxDecoration(
+                    color: AppColors.panelColor,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    "${account.name}\t\t #${account.accountNumber} ${account.balance}",
+                    style: AppTextStyle.bodySmallMid(
+                      context,
+                      color: isSelected ? AppColors.primaryColor : AppColors.descriptions
+                    ),
                   ),
                 ),
                 onTap: (){
@@ -708,76 +719,84 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                   }
                 },
               ),
-              Visibility(
-                  visible: !isArchive && isLongPressed,
-                  child: Builder(
-                    builder: (context){
-                      print('Rendering PrimaryButton for ${account.name} #${account.accountNumber}');                    return PrimaryButton(
-                        onPressed: ()=> showDialog(
-                          context: context,
-                           barrierColor: Colors.transparent,
-                          builder: (BuildContext dialogContext) => BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 9.0, sigmaY: 9.0),
-                            child: AlertDialog(
-                              actionsAlignment: MainAxisAlignment.center,
-                              backgroundColor: Colors.transparent,
-                              title: Text(
-                                textAlign: TextAlign.center,
-                                'Archive Account',
-                                style: AppTextStyle.h3(context, color: AppColors.primaryText),
-                              ),
-                              content: Text(
-                                textAlign: TextAlign.center,
-                                'Are you sure you want to Archive ${account.name} #${account.accountNumber}?',
-                                style: AppTextStyle.bodySmall(context, color: AppColors.descriptions),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: ()=>Navigator.of(dialogContext).pop(),
-                                  child: _tag(context, 'No', Color(0XFF8B949E)),
+              Center(
+                child: Visibility(
+                    visible: !isArchive && isLongPressed,
+                    child: Builder(
+                      builder: (context){
+                        print('Rendering PrimaryButton for ${account.name} #${account.accountNumber}');
+                        return PrimaryButton(
+                          onPressed: ()=> showDialog(
+                            context: context,
+                             barrierColor: Colors.transparent,
+                            builder: (BuildContext dialogContext) => BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 9.0, sigmaY: 9.0),
+                              child: AlertDialog(
+                                actionsAlignment: MainAxisAlignment.center,
+                                backgroundColor: Colors.transparent,
+                                title: Text(
+                                  textAlign: TextAlign.center,
+                                  'Archive Account',
+                                  style: AppTextStyle.h3(context, color: AppColors.primaryText),
+                                ),
+                                content: Text(
+                                  textAlign: TextAlign.center,
+                                  'Are you sure you want to Archive ${account.name} #${account.accountNumber}?',
+                                  style: AppTextStyle.bodySmall(context, color: AppColors.descriptions),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: ()=>Navigator.of(dialogContext).pop(),
+                                    child: _tag(context, 'No', Color(0XFF8B949E)),
 
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                     Navigator.of(dialogContext).pop();
-                                    setState(() => _archiveAccount(account));
-                                  },
-                                  child: _tag(context, 'Yes', AppColors.primaryColor,textColor: AppColors.primaryColor),
-                                ),
-                              ],
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                       Navigator.of(dialogContext).pop();
+                                      setState(() => _archiveAccount(account));
+                                    },
+                                    child: _tag(context, 'Yes', AppColors.primaryColor,textColor: AppColors.primaryColor),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        buttonText:'Archive',
-                        buttonType: ButtonType.tertiary,
-                        textStyle: AppTextStyle.bodySmall(context),
-                        leftIcon:  'assets/icons/archiveIcon.svg',
-                        iconColor: AppColors.primaryText,
-                        iconSize: size.height * 0.02,
-                        buttonHeight: size.height * 0.04,
-                      );
-                    }
-                  ),
-                ),
-              Visibility(
-                  visible: isArchive && isLongPressed,
-                  child: Builder(
-                    builder: (context){
-                      print('Rendering Restore PrimaryButton for ${account.name} #${account.accountNumber}');
+                          buttonText:'Archive',
+                          buttonType: ButtonType.tertiary,
+                          textStyle: AppTextStyle.bodySmall(context),
+                          leftIcon:  'assets/icons/archiveIcon.svg',
+                          iconColor: AppColors.primaryText,
+                          iconSize: size.height * 0.02,
+                          buttonHeight: size.height * 0.04,
+                          buttonWidth: size.width * 0.8,
 
-                      return PrimaryButton(
-                        onPressed: ()=> _restoreAccount(account),
-                        buttonText:'Restore',
-                        buttonType: ButtonType.tertiary,
-                        textStyle: AppTextStyle.bodySmall(context),
-                        leftIcon:  'assets/icons/restoreIcon.svg',
-                        iconColor: AppColors.primaryText,
-                        iconSize: size.height * 0.03,
-                        buttonHeight: size.height * 0.04,
-                      );
-                    }
+                        );
+                      }
+                    ),
                   ),
-                ),
+              ),
+              Center(
+                child: Visibility(
+                    visible: isArchive && isLongPressed,
+                    child: Builder(
+                      builder: (context){
+                        print('Rendering Restore PrimaryButton for ${account.name} #${account.accountNumber}');
+
+                        return PrimaryButton(
+                          onPressed: ()=> _restoreAccount(account),
+                          buttonText:'Restore',
+                          buttonType: ButtonType.tertiary,
+                          textStyle: AppTextStyle.bodySmall(context),
+                          leftIcon:  'assets/icons/restoreIcon.svg',
+                          iconColor: AppColors.primaryText,
+                          iconSize: size.height * 0.03,
+                          buttonHeight: size.height * 0.04,
+                          buttonWidth: size.width * 0.8,
+                        );
+                      }
+                    ),
+                  ),
+              ),
 
 
             ],
