@@ -652,231 +652,105 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   }
 
   /// Bottom sheet
-
-  // Widget _tradingAccounts(){
+  // Widget _buildDetailsList(BuildContext context,
+  //     ScrollController controller,
+  //     List<TradingAccount> accounts, bool isArchive) {
+  //
   //   final size = MediaQuery.of(context).size;
+  //   final showArchiveButton = !isArchive && _selectedAccount != null && accounts.contains(_selectedAccount);
   //
-  //
-  //   final List<TradingAccount> accounts = [
-  //     TradingAccount(
-  //       name: "Standard",
-  //       currency: "USD",
-  //       balance: "\$100.000",
-  //       isReal: true,
-  //       isDemo: false,
-  //       platform: "MT5",
-  //       iconColor: AppColors.primaryColor,
-  //       borderColor: AppColors.primaryColor,
-  //     ),
-  //     TradingAccount(
-  //       name: "Ultra Low",
-  //       currency: "USD",
-  //       balance: "\$100.000",
-  //       isReal: false,
-  //       isDemo: true,
-  //       platform: "MT5",
-  //       iconColor: Color(0XFF8B949E),
-  //       borderColor: Color(0XFF8B949E),
-  //     ),
-  //   ];
-  //
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(
-  //             "Trading Accounts",
-  //             style: AppTextStyle.h3(context,color: AppColors.primaryText),
-  //           ),
-  //           CircularIconButton(
-  //             onTap: () {},
-  //             icon: Icons.add,
-  //             backgroundColor: AppColors.primaryColor,
-  //           ),
-  //
-  //         ],
-  //       ),
-  //
-  //       SizedBox(height: size.height * 0.04),
-  //
-  //       ...accounts.asMap().entries.map((entry){
-  //         int index = entry.key;
-  //         TradingAccount acc = entry.value;
-  //         return  Padding(
-  //           padding: EdgeInsets.only(bottom: size.height * 0.02),
-  //           child: TradingAccountCard(
-  //             account: acc,
-  //             onTrade: (){},
-  //             onDeposit: (){},
-  //             onTransfer: (){},
-  //             isObscured: _isObscured,
-  //             onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
-  //             onExpandTap: ()=>  _showExpandedSheet(context, acc),
-  //           ),
-  //         );
-  //       }),
-  //
-  //
-  //
-  //     ],
-  //   );
-  // }
-  // void _showExpandedSheet(BuildContext context, TradingAccount account) {
-  //   final size = MediaQuery.of(context).size;
-  //   // Sample data for tab 1 and tab 2 (replace with API data later)
-  //   final List<String> realAccountDetails = [
-  //     (account.name),
-  //     "Platform: ${account.platform}",
-  //     "Currency: ${account.currency}",
-  //     "Balance: ${account.balance}",
-  //   ];
-  //
-  //   final List<String> demoAccountDetails = [
-  //     "Demo",
-  //     "Deposit: \$100",
-  //     "Withdraw: \$50",
-  //   ];
-  //
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: Colors.transparent,
-  //     isScrollControlled: true,
-  //     builder: (_) => DraggableScrollableSheet(
-  //       initialChildSize: 0.5,
-  //       maxChildSize: 0.85,
-  //       minChildSize: 0.3,
-  //       builder: (_, controller) => Container(
-  //         padding: EdgeInsets.symmetric(
-  //           horizontal: size.width * 0.05,
-  //           vertical: size.height * 0.02,
-  //         ),
-  //         decoration: ShapeDecoration(
-  //           gradient: LinearGradient(
-  //             begin: Alignment(0.62, 0.79),
-  //             end: Alignment(-0.62, -0.79),
-  //             colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
-  //           ),
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-  //           ),
-  //         ),
-  //         child: DefaultTabController(
-  //           length: 2,
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Center(
-  //                 child: Container(
-  //                   height: 4,
-  //                   width: size.width * 0.3,
-  //                   margin: const EdgeInsets.only(bottom: 18),
-  //                   decoration: BoxDecoration(
-  //                     color: Colors.grey,
-  //                     borderRadius: BorderRadius.circular(8),
-  //                   ),
-  //                 ),
-  //               ),
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
-  //                   CircularIconButton(
-  //                     onTap: () {},
-  //                     icon: Icons.add,
-  //                     backgroundColor: AppColors.primaryColor,
-  //                   ),
-  //                 ],
-  //               ),
-  //               TabBar(
-  //                 labelColor: AppColors.primaryColor,
-  //                 unselectedLabelColor: Color(0XFFECF6FF),
-  //                 indicatorColor: AppColors.primaryColor,
-  //                 labelStyle: AppTextStyle.bodySmallMid(context),
-  //                 dividerColor: AppColors.stroke,
-  //                 indicatorSize: TabBarIndicatorSize.tab,
-  //                 tabs: const [Tab(text: 'Real'), Tab(text: 'Demo')],
-  //               ),
-  //               const SizedBox(height: 10),
-  //               Expanded(
-  //                 child: TabBarView(
-  //                   children: [
-  //                     _buildDetailsList(context, controller, realAccountDetails),
-  //                     _buildDetailsList(context, controller, demoAccountDetails),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  // Widget _buildDetailsList(BuildContext context, ScrollController controller, List<String> details) {
   //   return ListView.separated(
   //     controller: controller,
   //     physics: const BouncingScrollPhysics(),
-  //     itemCount: details.length,
+  //     itemCount: accounts.length + (showArchiveButton ? 1 : 0),
   //     separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
-  //     itemBuilder: (_, index) {
-  //       final text = details[index];
-  //       final isHeader = index == 0;
-  //       return Text(
-  //         text,
-  //         style: isHeader
-  //             ? AppTextStyle.bodySmallMid(context, color: AppColors.primaryColor)
-  //             : AppTextStyle.bodySmall2x(context).copyWith(color: AppColors.primaryText),
+  //     itemBuilder: (context, index) {
+  //       if(showArchiveButton && index == accounts.length){
+  //         return Padding(
+  //           padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
+  //           child: PrimaryButton(
+  //             onPressed: () => _archiveAccount(_selectedAccount!),
+  //             buttonText: "Archive",
+  //             buttonType: ButtonType.secondary,
+  //             textStyle: AppTextStyle.bodySmall(context, color: AppColors.primaryText),
+  //           ),
+  //         );
+  //       }
+  //
+  //       final account = accounts[index];
+  //       return ListTile(
+  //         title: Text(
+  //           "${account.name} #${account.accountNumber} ${account.balance}",
+  //           style: AppTextStyle.bodySmallMid(
+  //             context,
+  //             color: _selectedAccount == account ? AppColors.primaryColor : AppColors.descriptions
+  //           ),
+  //         ),
+  //         onTap: (){
+  //           setState(() {
+  //             _selectedAccount = account;
+  //             Navigator.pop(context);
+  //           });
+  //         },
+  //         trailing: isArchive
+  //             ? IconButton(onPressed: ()=> _restoreAccount(account),
+  //             icon: Icon(Icons.restore,color: AppColors.primaryColor,)
+  //         ) : null,
   //       );
   //     },
   //   );
   // }
-
   Widget _buildDetailsList(BuildContext context,
       ScrollController controller,
       List<TradingAccount> accounts, bool isArchive) {
 
     final size = MediaQuery.of(context).size;
-    final showArchiveButton = !isArchive && _selectedAccount != null && accounts.contains(_selectedAccount);
 
     return ListView.separated(
       controller: controller,
       physics: const BouncingScrollPhysics(),
-      itemCount: accounts.length + (showArchiveButton ? 1 : 0),
+      itemCount: accounts.length,
       separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
       itemBuilder: (context, index) {
-        if(showArchiveButton && index == accounts.length){
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-            child: PrimaryButton(
-              onPressed: () => _archiveAccount(_selectedAccount!),
-              buttonText: "Archive",
-              buttonType: ButtonType.secondary,
-              textStyle: AppTextStyle.bodySmall(context, color: AppColors.primaryText),
-            ),
-          );
-        }
-
         final account = accounts[index];
-        return ListTile(
-          title: Text(
-            "${account.name} #${account.accountNumber} ${account.balance}",
-            style: AppTextStyle.bodySmallMid(
-              context,
-              color: _selectedAccount == account ? AppColors.primaryColor : AppColors.descriptions
+        final isSelected = _selectedAccount == account;
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+                "${account.name} #${account.accountNumber} ${account.balance}",
+                style: AppTextStyle.bodySmallMid(
+                  context,
+                  color: _selectedAccount == account ? AppColors.primaryColor : AppColors.descriptions
+                ),
+              ),
+              onTap: (){
+                setState(() {
+                  if(isSelected && !isArchive){
+                    _selectedAccount = account;
+                  }else{
+                    _selectedAccount = account;
+                    Navigator.pop(context);
+                  }
+                });
+              },
+              trailing: isArchive
+                  ? IconButton(onPressed: ()=> _restoreAccount(account),
+                  icon: Icon(Icons.restore,color: AppColors.primaryColor,)
+              ) : null,
             ),
-          ),
-          onTap: (){
-            setState(() {
-              _selectedAccount = account;
-              Navigator.pop(context);
-            });
-          },
-          trailing: isArchive 
-              ? IconButton(onPressed: ()=> _restoreAccount(account),
-              icon: Icon(Icons.restore,color: AppColors.primaryColor,)
-          ) : null,
+            if(!isArchive && isSelected)
+              PrimaryButton(
+                  buttonText:'Archive',
+                  buttonType: ButtonType.tertiary,
+                  onPressed: ()=> _archiveAccount(account),
+                  textStyle: AppTextStyle.bodySmall(context),
+                  leftIcon:  'assets/icons/archiveIcon.svg',
+                  iconColor: AppColors.primaryText,
+                  iconSize: size.height * 0.02,
+                  buttonHeight: size.height * 0.03
+              ),
+          ],
         );
       },
     );
@@ -905,38 +779,26 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
         SizedBox(height: size.height * 0.04),
 
-    ...(_selectedAccount != null
-        ? [
-          Padding(
-            padding: EdgeInsets.only(bottom: size.height * 0.02),
-            child: TradingAccountCard(
-              account: _selectedAccount!,
-              onTrade: () {},
-              onDeposit: () {},
-              onTransfer: () {},
-              isObscured: _isObscured,
-              onToggleVisibility: () => setState(() => _isObscured = !_isObscured),
-              onExpandTap: () => _showExpandedSheet(context, _selectedAccount!),
-            ),
-          ),
-    ] : _realAccounts.map((acc)=>
         Padding(
           padding: EdgeInsets.only(bottom: size.height * 0.02),
           child: TradingAccountCard(
-            account: acc,
-            onTrade: (){},
-            onDeposit: (){},
-            onTransfer: (){},
+            account: _selectedAccount ?? _realAccounts[0], // Default to first real account
+            onTrade: () {},
+            onDeposit: () {},
+            onTransfer: () {},
             isObscured: _isObscured,
-            onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
-            onExpandTap: ()=>  _showExpandedSheet(context, acc),
+            onToggleVisibility: () => setState(() => _isObscured = !_isObscured),
+            onExpandTap: () => _showExpandedSheet(context, _selectedAccount ?? _realAccounts[0]),
           ),
-        )).toList()),
+        ),
+
       ],
     );
   }
+
   void _showExpandedSheet(BuildContext context, TradingAccount account) {
     final size = MediaQuery.of(context).size;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -960,55 +822,53 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
               borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
             ),
           ),
-          child: DefaultTabController(
-            initialIndex: 0,
-            length: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    height: 4,
-                    width: size.width * 0.3,
-                    margin: const EdgeInsets.only(bottom: 18),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  height: 4,
+                  width: size.width * 0.3,
+                  margin: const EdgeInsets.only(bottom: 18),
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
+                  CircularIconButton(
+                    onTap: () {},
+                    icon: Icons.add,
+                    backgroundColor: AppColors.primaryColor,
+                  ),
+                ],
+              ),
+              TabBar(
+                controller: _tabController,
+                labelColor: AppColors.primaryColor,
+                unselectedLabelColor: Color(0XFFECF6FF),
+                indicatorColor: AppColors.primaryColor,
+                labelStyle: AppTextStyle.bodySmallMid(context),
+                dividerColor: AppColors.stroke,
+                indicatorSize: TabBarIndicatorSize.tab,
+                tabs: const [Tab(text: 'Real'), Tab(text: 'Demo'),Tab(text: 'Archive')],
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
                   children: [
-                    Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
-                    CircularIconButton(
-                      onTap: () {},
-                      icon: Icons.add,
-                      backgroundColor: AppColors.primaryColor,
-                    ),
+                    _buildDetailsList(context, controller, _realAccounts, false),
+                    _buildDetailsList(context, controller, _demoAccounts, false),
+                    _buildDetailsList(context, controller, _archivedAccounts, true),
                   ],
                 ),
-                TabBar(
-                  labelColor: AppColors.primaryColor,
-                  unselectedLabelColor: Color(0XFFECF6FF),
-                  indicatorColor: AppColors.primaryColor,
-                  labelStyle: AppTextStyle.bodySmallMid(context),
-                  dividerColor: AppColors.stroke,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  tabs: const [Tab(text: 'Real'), Tab(text: 'Demo'),Tab(text: 'Archive')],
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      _buildDetailsList(context, controller, _realAccounts, false),
-                      _buildDetailsList(context, controller, _demoAccounts, false),
-                      _buildDetailsList(context, controller, _archivedAccounts, true),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
