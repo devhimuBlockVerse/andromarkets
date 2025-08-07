@@ -61,7 +61,7 @@ class TradingAccountCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(account.name, style: AppTextStyle.bodyLarge(context, color: AppColors.primaryText)),
-                    Text(account.currency, style: AppTextStyle.bodySmall(context, color: Colors.white70)),
+                    Text(account.accountNumber, style: AppTextStyle.bodySmall(context, color: Colors.white70)),
                   ],
                 ),
               ),

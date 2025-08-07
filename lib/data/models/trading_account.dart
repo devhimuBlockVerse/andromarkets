@@ -2,7 +2,7 @@ import 'dart:ui';
 
 class TradingAccount {
   final String name;
-  final String currency;
+  final String accountNumber;
   final String balance;
   final bool isReal;
   final bool isDemo;
@@ -12,12 +12,12 @@ class TradingAccount {
 
   TradingAccount({
     required this.name,
-    required this.currency,
+    required this.accountNumber,
     required this.balance,
     required this.isReal,
     required this.isDemo,
     required this.platform,
     required this.iconColor,
-    required this.borderColor,
+    required this.borderColor,,
    });
 }
