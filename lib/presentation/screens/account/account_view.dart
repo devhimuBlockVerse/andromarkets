@@ -117,6 +117,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   List<TradingAccount> _archivedAccounts = [];
 
   void _archiveAccount(TradingAccount account){
+    print('Archiving account: ${account.name} #${account.accountNumber}');
     setState(() {
       if(account.isReal){
         _realAccounts.remove(account);
@@ -130,6 +131,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     });
   }
   void _restoreAccount(TradingAccount account){
+    print('Restoring account: ${account.name} #${account.accountNumber}');
     setState(() {
       _archivedAccounts.remove(account);
       if(account.isReal){
@@ -654,67 +656,82 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     );
   }
 
-
-  Widget _buildDetailsList(BuildContext context,
+  Widget _buildDetailsList(
+      BuildContext context,
       ScrollController controller,
-      List<TradingAccount> accounts, bool isArchive) {
+      List<TradingAccount> accounts,
+      bool isArchive) {
 
     final size = MediaQuery.of(context).size;
+    return StatefulBuilder(
+      builder: (BuildContext context,StateSetter setSheetState) => ListView.separated(
+        key: ValueKey(_longPressedAccount?.accountNumber ?? 'listview'),
+        controller: controller,
+        physics: const BouncingScrollPhysics(),
+        itemCount: accounts.length,
+        separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
+        itemBuilder: (context, index) {
+          final account = accounts[index];
+          final isSelected = _selectedAccount == account;
+          final isLongPressed = _longPressedAccount == account;
+          print('Building ListTile for ${account.name} #${account.accountNumber}, isLongPressed: $isLongPressed');
 
-    return ListView.separated(
-      controller: controller,
-      physics: const BouncingScrollPhysics(),
-      itemCount: accounts.length,
-      separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
-      itemBuilder: (context, index) {
-        final account = accounts[index];
-        final isSelected = _selectedAccount == account;
-        final isLongPressed = _longPressedAccount == account;
-        return Column(
-          children: [
-            ListTile(
-              title: Text(
-                "${account.name} #${account.accountNumber} ${account.balance}",
-                style: AppTextStyle.bodySmallMid(
-                  context,
-                  color: _selectedAccount == account ? AppColors.primaryColor : AppColors.descriptions
+          return Column(
+            children: [
+              ListTile(
+                key: ValueKey(account.accountNumber),
+                title: Text(
+                  "${account.name}\t\t #${account.accountNumber} ${account.balance}",
+                  style: AppTextStyle.bodySmallMid(
+                    context,
+                    color: isSelected ? AppColors.primaryColor : AppColors.descriptions
+                  ),
                 ),
-              ),
-              onTap: (){
-                setState(() {
-                    _selectedAccount = account;
-                    _longPressedAccount = null;
-                    Navigator.pop(context);
-                });
-              },
-              onLongPress: (){
-                if(!isArchive){
+                onTap: (){
+                  print('Tapped account: ${account.name} #${account.accountNumber}');
                   setState(() {
-                    _longPressedAccount = account;
+                      _selectedAccount = account;
+                      _longPressedAccount = null;
+                      Navigator.pop(context);
                   });
-                }
-              },
-              trailing: isArchive
-                  ? IconButton(onPressed: ()=> _restoreAccount(account),
-                  icon: Icon(Icons.restore,color: AppColors.primaryColor,)
-              ) : null,
-            ),
-
-            if(!isArchive && isLongPressed)
-              PrimaryButton(
-                buttonText:'Archive',
-                buttonType: ButtonType.tertiary,
-                onPressed: ()=> _archiveAccount(account),
-                textStyle: AppTextStyle.bodySmall(context),
-                leftIcon:  'assets/icons/archiveIcon.svg',
-                iconColor: AppColors.primaryText,
-                iconSize: size.height * 0.02,
-                buttonHeight: size.height * 0.04,
+                },
+                onLongPress: (){
+                  if(!isArchive){
+                    print('Long-pressed account: ${account.name} #${account.accountNumber}');
+                    setSheetState(() {
+                      _longPressedAccount = account;
+                    });
+                  }
+                },
+                trailing: isArchive
+                    ? IconButton(onPressed: ()=> _restoreAccount(account),
+                    icon: Icon(Icons.restore,color: AppColors.primaryColor,)
+                ) : null,
               ),
 
-          ],
-        );
-      },
+
+                Visibility(
+                  visible: !isArchive && isLongPressed,
+                  child: Builder(
+                    builder: (context){
+                      print('Rendering PrimaryButton for ${account.name} #${account.accountNumber}');                    return PrimaryButton(
+                        onPressed: ()=> _archiveAccount(account),
+                        buttonText:'Archive',
+                        buttonType: ButtonType.tertiary,
+                        textStyle: AppTextStyle.bodySmall(context),
+                        leftIcon:  'assets/icons/archiveIcon.svg',
+                        iconColor: AppColors.primaryText,
+                        iconSize: size.height * 0.02,
+                        buttonHeight: size.height * 0.04,
+                      );
+                    }
+                  ),
+                ),
+
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -761,7 +778,6 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
   void _showExpandedSheet(BuildContext context, TradingAccount account) {
     final size = MediaQuery.of(context).size;
-
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
