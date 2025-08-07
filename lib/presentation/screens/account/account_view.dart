@@ -48,6 +48,8 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
   late TabController _tabController;
   TradingAccount? _selectedAccount;
+  TradingAccount? _longPressedAccount;
+
   List<TradingAccount> _realAccounts=[
     TradingAccount(
       name: "Standard",
@@ -123,10 +125,10 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       }
       _archivedAccounts.add(account);
       _selectedAccount = _realAccounts.isNotEmpty ? _realAccounts[0] : null;
+      _longPressedAccount = null;
       Navigator.pop(context);
     });
   }
-
   void _restoreAccount(TradingAccount account){
     setState(() {
       _archivedAccounts.remove(account);
@@ -136,6 +138,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
         _demoAccounts.add(account);
       }
       _selectedAccount = account;
+      _longPressedAccount = null;
       Navigator.pop(context);
     });
   }
@@ -651,55 +654,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     );
   }
 
-  /// Bottom sheet
-  // Widget _buildDetailsList(BuildContext context,
-  //     ScrollController controller,
-  //     List<TradingAccount> accounts, bool isArchive) {
-  //
-  //   final size = MediaQuery.of(context).size;
-  //   final showArchiveButton = !isArchive && _selectedAccount != null && accounts.contains(_selectedAccount);
-  //
-  //   return ListView.separated(
-  //     controller: controller,
-  //     physics: const BouncingScrollPhysics(),
-  //     itemCount: accounts.length + (showArchiveButton ? 1 : 0),
-  //     separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
-  //     itemBuilder: (context, index) {
-  //       if(showArchiveButton && index == accounts.length){
-  //         return Padding(
-  //           padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-  //           child: PrimaryButton(
-  //             onPressed: () => _archiveAccount(_selectedAccount!),
-  //             buttonText: "Archive",
-  //             buttonType: ButtonType.secondary,
-  //             textStyle: AppTextStyle.bodySmall(context, color: AppColors.primaryText),
-  //           ),
-  //         );
-  //       }
-  //
-  //       final account = accounts[index];
-  //       return ListTile(
-  //         title: Text(
-  //           "${account.name} #${account.accountNumber} ${account.balance}",
-  //           style: AppTextStyle.bodySmallMid(
-  //             context,
-  //             color: _selectedAccount == account ? AppColors.primaryColor : AppColors.descriptions
-  //           ),
-  //         ),
-  //         onTap: (){
-  //           setState(() {
-  //             _selectedAccount = account;
-  //             Navigator.pop(context);
-  //           });
-  //         },
-  //         trailing: isArchive
-  //             ? IconButton(onPressed: ()=> _restoreAccount(account),
-  //             icon: Icon(Icons.restore,color: AppColors.primaryColor,)
-  //         ) : null,
-  //       );
-  //     },
-  //   );
-  // }
+
   Widget _buildDetailsList(BuildContext context,
       ScrollController controller,
       List<TradingAccount> accounts, bool isArchive) {
@@ -714,6 +669,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       itemBuilder: (context, index) {
         final account = accounts[index];
         final isSelected = _selectedAccount == account;
+        final isLongPressed = _longPressedAccount == account;
         return Column(
           children: [
             ListTile(
@@ -726,30 +682,36 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
               ),
               onTap: (){
                 setState(() {
-                  if(isSelected && !isArchive){
                     _selectedAccount = account;
-                  }else{
-                    _selectedAccount = account;
+                    _longPressedAccount = null;
                     Navigator.pop(context);
-                  }
                 });
+              },
+              onLongPress: (){
+                if(!isArchive){
+                  setState(() {
+                    _longPressedAccount = account;
+                  });
+                }
               },
               trailing: isArchive
                   ? IconButton(onPressed: ()=> _restoreAccount(account),
                   icon: Icon(Icons.restore,color: AppColors.primaryColor,)
               ) : null,
             ),
-            if(!isArchive && isSelected)
+
+            if(!isArchive && isLongPressed)
               PrimaryButton(
-                  buttonText:'Archive',
-                  buttonType: ButtonType.tertiary,
-                  onPressed: ()=> _archiveAccount(account),
-                  textStyle: AppTextStyle.bodySmall(context),
-                  leftIcon:  'assets/icons/archiveIcon.svg',
-                  iconColor: AppColors.primaryText,
-                  iconSize: size.height * 0.02,
-                  buttonHeight: size.height * 0.03
+                buttonText:'Archive',
+                buttonType: ButtonType.tertiary,
+                onPressed: ()=> _archiveAccount(account),
+                textStyle: AppTextStyle.bodySmall(context),
+                leftIcon:  'assets/icons/archiveIcon.svg',
+                iconColor: AppColors.primaryText,
+                iconSize: size.height * 0.02,
+                buttonHeight: size.height * 0.04,
               ),
+
           ],
         );
       },
@@ -771,6 +733,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
             CircularIconButton(
               onTap: () {},
               icon: Icons.add,
+              iconColor: Colors.white,
               backgroundColor: AppColors.panelColor,
             ),
 
@@ -814,9 +777,11 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
           ),
           decoration: ShapeDecoration(
             gradient: LinearGradient(
-              begin: Alignment(0.62, 0.79),
-              end: Alignment(-0.62, -0.79),
-              colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
+              colors: [Color(0xFF0D1117),Color(0xFF1D242D)],
+              stops: [
+                0.0,
+                1.0,
+              ]
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
@@ -843,7 +808,8 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                   CircularIconButton(
                     onTap: () {},
                     icon: Icons.add,
-                    backgroundColor: AppColors.primaryColor,
+                    iconColor: Colors.white,
+                    backgroundColor: AppColors.panelColor,
                   ),
                 ],
               ),
