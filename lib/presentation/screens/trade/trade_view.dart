@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -62,7 +60,6 @@ class _TradeViewState extends State<TradeView> {
       });
     }
   }
-  
   Future<void>fetchQuotes()async{
 
     try{
@@ -129,7 +126,6 @@ class _TradeViewState extends State<TradeView> {
       });
     }
   }
-
   Future<void>placeOrder(String orderType, double volume)async{
     setState(() {
       statusMessage = "Placing order...";
