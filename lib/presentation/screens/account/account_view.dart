@@ -117,8 +117,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   List<TradingAccount> _archivedAccounts = [];
 
   void _archiveAccount(TradingAccount account){
-    print('Archiving account: ${account.name} #${account.accountNumber}');
-    setState(() {
+     setState(() {
       if(account.isReal){
         _realAccounts.remove(account);
       }else if(account.isDemo){
@@ -130,20 +129,22 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       Navigator.pop(context);
     });
   }
-  void _restoreAccount(TradingAccount account){
-    print('Restoring account: ${account.name} #${account.accountNumber}');
+  void _restoreAccount(TradingAccount account) {
     setState(() {
-      _archivedAccounts.remove(account);
-      if(account.isReal){
-        _realAccounts.insert(0, account);
-      }else if(account.isDemo){
-        _demoAccounts.insert(0,account);
+      if (_archivedAccounts.contains(account)) {
+        _archivedAccounts.remove(account);
+        if (account.isDemo == true) {
+          _demoAccounts.insert(0, account);
+        } else {
+          _realAccounts.insert(0, account);
+        }
+        _selectedAccount = account;
+        _longPressedAccount = null;
+        Navigator.pop(context);
       }
-      _selectedAccount = account;
-      _longPressedAccount = null;
-      Navigator.pop(context);
     });
   }
+
 
   Future<void> _fetchAccountData() async {
     try {
@@ -174,8 +175,8 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
-    _selectedAccount = _realAccounts[0];
     _tabController = TabController(length: 3, vsync: this);
+    _selectedAccount = _realAccounts[0];
     _fetchAccountData();
   }
 
@@ -666,16 +667,15 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
         ..remove(_selectedAccount)
         ..insert(0, _selectedAccount!);
     }
-    print('Sorted accounts for ${isArchive ? 'Archive' : 'Real/Demo'} tab: ${sortedAccounts.map((a) => a.accountNumber).toList()}');
     return StatefulBuilder(
       builder: (BuildContext context,StateSetter setSheetState) => ListView.separated(
         key: ValueKey(_longPressedAccount?.accountNumber ?? 'listview'),
         controller: controller,
         physics: const BouncingScrollPhysics(),
-        itemCount: accounts.length,
+        itemCount: sortedAccounts.length,
         separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
         itemBuilder: (context, index) {
-          final account = accounts[index];
+          final account = sortedAccounts[index];
           final isSelected = _selectedAccount == account;
           final isLongPressed = _longPressedAccount == account;
           print('Building ListTile for ${account.name} #${account.accountNumber}, isLongPressed: $isLongPressed');
