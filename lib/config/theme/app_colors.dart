@@ -9,6 +9,7 @@ class AppColors {
   static Color descriptions = Color(0xFFFFFFFF).withOpacity(0.8);
 
   static const Color black = Color(0xFF191919);
+  static const Color stroke = Color(0xFF212833);
 
   static const Color redErrorCall = Color(0xFFFF3E70);
 
@@ -17,6 +18,7 @@ class AppColors {
   static  Color secondaryColorDiscriptions2 = Color(0xFFFFFFFF).withOpacity(0.7);
 
   static  Color secondaryColor3 = Color(0xFFFFFFFF).withOpacity(0.6);
+  static  Color secondaryColor4 = Color(0xFFFFFFFF).withOpacity(0.4);
 
   static const Color gray = Color(0xFFE0E0E0);
 
@@ -48,10 +50,25 @@ class AppColors {
     ],
   );
 
+  static const LinearGradient blueGradient =  LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Color(0xFF1F1E24),
+      Color(0xFF1F1E25),
+    ],
+    stops: [
+      0.0,
+      1.0,
+    ],
+  );
+
   static const Color primaryButtonColor = Color(0xFFFCD331);
   static Color secondaryButtonColor = Color(0xFFFFFFFF).withOpacity(0.1);
 
   static const Color primaryBackgroundColor= Color(0xFF16171D);
+  static const Color masterBg= Color(0xFF0D1117);
+
 
 }
 

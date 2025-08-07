@@ -3,7 +3,6 @@ import 'package:andromarkets/presentation/screens/signIn/sign_in_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_text_styles.dart';
 import '../../../config/theme/responsive_ui.dart';
@@ -11,7 +10,7 @@ import '../../../core/enums/button_type.dart';
 import '../../../core/services/google_sign_service.dart';
 import '../../components/buttonComponent.dart';
 import '../../components/textFieldComponent.dart';
-import '../dashboard/dashboard_view.dart';
+import '../account/account_view.dart';
 
 
 class SignUpView extends StatefulWidget {
@@ -50,8 +49,6 @@ class _SignUpViewState extends State<SignUpView> {
     _confirmPasswordController.addListener(_checkPasswordMatch);
   }
 
-
-
   Future googleSignIn()async{
     final user = await GoogleSignInApi.login();
 
@@ -60,7 +57,7 @@ class _SignUpViewState extends State<SignUpView> {
         const SnackBar(content: Text("Sign in failed")),
       );
     }else{
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardView(
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AccountView(
           user: user
       )));
     }
@@ -132,8 +129,6 @@ class _SignUpViewState extends State<SignUpView> {
     );
 
   }
-
-
 
   Widget _buildSignUpForm() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
@@ -310,8 +305,6 @@ class _SignUpViewState extends State<SignUpView> {
       ],
     );
   }
-
-
 
 
 }

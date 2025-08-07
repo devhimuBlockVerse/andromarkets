@@ -134,7 +134,7 @@ class _TextFieldComState extends State<TextFieldCom> {
             Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SvgPicture.asset(
                 'assets/icons/warning.svg',
@@ -144,7 +144,8 @@ class _TextFieldComState extends State<TextFieldCom> {
               Expanded(
                 child: SizedBox(
                   child: Text(
-                    'Opps! Incorrect password',
+                    // 'Make sure the passwords match',
+                    widget.errorText!,
                     style: AppTextStyle.bodySmall2x(context,color: AppColors.redErrorCall),
                   ),
                 ),
@@ -162,7 +163,7 @@ class _TextFieldComState extends State<TextFieldCom> {
                 Expanded(
                   child: SizedBox(
                     child: Text(
-                      'Password Match',
+                      'Passwords match!',
                       style: AppTextStyle.bodySmall2x(context,color: AppColors.green),
                     ),
                   ),

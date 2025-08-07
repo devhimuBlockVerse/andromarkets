@@ -1,0 +1,1021 @@
+ import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../../../config/theme/app_colors.dart';
+import '../../../config/theme/app_text_styles.dart';
+import '../../../config/theme/responsive_ui.dart';
+import '../../../core/enums/button_type.dart';
+import '../../../data/models/action_data.dart';
+import '../../../data/models/trading_account.dart';
+import '../../components/actionItemComponent.dart';
+import '../../components/buttonComponent.dart';
+import '../../components/circularButtonComponent.dart';
+import '../../components/copyLinkComponent.dart';
+import '../../components/gradientContainer.dart';
+import '../../components/tradingAccountCard.dart';
+import 'table_view.dart';
+
+class AccountView extends StatefulWidget {
+  final GoogleSignInAccount? user;
+  const AccountView({super.key,  this.user});
+
+  @override
+  State<AccountView> createState() => _AccountViewState();
+}
+
+class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
+
+  int _selectedActionIndex = -1;
+  bool _isObscured = true;
+  int? _expandedIndex;
+
+  late final TabController _tabController;
+  TextEditingController referredController = TextEditingController();
+
+
+  final List<ActionData> _actions = [
+    ActionData('assets/icons/depositWallet.svg', 'Deposit'),
+    ActionData('assets/icons/withDrawIcon.svg', 'Withdraw'),
+     ActionData('assets/icons/verify.svg', 'Verify'),
+  ];
+  final List<String>_socialActions=[
+    'assets/icons/facebook.svg',
+    'assets/icons/twitter.svg',
+    'assets/icons/telegram.svg',
+    'assets/icons/whatsapp.svg',
+
+  ];
+
+  final List<Map<String, dynamic>> _mockData =[
+    {
+      'symbol': 'XAUUSD',
+      'status': 'Buy',
+      'statusColor': AppColors.green,
+      'volume': '0.1',
+      'profit': '+1232.4',
+      // 'expanded': false,
+
+    },
+    {
+      'symbol': 'XAUUSD',
+      'status': 'Sell',
+      'statusColor': AppColors.green,
+      'volume': '0.1',
+      'profit': '-1232.4',
+      // 'expanded': false,
+
+    },
+    {
+      'symbol': 'XAUUSD',
+      'status': 'Buy',
+      'statusColor': AppColors.green,
+      'volume': '0.1',
+      'profit': '+1232.4',
+      // 'expanded': false,
+
+    },
+  ];
+  final List<Map<String, dynamic>> _mockPendingData = [
+    {
+      'symbol': 'BTCUSD',
+      'status': 'Buy',
+      'volume': '0.2',
+      'profit': '+0.0',
+      // 'expanded': false,
+    },
+  ];
+
+  String _selectedView = 'Open Positions';
+  final List<String> _dropdownOptions = ['Open Positions', 'Pending Order'];
+
+
+
+  // void _toggleExpand(int index, bool isOpen){
+  //   setState(() {
+  //     if(isOpen){
+  //       _mockData[index]['expanded'] = !_mockData[index]['expanded'];
+  //     }else{
+  //       _mockPendingData[index]['expanded'] = !_mockPendingData[index]['expanded'];
+  //     }
+  //   });
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.primaryBackgroundColor,
+        body: RefreshIndicator(
+          onRefresh:(){
+            print("object");
+            return Future.delayed(const Duration(seconds: 2));
+          },
+          child: ResponsiveViewState(
+            mobile: body(),
+            tablet: body(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget body(){
+    final screenWidth = MediaQuery.of(context).size.width * 1;
+    final screenHeight = MediaQuery.of(context).size.height * 1;
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            SizedBox(height: screenHeight * 0.03),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                 Row(
+                  children: [
+                    CircleAvatar(
+                      radius: screenWidth * 0.06,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: (widget.user != null && widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+                          ? NetworkImage(widget.user!.photoUrl!)
+                          : null,
+
+                      child: (widget.user == null || widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+                          ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+                          : null,
+                    ),
+
+                    SizedBox(width: screenWidth * 0.02),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hi, Welcome Back',
+                          style: AppTextStyle.bodySmallMid(
+                            context,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Good Morning',
+                          style: AppTextStyle.bodySmall2x(
+                            context,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+
+                SvgPicture.asset(
+                  'assets/icons/notificationIcon.svg',
+                  width: screenWidth * 0.06,
+                  height: screenWidth * 0.06,
+                  // height: 24,
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+              ],
+            ),
+
+            SizedBox(height: screenHeight * 0.03),
+
+            _totalBalanceCard(),
+
+            SizedBox(height: screenHeight * 0.05),
+
+            _claimBonus(),
+
+            // SizedBox(height: screenHeight * 0.05),
+            //
+            // _quickAction(),
+            //
+            // SizedBox(height: screenHeight * 0.05),
+            //
+            // _referralSection(),
+
+            SizedBox(height: screenHeight * 0.05),
+
+            _tradingAccounts(),
+
+            SizedBox(height: screenHeight * 0.02),
+
+            // _bonusSection(),
+
+            // _openPositions(context),
+            OpenPositionsWidget(),
+            SizedBox(height: screenHeight * 0.01),
+            PrimaryButton(
+                buttonText:'Close All Position',
+                buttonType: ButtonType.tertiary,
+                onPressed: (){},
+                textStyle: AppTextStyle.label(context),
+                // leftIcon:  'assets/icons/crossIcon.svg',
+                // iconColor: AppColors.gray,
+                // iconSize: screenWidth * 0.05,
+                buttonHeight:screenHeight * 0.05
+            ),
+            SizedBox(height: screenHeight * 0.03),
+
+          ],
+        ),
+      )
+    );
+  }
+
+  Widget _totalBalanceCard(){
+    final screenWidth = MediaQuery.of(context).size.width * 1;
+    final screenHeight = MediaQuery.of(context).size.height * 1;
+    double balance = 5450.500;
+    return GradientBoxContainer(
+      width: screenWidth,
+      borderSide:BorderSide(
+          width: 1,
+          strokeAlign: BorderSide.strokeAlignOutside,
+          color: AppColors.stroke
+      ),
+      child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             children: [
+              Text(
+                'Total balance',
+                style: AppTextStyle.bodySmall2x(context,color: Colors.white60,lineHeight: 0.8)
+              ),
+              IconButton(
+                iconSize: screenWidth * 0.06,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: AppColors.primaryText,
+                  )
+              ),
+
+            ],
+          ),
+           SizedBox(height: screenHeight * 0.001),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                _isObscured ? "*******" : "\$${balance.toStringAsFixed(3)}",
+                 overflow: TextOverflow.ellipsis,
+                style: AppTextStyle.h1(context,color: Colors.white,lineHeight: 1.0),
+              ),
+              IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () => setState(() => _isObscured = !_isObscured),
+                  icon: Icon(_isObscured ? Icons.visibility_off_outlined : Icons.visibility,
+                    color: AppColors.primaryText,
+                  )
+              ),
+            ],
+          ),
+
+           SizedBox(height: 6),
+
+          PrimaryButton(
+            buttonText:'Deposit',
+            buttonType: ButtonType.primary,
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> DepositView()));
+            },
+            textStyle: AppTextStyle.label(context),
+            leftIcon:  'assets/icons/depositAdd.svg',
+            iconSize: screenWidth * 0.04,
+            buttonHeight: screenHeight * 0.05,
+          ),
+          SizedBox(height: screenHeight * 0.015),
+
+          PrimaryButton(
+              buttonText:'My Wallet',
+              buttonType: ButtonType.tertiary,
+              onPressed: (){},
+              textStyle: AppTextStyle.label(context),
+              leftIcon:  'assets/icons/rightArrowIcon.svg',
+              iconColor: AppColors.gray,
+              iconSize: screenWidth * 0.05,
+              buttonHeight: screenHeight * 0.05
+          ),
+
+        ],
+      ),
+    );
+
+  }
+
+  Widget _claimBonus() {
+    final size = MediaQuery.of(context).size;
+
+    return Container(
+      width: size.width,
+      decoration: const ShapeDecoration(
+        gradient: LinearGradient(
+          begin: Alignment(1.0, -0.09),
+          end: Alignment(-1, 0.09),
+          colors: [Color(0xFF1F1E24), Color(0xFF1F1E24)],
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+        ),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: size.height * 0.02,
+        vertical: size.height * 0.008,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Deposit Now & Get\n',
+                      style: AppTextStyle.bodyBase(context, color: AppColors.primaryText),
+                    ),
+                    TextSpan(
+                      text: '100%',
+                      style: AppTextStyle.bodyBase(context, color: AppColors.primaryColor),
+                    ),
+                    TextSpan(
+                      text: ' Bonus',
+                      style: AppTextStyle.bodyBase(context, color: AppColors.primaryText),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: size.height * 0.015),
+              PrimaryButton(
+                buttonText: 'Claim Bonus',
+                buttonType: ButtonType.primary,
+                onPressed: () {},
+                textStyle: AppTextStyle.buttonsMedium(context),
+                buttonHeight: size.height * 0.035,
+                buttonWidth: size.width * 0.32,
+              ),
+            ],
+          ),
+          Flexible(
+            child: Image.asset(
+              'assets/images/claimBonusImg.png',
+              height: size.height * 0.13,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.low,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickAction() {
+    final size = MediaQuery.of(context).size;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Quick Actions",
+          style: AppTextStyle.bodyBase(
+            context,
+            color: AppColors.primaryText,
+          ),
+        ),
+        SizedBox(height: size.height * 0.02),
+        Wrap(
+          spacing: size.width * 0.06,
+          runSpacing: size.height * 0.02,
+          alignment: WrapAlignment.center,
+          children: List.generate(_actions.length,(index){
+            final item = _actions[index];
+            return ActionItem(
+                iconPath: item.iconPath,
+                label: item.label,
+                size: size,
+                isSelected:  _selectedActionIndex == index,
+                onTap: (){
+                  setState(() {
+                    _selectedActionIndex = index;
+                  });
+                }
+            );
+          })
+        ),
+      ],
+    );
+  }
+
+  Widget _referralSection(){
+    final size = MediaQuery.of(context).size;
+    return GradientBoxContainer(
+      width: size.width,
+      // height: size.height * 0.15,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Refer & Earn \$100 Per Friend - No Cap!",
+            style: AppTextStyle.bodyBase(context,color: AppColors.primaryText),
+          ),
+
+          SizedBox(height: size.height * 0.02),
+
+          CopyLinkBox(
+            labelText: 'Referral Link:',
+            hintText: ' https://mycoinpoll.com?ref=125482458661',
+            controller: referredController,
+            isReadOnly: true,
+            trailingIconAsset: 'assets/icons/copyIcon.svg',
+            onTrailingIconTap: () {
+              const referralLink = 'https://mycoinpoll.com?ref=125482458661';
+              Clipboard.setData(const ClipboardData(text:referralLink));
+            },
+          ),
+
+          SizedBox(height: size.height * 0.02),
+
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: _socialActions.map((iconPath){
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                child: SvgPicture.asset(
+                  fit: BoxFit.contain,
+                  width: size.height * 0.04,
+                  iconPath,
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      )
+    );
+  }
+
+  Widget _tradingAccounts(){
+    final size = MediaQuery.of(context).size;
+
+
+    final List<TradingAccount> accounts = [
+      TradingAccount(
+        name: "Standard",
+        currency: "USD",
+        balance: "\$100.000",
+        isReal: true,
+        isDemo: false,
+        platform: "MT5",
+        iconColor: AppColors.primaryColor,
+        borderColor: AppColors.primaryColor,
+      ),
+      // TradingAccount(
+      //   name: "Ultra Low",
+      //   currency: "USD",
+      //   balance: "\$100.000",
+      //   isReal: false,
+      //   isDemo: true,
+      //   platform: "MT5",
+      //   iconColor: Color(0XFF8B949E),
+      //   borderColor: Color(0XFF8B949E),
+      // ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Trading Accounts",
+              style: AppTextStyle.h3(context,color: AppColors.primaryText),
+            ),
+            CircularIconButton(
+              onTap: () {},
+              icon: Icons.add,
+              backgroundColor: AppColors.primaryColor,
+            ),
+
+          ],
+        ),
+
+        SizedBox(height: size.height * 0.04),
+
+        ...accounts.asMap().entries.map((entry){
+          int index = entry.key;
+          TradingAccount acc = entry.value;
+          return  Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.02),
+            child: TradingAccountCard(
+              account: acc,
+              onTrade: (){},
+              onDeposit: (){},
+              onTransfer: (){},
+              isObscured: _isObscured,
+              onToggleVisibility: ()=> setState(() => _isObscured = !_isObscured),
+              onExpandTap: ()=>  _showExpandedSheet(context, acc),
+            ),
+          );
+        }),
+
+
+
+      ],
+    );
+  }
+
+  Widget _bonusSection() {
+    final size = MediaQuery.of(context).size;
+    final isLandscape = size.width > size.height;
+
+     final double padding = size.shortestSide * 0.03;
+    final double imageWidth = isLandscape ? size.height * 0.45 : size.width * 0.35;
+    final double imageTopOffset = -imageWidth * 0.4;
+    final double imageRightOffset = -imageWidth * 0.12;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        /// Root Container
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(padding),
+          decoration: BoxDecoration(
+            gradient: AppColors.blueGradient,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Bonus Text Info
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "\$300 ",
+                      style: AppTextStyle.h2(
+                        context,
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "Every week\ngiveaway on bitcoin",
+                      style: AppTextStyle.bodySmall(
+                        context,
+                        color: AppColors.descriptions.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: size.height * 0.02),
+
+              /// Progress Bar Section
+              GradientBoxContainer(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LinearProgressIndicator(
+                      color: AppColors.primaryColor,
+                      backgroundColor: AppColors.secondaryButtonColor,
+                      value: 0.5,
+                      minHeight: size.height * 0.005,
+                    ),
+                    SizedBox(height: size.height * 0.01),
+                    Text(
+                      "Unlock a 100% Tradable Bonus",
+                      style: AppTextStyle.bodySmall(
+                        context,
+                        color: AppColors.descriptions.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: size.height * 0.03),
+
+              /// Claim Bonus Button
+              PrimaryButton(
+                buttonText: 'Claim Your Bonus',
+                buttonType: ButtonType.primary,
+                onPressed: () {},
+                textStyle: AppTextStyle.bodySmall(context),
+                rightIcon: "assets/icons/rightArrowIcon.svg",
+                iconSize: size.height * 0.02,
+              ),
+            ],
+          ),
+        ),
+
+        /// Positioned Bonus Image (50% outside top-right)
+        Positioned(
+          top: imageTopOffset,
+          right: imageRightOffset,
+          child: Image.asset(
+            'assets/images/bonusImg.png',
+            width: imageWidth,
+            fit: BoxFit.fill,
+            filterQuality: FilterQuality.low,
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
+  Widget _openPositions(BuildContext context){
+    final size = MediaQuery.of(context).size;
+    final isOpen = _selectedView == 'Open Positions';
+    final data = isOpen ? _mockData : _mockPendingData;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+           children: [
+
+             DropdownButton<String>(
+                 value: _selectedView,
+                 iconSize: size.height * 0.05,
+                 iconEnabledColor: Colors.white,
+                 dropdownColor: AppColors.primaryBackgroundColor,
+                 items: _dropdownOptions.map((String value) {
+                   return DropdownMenuItem<String>(
+                     value: value,
+                     child: Text(value, style: AppTextStyle.bodySmall(context, color: AppColors.primaryText)),
+                   );
+                 }).toList(),
+                 onChanged:(value){
+                   setState(() {
+                     _selectedView = value!;
+                   });
+                 }
+             ),
+           ],
+        ),
+
+
+        Table(
+          columnWidths: const{
+            0: FlexColumnWidth(2),
+            1: FlexColumnWidth(2),
+            2: FlexColumnWidth(1.5),
+            3: FlexColumnWidth(2),
+            4: FlexColumnWidth(0.5),
+          },
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+
+          children: [
+            _tableRow(context,['Symbol', 'Status', 'Volume', 'Profit', ], isHeader: true, ),
+            ...List.generate(data.length * 2 -1, (i){
+              if(i.isOdd){
+                return _dividerRow();
+              }
+              final index = i ~/ 2;
+              final row = data[index];
+              final isBuy = row['status'] == 'Buy';
+              final profit = row['profit'];
+              final isPositive = profit.contains('+');
+
+              return TableRow(
+                children: [
+                  _tableCell(row['symbol']),
+                  _tableCellWithDot(row['status'], isBuy ? AppColors.green : AppColors.redErrorCall, context),
+                  _tableCell(row['volume']),
+                  _tableCell(
+                    row['profit'],
+                    color: isPositive ? AppColors.green : AppColors.redErrorCall,
+                  ),
+                ]);
+            }),
+          ],
+        )
+
+      ],
+    );
+  }
+   TableRow _tableRow(BuildContext context,List<String> cells, {bool isHeader = false}) {
+    final size = MediaQuery.of(context).size;
+    return TableRow(
+      children: List.generate(cells.length, (i) {
+        final text = cells[i];
+
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: size.height * 0.019),
+          child: Text(
+            text,
+            style: AppTextStyle.bodySmall2x(
+              context,
+              color: isHeader ? AppColors.secondaryColor3 : AppColors.primaryText,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+   Widget _tableCell(String text, {Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        text,
+        style: AppTextStyle.bodySmall2x(context, color: color ?? AppColors.primaryText),
+      ),
+    );
+  }
+  Widget _tableCellWithDot(String text, Color dotColor, BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          margin: const EdgeInsets.only(right: 6),
+          decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+        ),
+        Text(text, style: AppTextStyle.bodySmall2x(context, color: AppColors.primaryText)),
+      ],
+    );
+  }
+  TableRow _dividerRow() {
+    return TableRow(
+      children: List.generate(4, (_) => Divider(color: AppColors.stroke, height: 1)),
+    );
+  }
+  void _showRowDetailsBottomSheet(BuildContext context, Map<String, dynamic> rowData) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 0.08, vertical: size.height * 0.08),
+        decoration: BoxDecoration(
+          color: AppColors.primaryBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 4,
+              width: 40,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(8)),
+            ),
+            Text("Trade Details", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
+            const SizedBox(height: 20),
+            ...rowData.entries.map((e) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("${e.key.capitalize()}: ", style: AppTextStyle.bodySmall2x(context, color: Colors.grey)),
+                  Flexible(child: Text("${e.value}", style: AppTextStyle.bodySmall2x(context, color: AppColors.primaryText))),
+                ],
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+
+  /// Bottom sheet
+  void _showExpandedSheet(BuildContext context, TradingAccount account) {
+    final size = MediaQuery.of(context).size;
+    // Sample data for tab 1 and tab 2 (replace with API data later)
+    final List<String> realAccountDetails = [
+      (account.name),
+      "Platform: ${account.platform}",
+      "Currency: ${account.currency}",
+      "Balance: ${account.balance}",
+    ];
+
+    final List<String> demoAccountDetails = [
+      "Demo",
+      "Deposit: \$100",
+      "Withdraw: \$50",
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        maxChildSize: 0.85,
+        minChildSize: 0.3,
+        builder: (_, controller) => Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.05,
+            vertical: size.height * 0.02,
+          ),
+          decoration: ShapeDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(0.62, 0.79),
+              end: Alignment(-0.62, -0.79),
+              colors: [Color(0xFF0D1117), Color(0xFF1D242D)],
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+          ),
+          child: DefaultTabController(
+            length: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    height: 4,
+                    width: size.width * 0.3,
+                    margin: const EdgeInsets.only(bottom: 18),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Summary", style: AppTextStyle.h3(context, color: AppColors.primaryText)),
+                    CircularIconButton(
+                      onTap: () {},
+                      icon: Icons.add,
+                      backgroundColor: AppColors.primaryColor,
+                    ),
+                  ],
+                ),
+                TabBar(
+                  labelColor: AppColors.primaryColor,
+                  unselectedLabelColor: Color(0XFFECF6FF),
+                  indicatorColor: AppColors.primaryColor,
+                  labelStyle: AppTextStyle.bodySmallMid(context),
+                  dividerColor: AppColors.stroke,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  tabs: const [Tab(text: 'Real'), Tab(text: 'Demo')],
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _buildDetailsList(context, controller, realAccountDetails),
+                      _buildDetailsList(context, controller, demoAccountDetails),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildDetailsList(BuildContext context, ScrollController controller, List<String> details) {
+    return ListView.separated(
+      controller: controller,
+      physics: const BouncingScrollPhysics(),
+      itemCount: details.length,
+      separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
+      itemBuilder: (_, index) {
+        final text = details[index];
+        final isHeader = index == 0;
+        return Text(
+          text,
+          style: isHeader
+              ? AppTextStyle.bodySmallMid(context, color: AppColors.primaryColor)
+              : AppTextStyle.bodySmall2x(context).copyWith(color: AppColors.primaryText),
+        );
+      },
+    );
+  }
+
+}
+
+ extension StringCasingExtension on String {
+   String capitalize() => '${this[0].toUpperCase()}${substring(1)}';
+ }
+
+///Google Sign In Profile Code
+// Widget body(){
+//   final screenWidth = MediaQuery.of(context).size.width * 1;
+//   final screenHeight = MediaQuery.of(context).size.height * 1;
+//   if (widget.user == null) {
+//     return Center(
+//       child: Text(
+//         "No user info found. Please sign in again.",
+//         style: AppTextStyle.h3(context, color: AppColors.primaryText),
+//       ),
+//     );
+//   }
+//
+//   return SingleChildScrollView(
+//     physics: const BouncingScrollPhysics(),
+//     child: SizedBox(
+//       height: screenHeight,
+//       child: Padding(
+//         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             Text(
+//               'Profile',
+//               style: AppTextStyle.h2(context,color: AppColors.primaryText),
+//             ),
+//
+//             SizedBox(height: screenHeight * 0.03),
+//
+//             CircleAvatar(
+//               radius: screenWidth * 0.1,
+//               backgroundColor: Colors.grey[300],
+//               backgroundImage: (widget.user!.photoUrl != null && widget.user!.photoUrl!.isNotEmpty)
+//                   ? NetworkImage(widget.user!.photoUrl!)
+//                   : null,
+//               child: (widget.user!.photoUrl == null || widget.user!.photoUrl!.isEmpty)
+//                   ? Icon(Icons.person, size: screenWidth * 0.1, color: Colors.white)
+//                   : null,
+//             ),
+//
+//
+//             SizedBox(height: screenHeight * 0.03),
+//
+//             Text(
+//               'Name: ${widget.user!.displayName ?? "N/A"}',
+//               style: AppTextStyle.h3(context,color: AppColors.primaryText),
+//             ),
+//
+//             SizedBox(height: screenHeight * 0.01),
+//
+//             Text(
+//               'Email: ${widget.user!.email}',
+//               style: AppTextStyle.buttonsMedium(context,color: AppColors.primaryText),
+//             ),
+//
+//             SizedBox(height: screenHeight * 0.03),
+//
+//             PrimaryButton(
+//               buttonText:'Sign Out',
+//               buttonType: ButtonType.primary,
+//               onPressed:  ()async{
+//                await GoogleSignInApi.logout();
+//                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SignInView()));
+//               },
+//               textStyle: AppTextStyle.buttonsMedium(context),
+//             ),
+//           ],
+//         ),
+//       ),
+//     )
+//   );
+// }
+
+
+
+ 

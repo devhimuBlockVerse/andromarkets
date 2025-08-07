@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/models/login_model.dart';
-import '../../domain/usecase/get_message_usecase.dart';
 
-class HomeViewModel extends ChangeNotifier {
+class DashboardViewModel extends ChangeNotifier {
   bool isLoading = false;
   String message = 'Welcome';
   UserModel? user;
@@ -14,18 +13,6 @@ class HomeViewModel extends ChangeNotifier {
   List<String> roles = [];
   List<String> permissions = [];
 
-  
-  final GetMessageUseCase _getMessageUseCase = GetMessageUseCase();
-
-  Future<void> fetchMessage() async {
-    isLoading = true;
-    notifyListeners();
-
-    message = await _getMessageUseCase();
-
-    isLoading = false;
-    notifyListeners();
-  }
 
   Future<void> loadUserData() async{
     final prefs = await SharedPreferences.getInstance();
@@ -50,20 +37,20 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> saveLoginResponse(LoginResponseModel loginResponse) async {
     final prefs = await SharedPreferences.getInstance();
+    final user = loginResponse.user;
+
     prefs.setString('login_response', json.encode({
-      'user': {
-        'id': loginResponse.user.id,
-        'name': loginResponse.user.name,
-        'email': loginResponse.user.email,
-        'email_verified_at': loginResponse.user.emailVerifiedAt,
-      },
+      'user': user != null ? {
+        'id': user.id,
+        'name': user.name,
+        'email': user.email,
+        'email_verified_at': user.emailVerifiedAt,
+      } : null,
       'token': loginResponse.token,
       'roles': loginResponse.roles,
       'permissions': loginResponse.permissions,
+      'google2fa_required': loginResponse.google2faRequired,
     }));
   }
-
-
-
 
 }

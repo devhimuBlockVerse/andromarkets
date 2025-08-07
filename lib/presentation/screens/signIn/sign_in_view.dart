@@ -1,8 +1,8 @@
 import 'package:andromarkets/config/theme/app_colors.dart';
 import 'package:andromarkets/config/theme/app_text_styles.dart';
 import 'package:andromarkets/config/theme/responsive_ui.dart';
-import 'package:andromarkets/core/enums/textfield_type.dart';
 import 'package:andromarkets/presentation/components/buttonComponent.dart';
+import 'package:andromarkets/presentation/screens/password/forgot_password_view.dart';
 import 'package:andromarkets/presentation/screens/signup/sign_up_view.dart';
 import 'package:andromarkets/presentation/viewmodel/auth_view_model.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +10,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../core/enums/button_type.dart';
 import '../../../core/services/google_sign_service.dart';
+import '../../widgets/bottom_navigation.dart';
 import '../../components/textFieldComponent.dart';
-import '../../viewmodel/home_view_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../viewmodel/dashboard_view_model.dart';
 
-import '../dashboard/dashboard_view.dart';
 
 
 class SignInView extends StatefulWidget {
@@ -38,7 +37,10 @@ class _SignInViewState extends State<SignInView> {
     super.dispose();
   }
 
-  void _handleLogin(BuildContext context, AuthViewModel authViewModel) {
+  Future<void>_signIn()async{
+
+    final authViewModel = context.read<AuthViewModel>();
+
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -49,7 +51,18 @@ class _SignInViewState extends State<SignInView> {
       return;
     }
 
-    authViewModel.login(email, password, context);
+    try{
+      authViewModel.setLoading(true);
+      await authViewModel.login(email, password, context);
+    }catch(e){
+      print("_signIn Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }finally{
+      authViewModel.setLoading(false);
+    }
+
   }
 
   Future googleSignIn()async{
@@ -60,9 +73,17 @@ class _SignInViewState extends State<SignInView> {
         const SnackBar(content: Text("Sign in failed")),
       );
     }else{
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardView(
-          user: user
-      )));
+      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => BottomNavigation(user: user,)));
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => BottomNavigation(
+            googleUser: user,
+            initialScreenId: 'dashboard',
+          ),
+        ),
+      );
+
     }
 
   }
@@ -73,22 +94,19 @@ class _SignInViewState extends State<SignInView> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.primaryBackgroundColor,
-        body: Center(
-          child: authViewModel.isLoading
-              ? const CircularProgressIndicator()
-              :  ResponsiveViewState(
-              mobile: body(),
-              tablet: body(),
-           )
-
-        ),
+        body: authViewModel.isLoading
+            ? const CircularProgressIndicator()
+            :  ResponsiveViewState(
+            mobile: body(),
+            tablet: body(),
+         ),
       ),
     );
   }
   Widget body() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
-    final viewModel = context.watch<HomeViewModel>();
+    final viewModel = context.watch<DashboardViewModel>();
     final authViewModel = context.watch<AuthViewModel>();
     final user = authViewModel.user;
 
@@ -100,6 +118,7 @@ class _SignInViewState extends State<SignInView> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: screenHeight * 0.05),
 
               Image.asset(
                   "assets/images/splashScreenLogo.png",
@@ -157,7 +176,7 @@ class _SignInViewState extends State<SignInView> {
 
         /// Forgot password
         GestureDetector(
-          onTap: (){},
+          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPasswordView())),
           child: Align(
             alignment: Alignment.bottomRight,
             child: Text(
@@ -170,12 +189,15 @@ class _SignInViewState extends State<SignInView> {
         SizedBox(height: screenHeight * 0.02),
 
         /// Sign In
+
         PrimaryButton(
             buttonText: 'Sign In',
             buttonType: ButtonType.primary,
-            onPressed:()=> _handleLogin(context,authViewModel),
+            onPressed:_signIn,
             textStyle: AppTextStyle.buttonsMedium(context),
         ),
+
+
 
         SizedBox(height: screenHeight * 0.02),
 
