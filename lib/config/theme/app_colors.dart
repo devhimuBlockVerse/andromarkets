@@ -68,6 +68,7 @@ class AppColors {
 
   static const Color primaryBackgroundColor= Color(0xFF16171D);
   static const Color masterBg= Color(0xFF0D1117);
+  static const Color panelColor= Color(0xFF161B22);
 
 
 }

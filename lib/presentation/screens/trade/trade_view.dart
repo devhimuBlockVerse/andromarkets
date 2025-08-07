@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -62,12 +60,11 @@ class _TradeViewState extends State<TradeView> {
       });
     }
   }
-  
   Future<void>fetchQuotes()async{
 
     try{
       final response = await http
-          .get(Uri.parse('http://192.168.68.61:8000/quotes/$symbol'))
+          .get(Uri.parse('http://192.168.68.66:8000/quotes/$symbol'))
           .timeout(Duration(seconds: 3));
 
       if(response.statusCode == 200){
@@ -88,7 +85,7 @@ class _TradeViewState extends State<TradeView> {
   Future<void>fetchAccountInfo()async{
     try{
       final response = await http
-          .get(Uri.parse('http://192.168.68.61:8000/account'))
+          .get(Uri.parse('http://192.168.68.66:8000/account'))
           .timeout(Duration(seconds: 3));
       if(response.statusCode == 200){
         setState(() {
@@ -109,7 +106,7 @@ class _TradeViewState extends State<TradeView> {
   Future<void> fetchChartData() async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.68.61:8000/history/$symbol/20'))
+          .get(Uri.parse('http://192.168.68.66:8000/history/$symbol/20'))
           .timeout(Duration(seconds: 3));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -129,7 +126,6 @@ class _TradeViewState extends State<TradeView> {
       });
     }
   }
-
   Future<void>placeOrder(String orderType, double volume)async{
     setState(() {
       statusMessage = "Placing order...";
@@ -138,7 +134,7 @@ class _TradeViewState extends State<TradeView> {
     });
     try{
       final response = await http
-          .post(Uri.parse('http://192.168.68.61:8000/order/$symbol/$orderType/$volume'))
+          .post(Uri.parse('http://192.168.68.66:8000/order/$symbol/$orderType/$volume'))
           .timeout(Duration(seconds: 3));
       setState(() {
         statusMessage = json.decode(response.body)['error'] ?? 'Order placed successfully';
