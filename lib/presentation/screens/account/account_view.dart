@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -134,9 +135,9 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     setState(() {
       _archivedAccounts.remove(account);
       if(account.isReal){
-        _realAccounts.add(account);
+        _realAccounts.insert(0, account);
       }else if(account.isDemo){
-        _demoAccounts.add(account);
+        _demoAccounts.insert(0,account);
       }
       _selectedAccount = account;
       _longPressedAccount = null;
@@ -659,6 +660,13 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       BuildContext context, ScrollController controller,
       List<TradingAccount> accounts, bool isArchive) {
     final size = MediaQuery.of(context).size;
+    final sortedAccounts = List<TradingAccount>.from(accounts);
+    if(_selectedAccount != null && sortedAccounts.contains(_selectedAccount)){
+      sortedAccounts
+        ..remove(_selectedAccount)
+        ..insert(0, _selectedAccount!);
+    }
+    print('Sorted accounts for ${isArchive ? 'Archive' : 'Real/Demo'} tab: ${sortedAccounts.map((a) => a.accountNumber).toList()}');
     return StatefulBuilder(
       builder: (BuildContext context,StateSetter setSheetState) => ListView.separated(
         key: ValueKey(_longPressedAccount?.accountNumber ?? 'listview'),
@@ -705,7 +713,41 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                   child: Builder(
                     builder: (context){
                       print('Rendering PrimaryButton for ${account.name} #${account.accountNumber}');                    return PrimaryButton(
-                        onPressed: ()=> _archiveAccount(account),
+                        onPressed: ()=> showDialog(
+                          context: context,
+                           barrierColor: Colors.transparent,
+                          builder: (BuildContext dialogContext) => BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 9.0, sigmaY: 9.0),
+                            child: AlertDialog(
+                              actionsAlignment: MainAxisAlignment.center,
+                              backgroundColor: Colors.transparent,
+                              title: Text(
+                                textAlign: TextAlign.center,
+                                'Archive Account',
+                                style: AppTextStyle.h3(context, color: AppColors.primaryText),
+                              ),
+                              content: Text(
+                                textAlign: TextAlign.center,
+                                'Are you sure you want to Archive ${account.name} #${account.accountNumber}?',
+                                style: AppTextStyle.bodySmall(context, color: AppColors.descriptions),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: ()=>Navigator.of(dialogContext).pop(),
+                                  child: _tag(context, 'No', Color(0XFF8B949E)),
+
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                     Navigator.of(dialogContext).pop();
+                                    setState(() => _archiveAccount(account));
+                                  },
+                                  child: _tag(context, 'Yes', AppColors.primaryColor,textColor: AppColors.primaryColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         buttonText:'Archive',
                         buttonType: ButtonType.tertiary,
                         textStyle: AppTextStyle.bodySmall(context),
@@ -728,9 +770,9 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                         buttonText:'Restore',
                         buttonType: ButtonType.tertiary,
                         textStyle: AppTextStyle.bodySmall(context),
-                        leftIcon:  'assets/icons/archiveIcon.svg',
+                        leftIcon:  'assets/icons/restoreIcon.svg',
                         iconColor: AppColors.primaryText,
-                        iconSize: size.height * 0.02,
+                        iconSize: size.height * 0.03,
                         buttonHeight: size.height * 0.04,
                       );
                     }
@@ -847,7 +889,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                 labelStyle: AppTextStyle.bodySmallMid(context),
                 dividerColor: AppColors.stroke,
                 indicatorSize: TabBarIndicatorSize.tab,
-                tabs: const [Tab(text: 'Real'), Tab(text: 'Demo'),Tab(text: 'Archive')],
+                tabs: const [Tab(text: 'Real'), Tab(text: 'Demo'),Tab(text: 'Archived')],
               ),
               const SizedBox(height: 10),
               Expanded(
@@ -946,6 +988,23 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 //     )
 //   );
 // }
+
+
+
+Widget _tag(BuildContext context, String label, Color color,{Color? textColor}) {
+  final size = MediaQuery.of(context).size;
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: size.width * 0.03, vertical: size.width * 0.01),
+    decoration: ShapeDecoration(
+      color: color.withOpacity(0.2),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 1, color: color),
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ),
+    child: Text(label, style: AppTextStyle.bodySmall2x(context, color: textColor ?? Color(0XFFECF6FF))),
+  );
+}
 
 
 
