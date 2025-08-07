@@ -18,6 +18,28 @@ class TradingAccount {
     required this.isDemo,
     required this.platform,
     required this.iconColor,
-    required this.borderColor,,
+    required this.borderColor,
    });
+
+  TradingAccount copyWith({
+    String? name,
+    String? accountNumber,
+    String? balance,
+    bool? isReal,
+    bool? isDemo,
+    String? platform,
+    Color? iconColor,
+    Color? borderColor,
+  }) {
+    return TradingAccount(
+      name: name ?? this.name,
+      accountNumber: accountNumber ?? this.accountNumber,
+      balance: balance ?? this.balance,
+      isReal: isReal ?? this.isReal,
+      isDemo: isDemo ?? this.isDemo,
+      platform: platform ?? this.platform,
+      iconColor: iconColor ?? this.iconColor,
+      borderColor: borderColor ?? this.borderColor,
+    );
+  }
 }

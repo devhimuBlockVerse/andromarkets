@@ -1,4 +1,6 @@
- import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
+ import 'dart:convert';
+
+import 'package:andromarkets/presentation/screens/funds/deposit_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,6 +18,7 @@ import '../../components/copyLinkComponent.dart';
 import '../../components/gradientContainer.dart';
 import '../../components/tradingAccountCard.dart';
 import 'table_view.dart';
+import 'package:http/http.dart'as http;
 
 class AccountView extends StatefulWidget {
   final GoogleSignInAccount? user;
@@ -30,7 +33,6 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   int _selectedActionIndex = -1;
   bool _isObscured = true;
 
-  late final TabController _tabController;
   TextEditingController referredController = TextEditingController();
   final List<ActionData> _actions = [
     ActionData('assets/icons/depositWallet.svg', 'Deposit'),
@@ -44,6 +46,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     'assets/icons/whatsapp.svg',
   ];
 
+  late TabController _tabController;
   TradingAccount? _selectedAccount;
   List<TradingAccount> _realAccounts=[
     TradingAccount(
@@ -119,9 +122,11 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
         _demoAccounts.remove(account);
       }
       _archivedAccounts.add(account);
-      _selectedAccount = null;
+      _selectedAccount = _realAccounts.isNotEmpty ? _realAccounts[0] : null;
+      Navigator.pop(context);
     });
   }
+
   void _restoreAccount(TradingAccount account){
     setState(() {
       _archivedAccounts.remove(account);
@@ -130,17 +135,43 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       }else if(account.isDemo){
         _demoAccounts.add(account);
       }
-      _selectedAccount = null;
+      _selectedAccount = account;
+      Navigator.pop(context);
     });
   }
 
-
+  Future<void> _fetchAccountData() async {
+    try {
+      final response = await http.get(Uri.parse('http://192.168.68.66:8000/account'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          // Update balances for real and demo accounts
+          _realAccounts = _realAccounts
+              .map((acc) => acc.copyWith(balance: "\$${data['balance']}"))
+              .toList();
+          _demoAccounts = _demoAccounts
+              .map((acc) => acc.copyWith(balance: "\$${data['balance']}"))
+              .toList();
+          if (_selectedAccount != null) {
+            _selectedAccount = _selectedAccount!.copyWith(balance: "\$${data['balance']}");
+          }
+        });
+      } else {
+        print('Failed to fetch account data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching account data: $e');
+    }
+  }
 
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _selectedAccount = _realAccounts[0];
+    _tabController = TabController(length: 3, vsync: this);
+    _fetchAccountData();
   }
 
   @override
@@ -802,28 +833,27 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   //   );
   // }
 
-  Widget _buildDetailsList(BuildContext context, ScrollController controller, List<TradingAccount> accounts, bool isArchive) {
+  Widget _buildDetailsList(BuildContext context,
+      ScrollController controller,
+      List<TradingAccount> accounts, bool isArchive) {
+
     final size = MediaQuery.of(context).size;
+    final showArchiveButton = !isArchive && _selectedAccount != null && accounts.contains(_selectedAccount);
+
     return ListView.separated(
       controller: controller,
       physics: const BouncingScrollPhysics(),
-      itemCount: accounts.length + (isArchive ? 0 : 1),
+      itemCount: accounts.length + (showArchiveButton ? 1 : 0),
       separatorBuilder: (_, __) => Divider(color: AppColors.stroke),
       itemBuilder: (context, index) {
-        if(!isArchive && index == accounts.length && _selectedAccount != null){
+        if(showArchiveButton && index == accounts.length){
           return Padding(
             padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-            child: ElevatedButton(
+            child: PrimaryButton(
               onPressed: () => _archiveAccount(_selectedAccount!),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                foregroundColor: AppColors.primaryText,
-                padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text("Archive", style: AppTextStyle.bodySmall(context)),
+              buttonText: "Archive",
+              buttonType: ButtonType.secondary,
+              textStyle: AppTextStyle.bodySmall(context, color: AppColors.primaryText),
             ),
           );
         }
@@ -840,10 +870,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
           onTap: (){
             setState(() {
               _selectedAccount = account;
-              if(_selectedAccount != null){
-                _realAccounts = _realAccounts.map((acc)=> acc == _selectedAccount ? _selectedAccount! : acc).toList();
-                _demoAccounts = _demoAccounts.map((acc)=> acc == _selectedAccount ? _selectedAccount! : acc).toList();
-              }
+              Navigator.pop(context);
             });
           },
           trailing: isArchive 
@@ -854,6 +881,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       },
     );
   }
+
   Widget _tradingAccounts(){
     final size = MediaQuery.of(context).size;
     return Column(
@@ -933,6 +961,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
             ),
           ),
           child: DefaultTabController(
+            initialIndex: 0,
             length: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
