@@ -27,33 +27,11 @@ class _TradeViewState extends State<TradeView> {
   String errorMessage = "";
   List<Map<String, dynamic>> chartData = [];
   Timer? _timer;
-  // late TrackballBehavior _trackballBehavior;
 
   @override
   void initState() {
     super.initState();
-    // _trackballBehavior = TrackballBehavior(
-    //   enable: true,
-    //   lineType: TrackballLineType.vertical,
-    //   lineColor: AppColors.primaryColor.withOpacity(0.5),
-    //   lineWidth: 1,
-    //   activationMode: ActivationMode.none,
-    //   shouldAlwaysShow: true,
-    //   tooltipSettings: InteractiveTooltip(
-    //     enable: true,
-    //     color: AppColors.primaryBackgroundColor.withOpacity(0.8),
-    //     textStyle: TextStyle(
-    //       fontSize: 11,
-    //       color: AppColors.descriptions,
-    //       fontWeight: FontWeight.normal
-    //     ),
-    //
-    //     format: 'Time: point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.y',
-    //     decimalPlaces: 5,
-    //   ),
-    //   tooltipAlignment: ChartAlignment.near,
-    //   tooltipDisplayMode: TrackballDisplayMode.floatAllPoints
-    // );
+
     _fetchData();
     _timer = Timer.periodic(Duration(seconds: 3), (timer) {
       fetchQuotes();
@@ -138,9 +116,7 @@ class _TradeViewState extends State<TradeView> {
         setState(() {
           chartData = data.cast<Map<String, dynamic>>();
           errorMessage = '';
-          // if(chartData.isNotEmpty){
-          //   _trackballBehavior.showByIndex(chartData.length -1);
-          // }
+
         });
       }else{
         setState(() {
@@ -203,13 +179,7 @@ class _TradeViewState extends State<TradeView> {
   Widget body() {
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
-    // if (chartData.isNotEmpty) {
-    //   SchedulerBinding.instance.addPostFrameCallback((_) {
-    //     if (mounted) {
-    //       _trackballBehavior.showByIndex(chartData.length - 1);
-    //     }
-    //   });
-    // }
+
     return SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -261,98 +231,7 @@ class _TradeViewState extends State<TradeView> {
 
                 SizedBox(height: screenHeight * 0.02),
 
-                /// Sample Chart
-                // Container(
-                //   height: screenHeight * 0.4,
-                //   width: screenWidth,
-                //   child: LineChart(
-                //     LineChartData(
-                //       gridData: FlGridData(
-                //         show: true,
-                //         drawVerticalLine: true,
-                //         getDrawingHorizontalLine: (value)=> FlLine(
-                //           color: AppColors.descriptions.withOpacity(0.3),
-                //           strokeWidth: 1,
-                //         ),
-                //         getDrawingVerticalLine: (value) => FlLine(
-                //           color: AppColors.descriptions.withOpacity(0.3),
-                //           strokeWidth: 1,
-                //         ),
-                //       ),
-                //       titlesData: FlTitlesData(
-                //         show: true,
-                //         bottomTitles: AxisTitles(
-                //           sideTitles: SideTitles(
-                //             showTitles: true,
-                //             interval: 4,
-                //             getTitlesWidget: (value, meta){
-                //               if(chartData.isEmpty){
-                //                 return Text(
-                //                   value.toInt().toString(),
-                //                   style: AppTextStyle.bodySmall(context,color: AppColors.descriptions),
-                //                 );}
-                //
-                //               final index = value.toInt();
-                //               if(index >= 0 && index < chartData.length){
-                //                 final timestamp = chartData[index]['time'];
-                //                 final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-                //                 return Text(
-                //                   DateFormat('HH:mm').format(date),
-                //                   style: AppTextStyle.bodySmall(context,color: AppColors.descriptions),
-                //                 );
-                //               }
-                //               return Text("");
-                //             },
-                //           ),
-                //         ),
-                //
-                //         leftTitles: AxisTitles(
-                //           sideTitles:  SideTitles(
-                //             showTitles: true,
-                //             interval: 0.0001,
-                //             getTitlesWidget: (value, meta){
-                //               return Text(
-                //                 value.toStringAsFixed(4),
-                //                 style: AppTextStyle.bodySmall(context,color: AppColors.descriptions),
-                //               );
-                //             },
-                //             reservedSize: 50,
-                //           ),
-                //         ),
-                //         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                //         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                //       ),
-                //       borderData: FlBorderData(show: true),
-                //       lineBarsData: [
-                //         LineChartBarData(
-                //           spots: chartData.isNotEmpty
-                //               ? chartData
-                //                   .asMap()
-                //                   .entries
-                //                   .map((e) => FlSpot(e.key.toDouble(), e.value['close'].toDouble()))
-                //                   .toList()
-                //               : [
-                //             FlSpot(0, 1.12345),
-                //             FlSpot(1, 1.12350),
-                //             FlSpot(2, 1.12340),
-                //             FlSpot(3, 1.12360),
-                //             FlSpot(4, 1.12355),
-                //           ],
-                //           isCurved: true,
-                //           color: AppColors.green,
-                //           dotData: FlDotData(show: false),
-                //         ),
-                //       ],
-                //       minY: chartData.isNotEmpty
-                //         ? chartData.map((e) => e['low'].toDouble()).reduce((a,b) => a < b ?  a : b) - 0.0002
-                //           : 1.12300,
-                //       maxY: chartData.isNotEmpty
-                //           ? chartData.map((e) => e['high'].toDouble()).reduce((a, b) => a > b ? a : b) + 0.0002
-                //           : 1.12400,
-                //     ),
-                //   ),
-                // ),
-                /// V2
+                ///  Chart
                 SizedBox(
                   height: screenHeight * 0.45,
                   child: chartData.isNotEmpty
@@ -370,7 +249,8 @@ class _TradeViewState extends State<TradeView> {
                       enable: true,
 
                       lineType: TrackballLineType.vertical,
-                        lineColor: AppColors.descriptions.withOpacity(0.5),                      lineWidth: 1,
+                        lineColor: AppColors.descriptions.withOpacity(0.5),
+                        lineWidth: 1,
                       activationMode: ActivationMode.singleTap,
                       tooltipSettings: InteractiveTooltip(
                         enable: true,
@@ -382,9 +262,7 @@ class _TradeViewState extends State<TradeView> {
                       tooltipAlignment: ChartAlignment.near,
                       tooltipDisplayMode: TrackballDisplayMode.floatAllPoints
                     ),
-                    // trackballBehavior: _trackballBehavior,
 
-                    // Add crosshair for price/time details
                     crosshairBehavior: CrosshairBehavior(
                       enable: true,
                       lineType: CrosshairLineType.both,
@@ -490,20 +368,7 @@ class _TradeViewState extends State<TradeView> {
                 ),
 
                 SizedBox(height: screenHeight * 0.02),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     ElevatedButton(
-                //      onPressed: () => placeOrder('buy', 0.1),
-                //       child: Text('Buy',style: AppTextStyle.bodySmall(context,color: AppColors.primaryColor)),
-                //     ),
-                //
-                //     ElevatedButton(
-                //       onPressed: () => placeOrder('sell', 0.1),
-                //       child: Text('Sell',style: AppTextStyle.bodySmall(context,color: AppColors.redErrorCall)),
-                //     ),
-                //   ],
-                // ),
+
                 SizedBox(width: screenWidth * 0.02),
                 Text(
                   statusMessage,
