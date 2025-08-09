@@ -51,29 +51,9 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   TradingAccount? _longPressedAccount;
 
   List<TradingAccount> _realAccounts=[
-    // TradingAccount(
-    //   name: "Standard",
-    //   accountNumber: "123456",
-    //   balance: "\$421.10",
-    //   isReal: true,
-    //   isDemo: false,
-    //   platform: "MT5",
-    //   iconColor: AppColors.primaryColor,
-    //   borderColor: AppColors.primaryColor,
-    // ),
-    // TradingAccount(
-    //   name: "Low",
-    //   accountNumber: "123457",
-    //   balance: "\$421.10",
-    //   isReal: true,
-    //   isDemo: false,
-    //   platform: "MT5",
-    //   iconColor: AppColors.primaryColor,
-    //   borderColor: AppColors.primaryColor,
-    // ),
     TradingAccount(
-      name: "Ultra Low",
-      accountNumber: "123458",
+      name: "Standard",
+      accountNumber: "123456",
       balance: "\$421.10",
       isReal: true,
       isDemo: false,
@@ -81,32 +61,23 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
       iconColor: AppColors.primaryColor,
       borderColor: AppColors.primaryColor,
     ),
+    TradingAccount(
+      name: "Low",
+      accountNumber: "612141",
+      balance: "\$121.50",
+      isReal: true,
+      isDemo: false,
+      platform: "MT5",
+      iconColor: AppColors.primaryColor,
+      borderColor: AppColors.primaryColor,
+    ),
+
   ];
   List<TradingAccount> _demoAccounts=[
-    // TradingAccount(
-    //   name: "Standard",
-    //   accountNumber: "123459",
-    //   balance: "\$421.10",
-    //   isReal: false,
-    //   isDemo: true,
-    //   platform: "MT5",
-    //   iconColor: Color(0xFF8B949E),
-    //   borderColor: Color(0xFF8B949E),
-    // ),
-    // TradingAccount(
-    //   name: "Low",
-    //   accountNumber: "123460",
-    //   balance: "\$421.10",
-    //   isReal: false,
-    //   isDemo: true,
-    //   platform: "MT5",
-    //   iconColor: Color(0xFF8B949E),
-    //   borderColor: Color(0xFF8B949E),
-    // ),
     TradingAccount(
-      name: "Ultra Low",
-      accountNumber: "123461",
-      balance: "\$421.10",
+      name: "Standard",
+      accountNumber: "112210",
+      balance: "\$10000.00",
       isReal: false,
       isDemo: true,
       platform: "MT5",
