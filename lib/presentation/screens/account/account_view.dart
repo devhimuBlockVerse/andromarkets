@@ -291,7 +291,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   Widget _totalBalanceCard(){
     final screenWidth = MediaQuery.of(context).size.width * 1;
     final screenHeight = MediaQuery.of(context).size.height * 1;
-    double balance = 5450.500;
+    double balance = _realAccounts.isNotEmpty ? double.parse(_realAccounts[0].balance.substring(1)) : _demoAccounts.isNotEmpty ? double.parse(_demoAccounts[0].balance.substring(1))  : 0000.000;
     return GradientBoxContainer(
       width: screenWidth,
       borderSide:BorderSide(
@@ -799,7 +799,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     if(_realAccounts.isEmpty && _demoAccounts.isEmpty){
       final defaultAccount = TradingAccount(
         name: "Demo",
-        accountNumber: "000000",
+        accountNumber: "######",
         balance: "\$000.00",
         isReal: false,
         isDemo: false,
