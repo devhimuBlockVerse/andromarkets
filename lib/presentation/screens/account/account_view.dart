@@ -51,26 +51,26 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   TradingAccount? _longPressedAccount;
 
   List<TradingAccount> _realAccounts=[
-    TradingAccount(
-      name: "Standard",
-      accountNumber: "123456",
-      balance: "\$421.10",
-      isReal: true,
-      isDemo: false,
-      platform: "MT5",
-      iconColor: AppColors.primaryColor,
-      borderColor: AppColors.primaryColor,
-    ),
-    TradingAccount(
-      name: "Low",
-      accountNumber: "123457",
-      balance: "\$421.10",
-      isReal: true,
-      isDemo: false,
-      platform: "MT5",
-      iconColor: AppColors.primaryColor,
-      borderColor: AppColors.primaryColor,
-    ),
+    // TradingAccount(
+    //   name: "Standard",
+    //   accountNumber: "123456",
+    //   balance: "\$421.10",
+    //   isReal: true,
+    //   isDemo: false,
+    //   platform: "MT5",
+    //   iconColor: AppColors.primaryColor,
+    //   borderColor: AppColors.primaryColor,
+    // ),
+    // TradingAccount(
+    //   name: "Low",
+    //   accountNumber: "123457",
+    //   balance: "\$421.10",
+    //   isReal: true,
+    //   isDemo: false,
+    //   platform: "MT5",
+    //   iconColor: AppColors.primaryColor,
+    //   borderColor: AppColors.primaryColor,
+    // ),
     TradingAccount(
       name: "Ultra Low",
       accountNumber: "123458",
@@ -83,26 +83,26 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
     ),
   ];
   List<TradingAccount> _demoAccounts=[
-    TradingAccount(
-      name: "Standard",
-      accountNumber: "123459",
-      balance: "\$421.10",
-      isReal: false,
-      isDemo: true,
-      platform: "MT5",
-      iconColor: Color(0xFF8B949E),
-      borderColor: Color(0xFF8B949E),
-    ),
-    TradingAccount(
-      name: "Low",
-      accountNumber: "123460",
-      balance: "\$421.10",
-      isReal: false,
-      isDemo: true,
-      platform: "MT5",
-      iconColor: Color(0xFF8B949E),
-      borderColor: Color(0xFF8B949E),
-    ),
+    // TradingAccount(
+    //   name: "Standard",
+    //   accountNumber: "123459",
+    //   balance: "\$421.10",
+    //   isReal: false,
+    //   isDemo: true,
+    //   platform: "MT5",
+    //   iconColor: Color(0xFF8B949E),
+    //   borderColor: Color(0xFF8B949E),
+    // ),
+    // TradingAccount(
+    //   name: "Low",
+    //   accountNumber: "123460",
+    //   balance: "\$421.10",
+    //   isReal: false,
+    //   isDemo: true,
+    //   platform: "MT5",
+    //   iconColor: Color(0xFF8B949E),
+    //   borderColor: Color(0xFF8B949E),
+    // ),
     TradingAccount(
       name: "Ultra Low",
       accountNumber: "123461",
@@ -124,7 +124,9 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
         _demoAccounts.remove(account);
       }
       _archivedAccounts.add(account);
-      _selectedAccount = _realAccounts.isNotEmpty ? _realAccounts[0] : null;
+      // _selectedAccount = _realAccounts.isNotEmpty ? _realAccounts[0] : null;
+      _selectedAccount = _realAccounts.isNotEmpty ? _realAccounts[0]
+          : _demoAccounts.isNotEmpty ? _demoAccounts[0] : null;
       _longPressedAccount = null;
       Navigator.pop(context);
     });
@@ -660,6 +662,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
   Widget _buildDetailsList(
       BuildContext context, ScrollController controller,
       List<TradingAccount> accounts, bool isArchive) {
+
     final size = MediaQuery.of(context).size;
     final sortedAccounts = List<TradingAccount>.from(accounts);
     if(_selectedAccount != null && sortedAccounts.contains(_selectedAccount)){
@@ -705,9 +708,23 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
                 onTap: (){
                   print('Tapped account: ${account.name} #${account.accountNumber}');
                   setState(() {
-                      _selectedAccount = account;
-                      _longPressedAccount = null;
-                      Navigator.pop(context);
+                    // if (isSelected) {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => AccountDetailScreen(account: account),
+                    //     ),
+                    //   );
+                    // }else{
+                    //   _selectedAccount = account;
+                    //   _longPressedAccount = null;
+                    //   Navigator.pop(context);
+                    // }
+
+                    _selectedAccount = account;
+                    _longPressedAccount = null;
+                    Navigator.pop(context);
+
                   });
                 },
                 onLongPress: (){
@@ -808,6 +825,52 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
 
   Widget _tradingAccounts(){
     final size = MediaQuery.of(context).size;
+    if(_realAccounts.isEmpty && _demoAccounts.isEmpty){
+      final defaultAccount = TradingAccount(
+        name: "Demo",
+        accountNumber: "000000",
+        balance: "\$000.00",
+        isReal: false,
+        isDemo: false,
+        platform: 'N/A',
+        iconColor: AppColors.primaryColor,
+        borderColor: AppColors.primaryColor,
+      );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Trading Accounts",
+                style: AppTextStyle.h3(context, color: AppColors.primaryText),
+              ),
+              CircularIconButton(
+                onTap:(){},
+                icon: Icons.add,
+                iconColor: Colors.white,
+                backgroundColor: AppColors.panelColor,
+              ),
+            ],
+          ),
+          SizedBox(height: size.height * 0.04),
+          Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.02),
+            child: TradingAccountCard(
+              account: defaultAccount,
+              onTrade: () {},
+              onDeposit: () {},
+              onTransfer: () {},
+              isObscured: _isObscured,
+              onToggleVisibility: () => setState(() => _isObscured = !_isObscured),
+              onExpandTap: () => _showExpandedSheet(context, defaultAccount),
+            ),
+          ),
+
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -834,7 +897,7 @@ class _AccountViewState extends State<AccountView>with TickerProviderStateMixin{
           padding: EdgeInsets.only(bottom: size.height * 0.02),
           child: TradingAccountCard(
             account: _selectedAccount ?? _realAccounts[0], // Default to first real account
-            onTrade: () {},
+             onTrade: () {},
             onDeposit: () {},
             onTransfer: () {},
             isObscured: _isObscured,
