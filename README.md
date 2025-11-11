@@ -89,14 +89,7 @@ Includes C++, CMake, Swift modules for platform integrations and advanced featur
   flutter doctor
   ```
 - **Build errors:** Clean project (`flutter clean`), restart IDE, verify min/max SDK versions.
-
----
-
-## 📚 Resources
-
-- [Flutter Documentation](https://flutter.dev/docs)
-- [Dart Documentation](https://dart.dev/guides)
-
+ 
 ---
 
 
